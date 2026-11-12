@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi Catálogo de Películas y Series</title>
+
+    <meta name="description"
+          content="Explora y consulta mi catálogo de películas y series.">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Configuración del catálogo -->
+    <script src="js/config.js" defer></script>
+
+    <!-- Aplicación -->
+    <script src="js/drive.js" defer></script>
+    <script src="js/app.js" defer></script>
+</head>
+
+<body>
+
+    <!-- ENCABEZADO -->
+    <header class="header">
+
+        <div class="header-content">
+
+            <div class="brand">
+				<img class="brand-logo" id="brandLogo"
+					 src="img/logo.png"
+					 alt="Logo del catálogo">
+			</div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-container">
+
+        <!-- PRESENTACIÓN Y BÚSQUEDA -->
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <h2>
+                    Encuentra tu Película o Serie
+                </h2>
+
+                <p>
+                    Explora, Busca y Descubre Películas y Series
+                    disponibles en el Catálogo.
+                </p>
+
+                <div class="search-container">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Buscar por título, género, año..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        id="clearSearch"
+                        class="clear-search"
+                        aria-label="Limpiar búsqueda"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FILTROS -->
+        <section class="filters-section">
+
+            <div class="filters-heading">
+                <h3>Explorar catálogo</h3>
+
+                <button
+                    type="button"
+                    id="clearFilters"
+                    class="clear-filters"
+                >
+                    Limpiar filtros
+                </button>
+            </div>
+
+            <div class="filters-container">
+
+                <div class="filter-group">
+                    <label for="genreFilter">Género</label>
+
+                    <select id="genreFilter">
+                        <option value="">Todos los géneros</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="yearFilter">Año</label>
+
+                    <select id="yearFilter">
+                        <option value="">Todos los años</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="languageFilter">Idioma</label>
+
+                    <select id="languageFilter">
+                        <option value="">Todos los idiomas</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortFilter">Ordenar por</label>
+
+                    <select id="sortFilter">
+                        <option value="title-asc">Título A - Z</option>
+                        <option value="title-desc">Título Z - A</option>
+                        <option value="year-desc">Año más reciente</option>
+                        <option value="year-asc">Año más antiguo</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RESULTADOS -->
+        <section class="catalog-section">
+
+            <div class="results-heading">
+
+                <div>
+                    <h3>Mi colección</h3>
+
+                    <p id="resultsInfo">
+                        Preparando catálogo...
+                    </p>
+                </div>
+
+                <div class="view-indicator">
+                    <span id="currentPageInfo"></span>
+                </div>
+
+            </div>
+
+
+            <!-- ESTADO DE CARGA -->
+            <div id="loadingMessage" class="status-message">
+                <div class="loader"></div>
+                <p>Cargando catálogo...</p>
+            </div>
+
+
+            <!-- MENSAJE DE ERROR -->
+            <div
+                id="errorMessage"
+                class="status-message error-message"
+                hidden
+            >
+                <h3>No se pudo cargar el catálogo</h3>
+                <p id="errorText"></p>
+            </div>
+
+
+            <!-- SIN RESULTADOS -->
+            <div
+                id="emptyMessage"
+                class="status-message"
+                hidden
+            >
+                <h3>No encontramos resultados</h3>
+                <p>
+                    Intenta cambiar la búsqueda o los filtros.
+                </p>
+            </div>
+
+
+            <!-- GALERÍA -->
+            <div
+                id="catalogGrid"
+                class="catalog-grid"
+            >
+                <!-- Las tarjetas se generan desde JavaScript -->
+            </div>
+
+
+            <!-- PAGINACIÓN -->
+            <nav
+                id="pagination"
+                class="pagination"
+                aria-label="Paginación del catálogo"
+            >
+                <!-- Los botones se generan desde JavaScript -->
+            </nav>
+
+        </section>
+
+    </main>
+
+
+    <!-- VENTANA DE DETALLES -->
+    <div
+        id="detailModal"
+        class="modal"
+        aria-hidden="true"
+    >
+
+        <div class="modal-overlay" id="modalOverlay"></div>
+
+        <div
+            class="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="detailTitle"
+        >
+
+            <button
+                type="button"
+                id="closeModal"
+                class="modal-close"
+                aria-label="Cerrar detalles"
+            >
+                ×
+            </button>
+
+            <div class="detail-layout">
+
+                <div class="detail-poster-container">
+
+                    <img
+                        id="detailPoster"
+                        src=""
+                        alt="Póster de la película"
+                    >
+
+                </div>
+
+                <div class="detail-information">
+
+                    <span id="detailGenre" class="detail-genre"></span>
+
+                    <h2 id="detailTitle"></h2>
+
+                    <p id="detailSubtitle" class="detail-subtitle"></p>
+
+                    <div
+                        id="detailFields"
+                        class="detail-fields"
+                    >
+                        <!-- Los campos se generan desde JavaScript -->
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="footer">
+
+        <p>
+            Mi Catálogo de Películas y Series
+        </p>
+
+        <span>
+            Colección personal
+        </span>
+
+    </footer>
+
+</body>
+</html>
