@@ -94,12 +94,10 @@ button {
 }
 
 .brand-logo {
-    display: block;
 	width: 360px;
     height: 180px;
     object-fit: contain;
     flex-shrink: 0;
-	margin: 0 auto;
 }
 
 .brand-info h1 {
