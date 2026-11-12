@@ -11,7 +11,7 @@ window.CATALOGO_CONFIG = {
     BRAND_INITIALS: "FD",
 
     // Ruta del archivo JSON
-    JSON_URL: "https://raw.githubusercontent.com/DavidGuerrero890/Frikazo-Digital/refs/heads/main/Catalogo.json",
+    JSON_URL: "https://raw.githubusercontent.com/FrikazoDigital/Web/refs/heads/main/Catalogo.json",
 
     // Google Drive API Key
     GOOGLE_DRIVE_API_KEY: "AIzaSyAqXzpAygpJBYRd_f_OcLG1KvcdGX6E3sk",
