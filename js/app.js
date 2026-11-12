@@ -878,7 +878,11 @@
 			const content = document.createElement("span");
 
 			content.className = "detail-field-value";
-			content.textContent = value;
+			if (key === "Tamaño (MB)") {
+				content.textContent = Number(value).toLocaleString("es-CO");
+			} else {
+				content.textContent = value;
+			}
 
 			field.appendChild(label);
 			field.appendChild(content);
