@@ -153,7 +153,7 @@
             );
 
         }
-
+		
         return data;
 
     }
@@ -394,6 +394,21 @@
     // =====================================================
     // ORDENAR RESULTADOS
     // =====================================================
+	
+	function convertirFecha(fecha) {
+
+		if (!fecha) return 0;
+
+		const partes = String(fecha).trim().split("/");
+
+		if (partes.length !== 3) return 0;
+
+		const [dia, mes, año] = partes;
+
+		return Number(año) * 10000 +
+			   Number(mes) * 100 +
+			   Number(dia);
+	}
 
     function sortMovies() {
 
@@ -423,6 +438,12 @@
                 case "title-asc":
                 default:
                     return titleA.localeCompare(titleB, "es");
+				
+				case "date-desc":
+					const fechaA = convertirFecha(a["Fecha Ingreso"]);
+					const fechaB = convertirFecha(b["Fecha Ingreso"]);
+
+					return fechaB - fechaA;
 
             }
 
@@ -920,8 +941,8 @@
         elements.genreFilter.value = "";
         elements.yearFilter.value = "";
         elements.languageFilter.value = "";
-
-        elements.sortFilter.value = "title-asc";
+		
+		elements.sortFilter.value = "date-desc";
 
         elements.clearSearch.classList.remove("visible");
 
@@ -1094,7 +1115,9 @@
             populateFilters();
 
             // 5. Preparar resultados
-
+			
+			elements.sortFilter.value = "date-desc";
+			
             filteredMovies = [...allMovies];
 
             sortMovies();
