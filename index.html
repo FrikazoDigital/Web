@@ -134,6 +134,14 @@
 
 					<button
 						type="button"
+						id="randomMoviesButton"
+						class="random-movies-button"
+					>
+						🎲 ¿Qué veré hoy?
+					</button>
+
+					<button
+						type="button"
 						id="clearFilters"
 						class="clear-filters"
 					>
@@ -202,7 +210,91 @@
                 </div>
 
             </div>
+			
+			<!-- SECCIÓN DE PELÍCULAS ALEATORIAS -->
+			<div id="randomMoviesSection" class="random-movies-section" hidden>
 
+				<div class="random-movies-heading">
+
+					<h3>🎲 ¿Qué veré Hoy?</h3>
+
+					<p>
+						Selecciona tus Preferencias y Descubre algo para ver.
+					</p>
+
+				</div>
+
+				<div class="random-movies-filters">
+
+					<div class="filter-group">
+
+						<label>Género</label>
+
+						<div class="multi-filter" id="randomGenreFilter">
+
+							<button type="button" class="multi-filter-button">
+								Todos los Géneros
+							</button>
+
+							<div class="multi-filter-options"></div>
+
+						</div>
+
+					</div>
+
+					<div class="filter-group">
+
+						<label>Año</label>
+
+						<div class="multi-filter" id="randomYearFilter">
+
+							<button type="button" class="multi-filter-button">
+								Todos los Años
+							</button>
+
+							<div class="multi-filter-options"></div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class="random-movies-actions">
+
+					<button
+						type="button"
+						id="chooseRandomMovie"
+						class="choose-random-movie"
+					>
+						🎲 ¿QUÉ VERÉ HOY?
+					</button>
+
+					<button
+						type="button"
+						id="backToCatalog"
+						class="back-to-catalog"
+					>
+						↩ Volver al Catálogo
+					</button>
+
+				</div>
+
+				<div id="randomMovieResult" class="random-movie-result" hidden>
+
+					<h3>¡Esta es tu Elección de Hoy!</h3>
+
+					<div id="randomMovieGrid" class="catalog-grid"></div>
+
+				</div>
+
+				<p id="randomMovieEmpty" class="random-movie-empty" hidden>
+					No encontramos Peliculas o Series que coincidan con los Filtros seleccionados.
+					Intenta cambiar tus Preferencias.
+				</p>
+
+			</div>
+			
         </section>
 
 
