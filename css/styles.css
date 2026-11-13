@@ -387,7 +387,10 @@ button {
 }
 
 .movie-poster {
-    width: 100%;
+    position: relative;
+    overflow: hidden;
+	
+	width: 100%;
     aspect-ratio: 2 / 3;
 
     position: relative;
@@ -1200,7 +1203,10 @@ button {
 /* ANIMADA */
 
 .new-badge-animated {
-    top: 10px;
+    position: absolute;
+    z-index: 10;
+	
+	top: 10px;
     right: 10px;
     left: auto;
     width: auto;
