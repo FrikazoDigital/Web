@@ -690,62 +690,55 @@
 
 		const mode = CONFIG.NEW_BADGE_MODE || "days";
 
-		// MODO DESACTIVADO
+		if (mode === "off") return false;
 
-		if (mode === "off") {
+		const fechaPelicula = convertirFecha(movie["Fecha Ingreso"]);
+
+		if (!fechaPelicula) return false;
+
+		// Comprobar vigencia de la etiqueta
+		const [dia, mes, año] = String(movie["Fecha Ingreso"])
+			.trim().split("/").map(Number);
+
+		const fechaIngreso = new Date(año, mes - 1, dia);
+		const hoy = new Date();
+
+		hoy.setHours(0, 0, 0, 0);
+
+		const diferencia = Math.floor(
+			(hoy - fechaIngreso) / 86400000
+		);
+
+		const diasMaximos = CONFIG.NEW_BADGE_DAYS || 30;
+
+		if (diferencia < 0 || diferencia > diasMaximos) {
 			return false;
 		}
 
-		// MODO ÚLTIMOS 30 DÍAS
+		// Ordenar películas por fecha de ingreso
+		const peliculasConFecha = allMovies
+			.map(item => ({
+				movie: item,
+				fecha: convertirFecha(item["Fecha Ingreso"])
+			}))
+			.filter(item => item.fecha > 0)
+			.sort((a, b) => b.fecha - a.fecha);
 
+		// MODO POR DÍAS: solo la película más reciente
 		if (mode === "days") {
-
-			const fecha = movie["Fecha Ingreso"];
-
-			const fechaIngreso = convertirFecha(fecha);
-
-			if (!fechaIngreso) return false;
-
-			const [dia, mes, año] = String(fecha)
-				.trim()
-				.split("/")
-				.map(Number);
-
-			const fechaRegistro = new Date(año, mes - 1, dia);
-
-			const hoy = new Date();
-
-			hoy.setHours(0, 0, 0, 0);
-
-			const diferencia =
-				(hoy - fechaRegistro) / (1000 * 60 * 60 * 24);
-
-			return diferencia >= 0 &&
-				   diferencia <= (CONFIG.NEW_BADGE_DAYS || 30);
-
+			return fechaPelicula === peliculasConFecha[0].fecha;
 		}
 
-		// MODO ÚLTIMOS N TÍTULOS
-
+		// MODO POR CANTIDAD: últimas N películas vigentes
 		if (mode === "count") {
-
 			const cantidad = CONFIG.NEW_BADGE_COUNT || 10;
 
-			const ordenados = [...allMovies].sort((a, b) => {
-
-				return convertirFecha(b["Fecha Ingreso"]) -
-					   convertirFecha(a["Fecha Ingreso"]);
-
-			});
-
-			return ordenados
+			return peliculasConFecha
 				.slice(0, cantidad)
-				.some(item => item.Codigo === movie.Codigo);
-
+				.some(item => item.movie.Codigo === movie.Codigo);
 		}
 
 		return false;
-
 	}
 	
     function sortMovies() {
@@ -871,7 +864,9 @@
 
 			const newBadge = document.createElement("span");
 
-			newBadge.className = "new-badge";
+			newBadge.className =
+				"new-badge new-badge-" +
+				(CONFIG.NEW_BADGE_STYLE || "ribbon");
 			newBadge.textContent = "NUEVO";
 
 			posterContainer.appendChild(newBadge);

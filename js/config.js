@@ -28,6 +28,7 @@ window.CATALOGO_CONFIG = {
     // Mostrar información de depuración en consola
     DEBUG: true,
 	
+	// Excepciones en Genero
 	GENRE_FOLDER_MAP: {
 		"DC Comic (Actores)": "DC Comic",
 		"DC Comic (Animado)": "DC Comic",
@@ -41,7 +42,15 @@ window.CATALOGO_CONFIG = {
 	// "count"	Últimos 10 títulos
 	// "off"	Desactivar etiqueta
 	NEW_BADGE_MODE: "days",
-	NEW_BADGE_DAYS: 30,
-	NEW_BADGE_COUNT: 10
+	NEW_BADGE_DAYS: 365,
+	NEW_BADGE_COUNT: 20,
+	
+	// DISEÑO DE LA ETIQUETA NUEVO
+	// "ribbon"		Cinta diagonal
+	// "pill"		Cápsula roja
+	// "neon"		Verde neón
+	// "burst"		Explosiva
+	// "animated"	Animada
+	NEW_BADGE_STYLE: "animated"
 
 };
