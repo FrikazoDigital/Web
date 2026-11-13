@@ -274,16 +274,19 @@ button {
 }
 
 .clear-filters {
-    background: none;
-    border: none;
-    color: var(--primary);
-    font-size: 12px;
-    font-weight: 650;
-    transition: var(--transition);
+    padding: 9px 16px;
+    border: 1px solid #1976D2;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #2196F3, #075BFF);
+    color: #FFFFFF;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .clear-filters:hover {
-    color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.35);
 }
 
 .filters-container {
@@ -1235,4 +1238,58 @@ button {
         /*box-shadow: 0 0 15px #E91E63;*/
 		box-shadow: 0 0 15px #E60000;
     }
+}
+
+.top-badge {
+    position: absolute;
+    z-index: 10;
+    top: 10px;
+    left: 10px;
+
+    padding: 6px 10px;
+
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    color: #202020;
+
+    font-size: 0.75rem;
+    font-weight: 900;
+    border-radius: 6px;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* =========================================================
+   BOTÓN TOP 10
+   ========================================================= */
+
+.filters-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.top10-button {
+    padding: 9px 16px;
+    border: 1px solid #D99A00;
+    border-radius: 7px;
+
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    color: #202020;
+
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.top10-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.35);
+}
+
+.top10-button.active {
+    background: #1976D2;
+    border-color: #1976D2;
+    color: #FFFFFF;
 }
