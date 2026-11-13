@@ -922,3 +922,58 @@ button {
     }
 
 }
+
+/* =========================================================
+   CALIDAD VISUAL - COLORES
+   ========================================================= */
+
+.detail-field-value.quality-muyexcelente {
+    background: #123B70;
+    color: white;
+}
+
+.detail-field-value.quality-excelente {
+    background: #1976D2;
+    color: white;
+}
+
+.detail-field-value.quality-muybuena,
+.detail-field-value.quality-buena {
+    background: #2E9D50;
+    color: white;
+}
+
+.detail-field-value.quality-buenabaja {
+    background: #8BCF78;
+    color: #18351B;
+}
+
+.detail-field-value.quality-regularalta {
+    background: #F4D03F;
+    color: #493B00;
+}
+
+.detail-field-value.quality-regular,
+.detail-field-value.quality-mediomala {
+    background: #F39C32;
+    color: #4A2600;
+}
+
+.detail-field-value.quality-malisima {
+    background: #D93636;
+    color: white;
+}
+
+.detail-field-value.quality-lopeor {
+    background: #741F1F;
+    color: white;
+}
+
+.detail-field-value[class*="quality-"] {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    width: fit-content;
+}
