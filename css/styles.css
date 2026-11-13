@@ -1130,3 +1130,31 @@ button {
     }
 
 }
+
+/* =====================================================
+   ETIQUETA NUEVO
+   ===================================================== */
+
+.movie-poster {
+    position: relative;
+}
+
+.new-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+
+    padding: 6px 11px;
+
+    background: #E53935;
+    color: #FFFFFF;
+
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+
+    border-radius: 5px;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
