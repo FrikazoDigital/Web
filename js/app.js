@@ -38,6 +38,7 @@
         genreFilter: document.getElementById("genreFilter"),
         yearFilter: document.getElementById("yearFilter"),
         languageFilter: document.getElementById("languageFilter"),
+		qualityFilter: document.getElementById("qualityFilter"),
         sortFilter: document.getElementById("sortFilter"),
 
         clearFilters: document.getElementById("clearFilters"),
@@ -231,7 +232,8 @@
 		const totalPosters = document.getElementById("totalPosters");
 
 		if (totalTitles) {
-			totalTitles.textContent = `${catalog.length} títulos`;
+			/*totalTitles.textContent = `${catalog.length} títulos`;*/
+			totalTitles.textContent = `${allMovies.length} títulos`;
 		}
 
 		if (totalPosters) {
@@ -247,85 +249,216 @@
 
     function populateFilters() {
 
-        // GÉNEROS
+		updateDependentFilters();
 
-        const genres = [...new Set(
-
-            allMovies
-                .map(movie => movie.Genero)
-                .filter(Boolean)
-
-        )].sort((a, b) =>
-            a.localeCompare(b, "es")
-        );
-
-        elements.genreFilter.innerHTML =
-            '<option value="">Todos los géneros</option>';
-
-        genres.forEach(genre => {
-
-            const option = document.createElement("option");
-
-            option.value = genre;
-            option.textContent = genre;
-
-            elements.genreFilter.appendChild(option);
-
-        });
+	}
 
 
-        // AÑOS
+	// =====================================================
+	// OBTENER PELÍCULAS SEGÚN LOS DEMÁS FILTROS
+	// =====================================================
 
-        const years = [...new Set(
+	function getMoviesForFilter(excludeFilter) {
 
-            allMovies
-                .map(movie => movie["Año"])
-                .filter(Boolean)
+		const search = normalize(elements.searchInput.value);
 
-        )].sort((a, b) =>
-            Number(b) - Number(a)
-        );
+		const genre = elements.genreFilter.value;
+		const year = elements.yearFilter.value;
+		const language = elements.languageFilter.value;
+		const quality = elements.qualityFilter.value;
 
-        elements.yearFilter.innerHTML =
-            '<option value="">Todos los años</option>';
+		return allMovies.filter(movie => {
 
-        years.forEach(year => {
+			const searchValues = [
+				movie.Titulo,
+				movie["Titulo Ingles"],
+				movie.Saga,
+				movie.Genero,
+				movie.Idioma,
+				movie["Año"],
+				movie.Formato,
+				movie.Resolucion,
+				movie["Calidad Visual"],
+				movie.Observaciones
+			];
 
-            const option = document.createElement("option");
+			const matchesSearch = !search ||
+				searchValues.some(value =>
+					normalize(value).includes(search)
+				);
 
-            option.value = year;
-            option.textContent = year;
+			const matchesGenre = excludeFilter === "genre" ||
+				!genre || movie.Genero === genre;
 
-            elements.yearFilter.appendChild(option);
+			const matchesYear = excludeFilter === "year" ||
+				!year || String(movie["Año"] || "") === year;
 
-        });
+			const matchesLanguage = excludeFilter === "language" ||
+				!language || movie.Idioma === language;
+
+			const matchesQuality = excludeFilter === "quality" ||
+				!quality || movie["Calidad Visual"] === quality;
+
+			return (
+				matchesSearch &&
+				matchesGenre &&
+				matchesYear &&
+				matchesLanguage &&
+				matchesQuality
+			);
+
+		});
+
+	}
 
 
-        // IDIOMAS
+	// =====================================================
+	// ACTUALIZAR OPCIONES DE LOS FILTROS
+	// =====================================================
 
-        const languages = [...new Set(
+	function updateDependentFilters(changedFilter = null) {
 
-            allMovies
-                .map(movie => movie.Idioma)
-                .filter(Boolean)
+		const qualityOrder = [
+			"Muy Excelente",
+			"Excelente",
+			"Muy Buena",
+			"Buena",
+			"Buena Baja",
+			"Regular Alta",
+			"Regular",
+			"Medio Mala",
+			"Malisima",
+			"Lo Peor"
+		];
+		
+		const languageOrder = [
+			"Dual",
+			"Latino",
+			"Español",
+			"Subs",
+			"English Sub",
+			"Music"
+		];
 
-        )].sort((a, b) =>
-            a.localeCompare(b, "es")
-        );
+		const filters = [
+			{
+				key: "genre",
+				element: elements.genreFilter,
+				placeholder: "Todos los Géneros",
+				field: movie => movie.Genero,
+				sort: (a, b) => a.localeCompare(b, "es")
+			},
+			{
+				key: "year",
+				element: elements.yearFilter,
+				placeholder: "Todos los Años",
+				field: movie => movie["Año"],
+				sort: (a, b) => Number(b) - Number(a)
+			},
+			{
+				key: "language",
+				element: elements.languageFilter,
+				placeholder: "Todos los Idiomas",
+				field: movie => movie.Idioma,
+				sort: (a, b) => {
+					const indexA = languageOrder.indexOf(a);
+					const indexB = languageOrder.indexOf(b);
 
-        elements.languageFilter.innerHTML =
-            '<option value="">Todos los idiomas</option>';
+					if (indexA === -1) return 1;
+					if (indexB === -1) return -1;
 
-        languages.forEach(language => {
+					return indexA - indexB;
+				}
+			},
+			{
+				key: "quality",
+				element: elements.qualityFilter,
+				placeholder: "Todas las Calidades Visuales",
+				field: movie => movie["Calidad Visual"],
+				sort: (a, b) => {
+					const indexA = qualityOrder.indexOf(a);
+					const indexB = qualityOrder.indexOf(b);
 
-            const option = document.createElement("option");
+					if (indexA === -1) return 1;
+					if (indexB === -1) return -1;
 
-            option.value = language;
-            option.textContent = language;
+					return indexA - indexB;
+				}
+			}
+		];
 
-            elements.languageFilter.appendChild(option);
 
-        });
+		// Primero eliminar selecciones que ya no tienen resultados.
+
+		for (let i = 0; i < filters.length; i++) {
+
+			filters.forEach(filter => {
+
+				if (filter.key === changedFilter) return;
+
+				const selected = filter.element.value;
+
+				if (!selected) return;
+
+				const available = getMoviesForFilter(filter.key)
+					.map(filter.field)
+					.filter(value => value !== null &&
+						value !== undefined &&
+						String(value).trim() !== ""
+					)
+					.map(value => String(value));
+
+				if (!available.includes(selected)) {
+					filter.element.value = "";
+				}
+
+			});
+
+		}
+
+
+		// Después reconstruir las opciones disponibles.
+
+		filters.forEach(filter => {
+
+			const selected = filter.element.value;
+
+			let values = [
+				...new Set(
+					getMoviesForFilter(filter.key)
+						.map(filter.field)
+						.filter(value =>
+							value !== null &&
+							value !== undefined &&
+							String(value).trim() !== ""
+						)
+						.map(value => String(value))
+				)
+			];
+
+			values.sort(filter.sort);
+
+			filter.element.innerHTML = "";
+
+			const defaultOption = document.createElement("option");
+			defaultOption.value = "";
+			defaultOption.textContent = filter.placeholder;
+
+			filter.element.appendChild(defaultOption);
+
+			values.forEach(value => {
+
+				const option = document.createElement("option");
+				option.value = value;
+				option.textContent = value;
+
+				filter.element.appendChild(option);
+
+			});
+
+			filter.element.value = selected;
+
+		});
 
     }
 
@@ -334,61 +467,67 @@
     // BUSCAR PELÍCULAS
     // =====================================================
 
-    function filterMovies() {
+    function filterMovies(changedFilter = null) {
 
-        const search = normalize(elements.searchInput.value);
+		// Actualizar las opciones de los demás filtros.
+		updateDependentFilters(changedFilter);
 
-        const genre = elements.genreFilter.value;
-        const year = elements.yearFilter.value;
-        const language = elements.languageFilter.value;
+		const search = normalize(elements.searchInput.value);
 
-        filteredMovies = allMovies.filter(movie => {
+		const genre = elements.genreFilter.value;
+		const year = elements.yearFilter.value;
+		const language = elements.languageFilter.value;
+		const quality = elements.qualityFilter.value;
 
-            const searchValues = [
+		filteredMovies = allMovies.filter(movie => {
 
-                movie.Titulo,
-                movie["Titulo Ingles"],
-                movie.Saga,
-                movie.Genero,
-                movie.Idioma,
-                movie["Año"],
-                movie.Formato,
-                movie.Resolucion,
-                movie["Calidad Visual"],
-                movie.Observaciones
+			const searchValues = [
+				movie.Titulo,
+				movie["Titulo Ingles"],
+				movie.Saga,
+				movie.Genero,
+				movie.Idioma,
+				movie["Año"],
+				movie.Formato,
+				movie.Resolucion,
+				movie["Calidad Visual"],
+				movie.Observaciones
+			];
 
-            ];
+			const matchesSearch = !search ||
+				searchValues.some(value =>
+					normalize(value).includes(search)
+				);
 
-            const matchesSearch = !search ||
-                searchValues.some(value =>
-                    normalize(value).includes(search)
-                );
+			const matchesGenre = !genre ||
+				movie.Genero === genre;
 
-            const matchesGenre = !genre ||
-                movie.Genero === genre;
+			const matchesYear = !year ||
+				String(movie["Año"] || "") === year;
 
-            const matchesYear = !year ||
-                movie["Año"] === year;
+			const matchesLanguage = !language ||
+				movie.Idioma === language;
 
-            const matchesLanguage = !language ||
-                movie.Idioma === language;
+			const matchesQuality = !quality ||
+				movie["Calidad Visual"] === quality;
 
-            return (
-                matchesSearch &&
-                matchesGenre &&
-                matchesYear &&
-                matchesLanguage
-            );
+			return (
+				matchesSearch &&
+				matchesGenre &&
+				matchesYear &&
+				matchesLanguage &&
+				matchesQuality
+			);
 
-        });
+		});
 
-        sortMovies();
+		sortMovies();
 
-        currentPage = 1;
+		currentPage = 1;
 
-        renderCatalog();
+		renderCatalog();
 
-    }
+	}
 
 
     // =====================================================
@@ -943,6 +1082,7 @@
         elements.genreFilter.value = "";
         elements.yearFilter.value = "";
         elements.languageFilter.value = "";
+		elements.qualityFilter.value = "";
 		
 		elements.sortFilter.value = "date-desc";
 
@@ -968,7 +1108,7 @@
                 elements.searchInput.value.length > 0
             );
 
-            filterMovies();
+            filterMovies("search");
 
         });
 
@@ -981,7 +1121,7 @@
 
             elements.clearSearch.classList.remove("visible");
 
-            filterMovies();
+            filterMovies("search");
 
             elements.searchInput.focus();
 
@@ -990,33 +1130,38 @@
 
         // FILTROS
 
-        elements.genreFilter.addEventListener(
-            "change",
-            filterMovies
-        );
+		elements.genreFilter.addEventListener(
+			"change",
+			() => filterMovies("genre")
+		);
 
-        elements.yearFilter.addEventListener(
-            "change",
-            filterMovies
-        );
+		elements.yearFilter.addEventListener(
+			"change",
+			() => filterMovies("year")
+		);
 
-        elements.languageFilter.addEventListener(
-            "change",
-            filterMovies
-        );
+		elements.languageFilter.addEventListener(
+			"change",
+			() => filterMovies("language")
+		);
 
-        elements.sortFilter.addEventListener(
-            "change",
-            () => {
+		elements.qualityFilter.addEventListener(
+			"change",
+			() => filterMovies("quality")
+		);
+		
+		elements.sortFilter.addEventListener(
+			"change",
+			() => {
 
-                sortMovies();
+				sortMovies();
 
-                currentPage = 1;
+				currentPage = 1;
 
-                renderCatalog();
+				renderCatalog();
 
-            }
-        );
+			}
+		);
 
 
         // LIMPIAR TODOS LOS FILTROS
