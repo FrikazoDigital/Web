@@ -34,6 +34,14 @@ window.CATALOGO_CONFIG = {
 		"Marvel (Actores - MCU)": "Marvel",
 		"Marvel (Actores)": "Marvel",
 		"Marvel (Animado)": "Marvel"
-	}
+	},
+	
+	// CONFIGURACIÓN DE ETIQUETAS NUEVO
+	// "days"	Últimos 30 días
+	// "count"	Últimos 10 títulos
+	// "off"	Desactivar etiqueta
+	NEW_BADGE_MODE: "days",
+	NEW_BADGE_DAYS: 30,
+	NEW_BADGE_COUNT: 10
 
 };

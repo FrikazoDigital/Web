@@ -681,7 +681,73 @@
 			   Number(mes) * 100 +
 			   Number(dia);
 	}
+	
+	// =====================================================
+	// DETERMINAR SI UNA PELÍCULA ES NUEVA
+	// =====================================================
 
+	function esNuevo(movie) {
+
+		const mode = CONFIG.NEW_BADGE_MODE || "days";
+
+		// MODO DESACTIVADO
+
+		if (mode === "off") {
+			return false;
+		}
+
+		// MODO ÚLTIMOS 30 DÍAS
+
+		if (mode === "days") {
+
+			const fecha = movie["Fecha Ingreso"];
+
+			const fechaIngreso = convertirFecha(fecha);
+
+			if (!fechaIngreso) return false;
+
+			const [dia, mes, año] = String(fecha)
+				.trim()
+				.split("/")
+				.map(Number);
+
+			const fechaRegistro = new Date(año, mes - 1, dia);
+
+			const hoy = new Date();
+
+			hoy.setHours(0, 0, 0, 0);
+
+			const diferencia =
+				(hoy - fechaRegistro) / (1000 * 60 * 60 * 24);
+
+			return diferencia >= 0 &&
+				   diferencia <= (CONFIG.NEW_BADGE_DAYS || 30);
+
+		}
+
+		// MODO ÚLTIMOS N TÍTULOS
+
+		if (mode === "count") {
+
+			const cantidad = CONFIG.NEW_BADGE_COUNT || 10;
+
+			const ordenados = [...allMovies].sort((a, b) => {
+
+				return convertirFecha(b["Fecha Ingreso"]) -
+					   convertirFecha(a["Fecha Ingreso"]);
+
+			});
+
+			return ordenados
+				.slice(0, cantidad)
+				.some(item => item.Codigo === movie.Codigo);
+
+		}
+
+		return false;
+
+	}
+	
     function sortMovies() {
 
         const sort = elements.sortFilter.value;
@@ -798,7 +864,20 @@
         const posterContainer = document.createElement("div");
 
         posterContainer.className = "movie-poster";
+		
+		// Etiqueta NUEVO
 
+		if (esNuevo(movie)) {
+
+			const newBadge = document.createElement("span");
+
+			newBadge.className = "new-badge";
+			newBadge.textContent = "NUEVO";
+
+			posterContainer.appendChild(newBadge);
+
+		}
+		
         if (posterUrl) {
 
             const image = document.createElement("img");
