@@ -62,6 +62,15 @@
         closeModal: document.getElementById("closeModal"),
 
         detailPoster: document.getElementById("detailPoster"),
+		// VISOR AMPLIADO DE POSTER
+		posterViewer: document.getElementById("posterViewer"),
+		closePosterViewer: document.getElementById("closePosterViewer"),
+		posterViewerImage: document.getElementById("posterViewerImage"),
+		posterViewerArea: document.getElementById("posterViewerArea"),
+		zoomIn: document.getElementById("zoomIn"),
+		zoomOut: document.getElementById("zoomOut"),
+		resetZoom: document.getElementById("resetZoom"),
+
         detailGenre: document.getElementById("detailGenre"),
         detailTitle: document.getElementById("detailTitle"),
         detailSubtitle: document.getElementById("detailSubtitle"),
@@ -1339,6 +1348,272 @@
         elements.closeModal.focus();
 
     }
+	
+	/* =========================================================
+	   VISOR AMPLIADO DE POSTER
+	   ========================================================= */
+
+	let posterZoom = 1;
+	let posterPositionX = 0;
+	let posterPositionY = 0;
+
+	let posterPointers = new Map();
+	let posterInitialPinchDistance = 0;
+	let posterInitialPinchZoom = 1;
+	let posterLastPointerX = 0;
+	let posterLastPointerY = 0;
+
+	function updatePosterTransform() {
+
+		elements.posterViewerImage.style.transform =
+			`translate(${posterPositionX}px, ${posterPositionY}px) scale(${posterZoom})`;
+
+	}
+
+	function resetPosterZoom() {
+
+		posterZoom = 1;
+		posterPositionX = 0;
+		posterPositionY = 0;
+
+		updatePosterTransform();
+
+	}
+
+	function changePosterZoom(amount) {
+
+		posterZoom = Math.min(
+			6,
+			Math.max(1, posterZoom + amount)
+		);
+
+		if (posterZoom === 1) {
+			posterPositionX = 0;
+			posterPositionY = 0;
+		}
+
+		updatePosterTransform();
+
+	}
+
+	function openPosterViewer() {
+
+		const posterUrl = elements.detailPoster.src;
+
+		if (!posterUrl || elements.detailPoster.style.display === "none") {
+			return;
+		}
+
+		elements.posterViewerImage.src = posterUrl;
+		elements.posterViewerImage.alt = elements.detailPoster.alt;
+
+		resetPosterZoom();
+
+		elements.posterViewer.classList.add("active");
+
+		document.body.style.overflow = "hidden";
+
+	}
+
+	function closePosterViewer() {
+
+		elements.posterViewer.classList.remove("active");
+
+		document.body.style.overflow = "";
+
+		posterPointers.clear();
+
+		resetPosterZoom();
+
+		elements.posterViewerImage.removeAttribute("src");
+
+	}
+
+	/* =========================================================
+	   EVENTOS DEL VISOR
+	   ========================================================= */
+
+	function connectPosterViewerEvents() {
+
+		// Abrir al hacer clic en el póster de la ficha.
+		elements.detailPoster.addEventListener(
+			"click",
+			openPosterViewer
+		);
+
+		// Cerrar visor.
+		elements.closePosterViewer.addEventListener(
+			"click",
+			closePosterViewer
+		);
+
+		// Controles de zoom.
+		elements.zoomIn.addEventListener("click", () => {
+			changePosterZoom(0.5);
+		});
+
+		elements.zoomOut.addEventListener("click", () => {
+			changePosterZoom(-0.5);
+		});
+
+		elements.resetZoom.addEventListener(
+			"click",
+			resetPosterZoom
+		);
+
+		// Cerrar al hacer clic fuera de la imagen.
+		elements.posterViewerArea.addEventListener("click", event => {
+
+			if (event.target === elements.posterViewerArea) {
+				closePosterViewer();
+			}
+
+		});
+
+		// Zoom con rueda del ratón.
+		elements.posterViewerArea.addEventListener(
+			"wheel",
+			event => {
+
+				event.preventDefault();
+
+				changePosterZoom(
+					event.deltaY < 0 ? 0.25 : -0.25
+				);
+
+			},
+			{ passive: false }
+		);
+
+		// Inicio del movimiento y del gesto de pellizco.
+		elements.posterViewerArea.addEventListener(
+			"pointerdown",
+			event => {
+
+				event.preventDefault();
+
+				elements.posterViewerArea.setPointerCapture(event.pointerId);
+
+				posterPointers.set(event.pointerId, {
+					x: event.clientX,
+					y: event.clientY
+				});
+
+				if (posterPointers.size === 1) {
+
+					posterLastPointerX = event.clientX;
+					posterLastPointerY = event.clientY;
+
+				} else if (posterPointers.size === 2) {
+
+					const points = Array.from(posterPointers.values());
+
+					posterInitialPinchDistance = Math.hypot(
+						points[1].x - points[0].x,
+						points[1].y - points[0].y
+					);
+
+					posterInitialPinchZoom = posterZoom;
+
+				}
+
+			}
+		);
+
+		// Movimiento: arrastrar o ampliar con dos dedos.
+		elements.posterViewerArea.addEventListener(
+			"pointermove",
+			event => {
+
+				if (!posterPointers.has(event.pointerId)) return;
+
+				posterPointers.set(event.pointerId, {
+					x: event.clientX,
+					y: event.clientY
+				});
+
+				if (posterPointers.size === 1 && posterZoom > 1) {
+
+					posterPositionX += event.clientX - posterLastPointerX;
+					posterPositionY += event.clientY - posterLastPointerY;
+
+					posterLastPointerX = event.clientX;
+					posterLastPointerY = event.clientY;
+
+					updatePosterTransform();
+
+				} else if (posterPointers.size === 2) {
+
+					const points = Array.from(posterPointers.values());
+
+					const currentDistance = Math.hypot(
+						points[1].x - points[0].x,
+						points[1].y - points[0].y
+					);
+
+					if (posterInitialPinchDistance > 0) {
+
+						posterZoom = Math.min(
+							6,
+							Math.max(
+								1,
+								posterInitialPinchZoom *
+								currentDistance / posterInitialPinchDistance
+							)
+						);
+
+						updatePosterTransform();
+
+					}
+
+				}
+
+			}
+		);
+
+		// Finalizar movimiento.
+		function releasePosterPointer(event) {
+
+			posterPointers.delete(event.pointerId);
+
+			if (posterPointers.size === 1) {
+
+				const point = Array.from(posterPointers.values())[0];
+
+				posterLastPointerX = point.x;
+				posterLastPointerY = point.y;
+
+			}
+
+			if (posterPointers.size < 2) {
+				posterInitialPinchDistance = 0;
+			}
+
+		}
+
+		elements.posterViewerArea.addEventListener(
+			"pointerup",
+			releasePosterPointer
+		);
+
+		elements.posterViewerArea.addEventListener(
+			"pointercancel",
+			releasePosterPointer
+		);
+
+		// Cerrar con ESC.
+		document.addEventListener("keydown", event => {
+
+			if (
+				event.key === "Escape" &&
+				elements.posterViewer.classList.contains("active")
+			) {
+				closePosterViewer();
+			}
+
+		});
+
+	}
 
 
     // =====================================================
@@ -1479,7 +1754,9 @@
     // =====================================================
 
     function connectEvents() {
-
+		
+		connectPosterViewerEvents();
+		
         // BUSCADOR
 
         elements.searchInput.addEventListener("input", () => {
