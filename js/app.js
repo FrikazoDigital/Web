@@ -903,6 +903,9 @@
 			} else {
 				content.textContent = value;
 			}
+			if (key === "Calidad Visual") {
+				content.classList.add("quality-" + normalize(value));
+			}
 
 			field.appendChild(label);
 			field.appendChild(content);
