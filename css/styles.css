@@ -977,3 +977,156 @@ button {
     font-weight: 600;
     width: fit-content;
 }
+
+/* =========================================================
+   FILTROS DE SELECCIÓN MÚLTIPLE
+   ========================================================= */
+
+.multi-filter {
+    position: relative;
+    width: 100%;
+}
+
+/* Botón principal */
+
+.multi-filter-button {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 36px 10px 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: var(--bg-card);
+    color: var(--text-primary);
+
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    font: inherit;
+    font-size: 0.9rem;
+    text-align: left;
+
+    cursor: pointer;
+
+    position: relative;
+	
+	background-color: #202633;
+    color: #FFFFFF;
+}
+
+.multi-filter-button::after {
+    content: "▾";
+    position: absolute;
+    right: 12px;
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.multi-filter-button:hover {
+    border-color: var(--accent-color);
+}
+
+/* Lista desplegable */
+
+.multi-filter-options {
+    display: none;
+
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+
+    width: 100%;
+    max-height: 260px;
+
+    overflow-y: auto;
+
+    /* Fondo sólido */
+    background-color: #202633;
+    color: #FFFFFF;
+
+    border: 1px solid #3B4658;
+    border-radius: 8px;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+
+    z-index: 9999;
+
+    padding: 6px;
+}
+
+/* Mostrar desplegable */
+
+.multi-filter.open .multi-filter-options {
+    display: block;
+}
+
+/* Cada opción */
+
+.multi-filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 9px 10px;
+
+    border-radius: 6px;
+
+    color: var(--text-primary);
+    font-size: 0.88rem;
+
+    cursor: pointer;
+	
+	color: #FFFFFF;
+    background-color: transparent;
+}
+
+.multi-filter-option:hover {
+    background: var(--bg-hover);
+	background-color: #354258;
+}
+
+/* Casillas */
+
+.multi-filter-option input {
+    width: 16px;
+    height: 16px;
+
+    margin: 0;
+
+    accent-color: var(--accent-color);
+
+    cursor: pointer;
+}
+
+/* Texto de cada opción */
+
+.multi-filter-option span {
+    flex: 1;
+}
+
+/* Opciones deshabilitadas */
+
+.multi-filter-option.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.multi-filter-option.disabled input {
+    cursor: not-allowed;
+}
+
+/* Separación y apariencia en celular */
+
+@media (max-width: 600px) {
+
+    .multi-filter-options {
+        max-height: 220px;
+    }
+
+    .multi-filter-button {
+        min-height: 46px;
+    }
+
+}
