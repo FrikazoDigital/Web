@@ -20,6 +20,9 @@
 
     let currentPage = 1;
 	let isTop10View = false;
+	let isRandomMoviesView = false;
+
+	let lastRandomMovie = null;
 
     // =====================================================
     // ELEMENTOS HTML
@@ -45,6 +48,16 @@
         clearFilters: document.getElementById("clearFilters"),
 		top10Button: document.getElementById("top10Button"),
 		resultsTitle: document.getElementById("resultsTitle"),
+		// PELÍCULAS ALEATORIAS
+		randomMoviesButton: document.getElementById("randomMoviesButton"),
+		randomMoviesSection: document.getElementById("randomMoviesSection"),
+		randomGenreFilter: document.getElementById("randomGenreFilter"),
+		randomYearFilter: document.getElementById("randomYearFilter"),
+		chooseRandomMovie: document.getElementById("chooseRandomMovie"),
+		backToCatalog: document.getElementById("backToCatalog"),
+		randomMovieResult: document.getElementById("randomMovieResult"),
+		randomMovieGrid: document.getElementById("randomMovieGrid"),
+		randomMovieEmpty: document.getElementById("randomMovieEmpty"),
 
         resultsInfo: document.getElementById("resultsInfo"),
         currentPageInfo: document.getElementById("currentPageInfo"),
@@ -55,7 +68,10 @@
         emptyMessage: document.getElementById("emptyMessage"),
 
         catalogGrid: document.getElementById("catalogGrid"),
-        pagination: document.getElementById("pagination"),
+		pagination: document.getElementById("pagination"),
+
+		filtersContainer: document.querySelector(".filters-container"),
+		catalogSection: document.querySelector(".catalog-section"),
 
         detailModal: document.getElementById("detailModal"),
         modalOverlay: document.getElementById("modalOverlay"),
@@ -262,7 +278,367 @@
 	function populateFilters() {
 		updateDependentFilters();
 	}
+	
+	// =====================================================
+    // FILTROS INDEPENDIENTES DE PELÍCULAS ALEATORIAS
+    // =====================================================
 
+    function getRandomSelectedValues(filterKey) {
+
+        const filter = filterKey === "genre"
+            ? elements.randomGenreFilter
+            : elements.randomYearFilter;
+
+        return Array.from(
+            filter.querySelectorAll(
+                'input[type="checkbox"]:checked:not([data-select-all])'
+            )
+        ).map(input => input.value);
+
+    }
+
+
+    function getRandomFilterDefinitions() {
+
+        return [
+            {
+                key: "genre",
+                element: elements.randomGenreFilter,
+                placeholder: "Todos los Géneros",
+                field: movie => movie.Genero,
+                sort: (a, b) => a.localeCompare(b, "es")
+            },
+            {
+                key: "year",
+                element: elements.randomYearFilter,
+                placeholder: "Todos los Años",
+                field: movie => movie["Año"],
+                sort: (a, b) => Number(b) - Number(a)
+            }
+        ];
+
+    }
+
+
+    function getRandomMoviesForFilter(excludeFilter = null) {
+
+        const selectedGenre = getRandomSelectedValues("genre");
+        const selectedYear = getRandomSelectedValues("year");
+
+        return allMovies.filter(movie => {
+
+            const matchesGenre =
+                excludeFilter === "genre" ||
+                selectedGenre.length === 0 ||
+                selectedGenre.includes(String(movie.Genero || ""));
+
+            const matchesYear =
+                excludeFilter === "year" ||
+                selectedYear.length === 0 ||
+                selectedYear.includes(String(movie["Año"] || ""));
+
+            return matchesGenre && matchesYear;
+
+        });
+
+    }
+
+
+    function updateRandomDependentFilters() {
+
+        const filters = getRandomFilterDefinitions();
+
+        filters.forEach(filter => {
+
+            const selected = getRandomSelectedValues(filter.key);
+
+            let values = [
+                ...new Set(
+                    getRandomMoviesForFilter(filter.key)
+                        .map(filter.field)
+                        .filter(value =>
+                            value !== null &&
+                            value !== undefined &&
+                            String(value).trim() !== ""
+                        )
+                        .map(value => String(value))
+                )
+            ];
+
+            values.sort(filter.sort);
+
+            // Conservar únicamente las selecciones disponibles.
+            const validSelected = selected.filter(value =>
+                values.includes(value)
+            );
+
+            const optionsContainer = filter.element.querySelector(
+                ".multi-filter-options"
+            );
+
+            const button = filter.element.querySelector(
+                ".multi-filter-button"
+            );
+
+            optionsContainer.innerHTML = "";
+
+            // SELECCIONAR TODAS
+
+            const selectAllLabel = document.createElement("label");
+            selectAllLabel.className =
+                "multi-filter-option multi-filter-select-all";
+
+            const selectAllCheckbox = document.createElement("input");
+            selectAllCheckbox.type = "checkbox";
+            selectAllCheckbox.setAttribute("data-select-all", "true");
+
+            selectAllCheckbox.checked =
+                values.length > 0 &&
+                values.every(value => validSelected.includes(value));
+
+            selectAllCheckbox.disabled = values.length === 0;
+
+            const selectAllText = document.createElement("span");
+            selectAllText.textContent = "Seleccionar Todas";
+
+            selectAllLabel.appendChild(selectAllCheckbox);
+            selectAllLabel.appendChild(selectAllText);
+
+            optionsContainer.appendChild(selectAllLabel);
+
+            // OPCIONES INDIVIDUALES
+
+            values.forEach(value => {
+
+                const label = document.createElement("label");
+                label.className = "multi-filter-option";
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = value;
+                checkbox.checked = validSelected.includes(value);
+
+                const text = document.createElement("span");
+                text.textContent = value;
+
+                label.appendChild(checkbox);
+                label.appendChild(text);
+
+                optionsContainer.appendChild(label);
+
+            });
+
+            // TEXTO DEL BOTÓN
+
+            if (validSelected.length === 0) {
+                button.textContent = filter.placeholder;
+            } else if (validSelected.length === 1) {
+                button.textContent = validSelected[0];
+            } else {
+                button.textContent =
+                    validSelected.length + " opciones seleccionadas";
+            }
+
+        });
+
+    }
+
+
+    // =====================================================
+    // PREPARAR FILTROS ALEATORIOS
+    // =====================================================
+
+    function populateRandomFilters() {
+
+        updateRandomDependentFilters();
+
+    }
+
+
+    // =====================================================
+    // CONECTAR EVENTOS DE LOS FILTROS ALEATORIOS
+    // =====================================================
+
+    function connectRandomFilterEvents() {
+
+        const filters = getRandomFilterDefinitions();
+
+        filters.forEach(filter => {
+
+            const button = filter.element.querySelector(
+                ".multi-filter-button"
+            );
+
+            // ABRIR Y CERRAR DESPLEGABLE
+
+            button.addEventListener("click", event => {
+
+                event.stopPropagation();
+
+                const wasOpen =
+                    filter.element.classList.contains("open");
+
+                filters.forEach(other => {
+                    other.element.classList.remove("open");
+                });
+
+                if (!wasOpen) {
+                    filter.element.classList.add("open");
+                }
+
+            });
+
+            // CAMBIOS EN LAS CASILLAS
+
+            filter.element.addEventListener("change", event => {
+
+                if (!event.target.matches('input[type="checkbox"]')) {
+                    return;
+                }
+
+                if (event.target.hasAttribute("data-select-all")) {
+
+                    const selectAll = event.target.checked;
+
+                    filter.element.querySelectorAll(
+                        'input[type="checkbox"]:not([data-select-all])'
+                    ).forEach(checkbox => {
+                        checkbox.checked = selectAll;
+                    });
+
+                }
+
+                updateRandomDependentFilters();
+
+            });
+
+        });
+
+    }
+
+
+    // =====================================================
+    // ELEGIR PELÍCULA O SERIE ALEATORIA
+    // =====================================================
+
+    function chooseRandomMovie() {
+
+        const availableMovies = getRandomMoviesForFilter();
+
+        elements.randomMovieGrid.innerHTML = "";
+
+        elements.randomMovieEmpty.hidden = true;
+        elements.randomMovieResult.hidden = true;
+
+        if (availableMovies.length === 0) {
+
+            elements.randomMovieEmpty.hidden = false;
+
+            lastRandomMovie = null;
+
+            return;
+
+        }
+
+        let candidates = availableMovies;
+
+        // Evitar repetir inmediatamente la misma película.
+        if (
+            availableMovies.length > 1 &&
+            lastRandomMovie
+        ) {
+
+            candidates = availableMovies.filter(movie =>
+                movie.Codigo !== lastRandomMovie.Codigo
+            );
+
+        }
+
+        const randomIndex = Math.floor(
+            Math.random() * candidates.length
+        );
+
+        const selectedMovie = candidates[randomIndex];
+
+        lastRandomMovie = selectedMovie;
+
+        // Reutilizar la ficha original del catálogo.
+        elements.randomMovieGrid.appendChild(
+            createMovieCard(selectedMovie)
+        );
+
+        elements.randomMovieResult.hidden = false;
+
+        elements.randomMovieResult.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    }
+
+
+    // =====================================================
+    // ENTRAR Y SALIR DE PELÍCULAS ALEATORIAS
+    // =====================================================
+
+    function toggleRandomMovies() {
+
+        if (isRandomMoviesView) {
+
+            // VOLVER AL CATÁLOGO
+
+            isRandomMoviesView = false;
+
+            elements.randomMoviesSection.hidden = true;
+            elements.filtersContainer.hidden = false;
+            elements.catalogSection.hidden = false;
+
+            elements.randomMoviesButton.textContent =
+                "🎲 ¿Qué veré hoy?";
+
+            elements.randomMoviesButton.classList.remove("active");
+
+            elements.top10Button.hidden = false;
+            elements.clearFilters.hidden = false;
+
+            return;
+
+        }
+
+        // Si estamos en TOP 10, regresar primero al catálogo.
+        if (isTop10View) {
+            toggleTop10();
+        }
+
+        isRandomMoviesView = true;
+
+        elements.randomMoviesSection.hidden = false;
+        elements.filtersContainer.hidden = true;
+        elements.catalogSection.hidden = true;
+
+        elements.randomMoviesButton.textContent =
+            "↩ Volver al catálogo";
+
+        elements.randomMoviesButton.classList.add("active");
+
+        elements.top10Button.hidden = true;
+        elements.clearFilters.hidden = true;
+
+        elements.randomMovieResult.hidden = true;
+        elements.randomMovieEmpty.hidden = true;
+
+        elements.randomMovieGrid.innerHTML = "";
+
+        lastRandomMovie = null;
+
+        updateRandomDependentFilters();
+
+        elements.randomMoviesSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
 
 	// =====================================================
 	// OBTENER SELECCIONES DE UN FILTRO
@@ -878,6 +1254,10 @@
 
 
 	function toggleTop10() {
+
+		if (isRandomMoviesView) {
+			toggleRandomMovies();
+		}
 
 		isTop10View = !isTop10View;
 
@@ -1757,6 +2137,23 @@
 		
 		connectPosterViewerEvents();
 		
+		connectRandomFilterEvents();
+
+		elements.randomMoviesButton.addEventListener(
+			"click",
+			toggleRandomMovies
+		);
+
+		elements.chooseRandomMovie.addEventListener(
+			"click",
+			chooseRandomMovie
+		);
+
+		elements.backToCatalog.addEventListener(
+			"click",
+			toggleRandomMovies
+		);
+		
         // BUSCADOR
 
         elements.searchInput.addEventListener("input", () => {
@@ -2001,6 +2398,7 @@
             // 4. Crear filtros
 
             populateFilters();
+			populateRandomFilters();
 
             // 5. Preparar resultados
 			
