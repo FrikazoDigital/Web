@@ -244,79 +244,43 @@
 
 
     // =====================================================
-    // CREAR OPCIONES DE FILTROS
-    // =====================================================
+	// CREAR OPCIONES DE FILTROS
+	// =====================================================
 
-    function populateFilters() {
-
+	function populateFilters() {
 		updateDependentFilters();
+	}
+
+
+	// =====================================================
+	// OBTENER SELECCIONES DE UN FILTRO
+	// =====================================================
+
+	function getSelectedFilterValues(filterKey) {
+
+		const filterElements = {
+			genre: elements.genreFilter,
+			year: elements.yearFilter,
+			language: elements.languageFilter,
+			quality: elements.qualityFilter
+		};
+
+		const filter = filterElements[filterKey];
+
+		if (!filter) return [];
+
+		return Array.from(
+			filter.querySelectorAll('input[type="checkbox"]:checked')
+		).map(input => input.value);
 
 	}
 
 
 	// =====================================================
-	// OBTENER PELÍCULAS SEGÚN LOS DEMÁS FILTROS
+	// CONFIGURACIÓN DE LOS FILTROS
 	// =====================================================
 
-	function getMoviesForFilter(excludeFilter) {
-
-		const search = normalize(elements.searchInput.value);
-
-		const genre = elements.genreFilter.value;
-		const year = elements.yearFilter.value;
-		const language = elements.languageFilter.value;
-		const quality = elements.qualityFilter.value;
-
-		return allMovies.filter(movie => {
-
-			const searchValues = [
-				movie.Titulo,
-				movie["Titulo Ingles"],
-				movie.Saga,
-				movie.Genero,
-				movie.Idioma,
-				movie["Año"],
-				movie.Formato,
-				movie.Resolucion,
-				movie["Calidad Visual"],
-				movie.Observaciones
-			];
-
-			const matchesSearch = !search ||
-				searchValues.some(value =>
-					normalize(value).includes(search)
-				);
-
-			const matchesGenre = excludeFilter === "genre" ||
-				!genre || movie.Genero === genre;
-
-			const matchesYear = excludeFilter === "year" ||
-				!year || String(movie["Año"] || "") === year;
-
-			const matchesLanguage = excludeFilter === "language" ||
-				!language || movie.Idioma === language;
-
-			const matchesQuality = excludeFilter === "quality" ||
-				!quality || movie["Calidad Visual"] === quality;
-
-			return (
-				matchesSearch &&
-				matchesGenre &&
-				matchesYear &&
-				matchesLanguage &&
-				matchesQuality
-			);
-
-		});
-
-	}
-
-
-	// =====================================================
-	// ACTUALIZAR OPCIONES DE LOS FILTROS
-	// =====================================================
-
-	function updateDependentFilters(changedFilter = null) {
+	function getFilterDefinitions() {
 
 		const qualityOrder = [
 			"Muy Excelente",
@@ -330,17 +294,17 @@
 			"Malisima",
 			"Lo Peor"
 		];
-		
+
 		const languageOrder = [
 			"Dual",
 			"Latino",
 			"Español",
 			"Subs",
 			"English Sub",
-			"Music"
+			"Music",
 		];
 
-		const filters = [
+		return [
 			{
 				key: "genre",
 				element: elements.genreFilter,
@@ -364,6 +328,10 @@
 					const indexA = languageOrder.indexOf(a);
 					const indexB = languageOrder.indexOf(b);
 
+					if (indexA === -1 && indexB === -1) {
+						return a.localeCompare(b, "es");
+					}
+
 					if (indexA === -1) return 1;
 					if (indexB === -1) return -1;
 
@@ -379,6 +347,10 @@
 					const indexA = qualityOrder.indexOf(a);
 					const indexB = qualityOrder.indexOf(b);
 
+					if (indexA === -1 && indexB === -1) {
+						return a.localeCompare(b, "es");
+					}
+
 					if (indexA === -1) return 1;
 					if (indexB === -1) return -1;
 
@@ -387,41 +359,134 @@
 			}
 		];
 
+	}
 
-		// Primero eliminar selecciones que ya no tienen resultados.
 
-		for (let i = 0; i < filters.length; i++) {
+	// =====================================================
+	// OBTENER PELÍCULAS SEGÚN LOS DEMÁS FILTROS
+	// =====================================================
+
+	function getMoviesForFilter(excludeFilter = null) {
+
+		const search = normalize(elements.searchInput.value);
+
+		const selected = {
+			genre: getSelectedFilterValues("genre"),
+			year: getSelectedFilterValues("year"),
+			language: getSelectedFilterValues("language"),
+			quality: getSelectedFilterValues("quality")
+		};
+
+		return allMovies.filter(movie => {
+
+			const searchValues = [
+				movie.Titulo,
+				movie["Titulo Ingles"],
+				movie.Saga,
+				movie.Genero,
+				movie.Idioma,
+				movie["Año"],
+				movie.Formato,
+				movie.Resolucion,
+				movie["Calidad Visual"],
+				movie.Observaciones
+			];
+
+			const matchesSearch = !search ||
+				searchValues.some(value =>
+					normalize(value).includes(search)
+				);
+
+			const matchesGenre = excludeFilter === "genre" ||
+				selected.genre.length === 0 ||
+				selected.genre.includes(String(movie.Genero || ""));
+
+			const matchesYear = excludeFilter === "year" ||
+				selected.year.length === 0 ||
+				selected.year.includes(String(movie["Año"] || ""));
+
+			const matchesLanguage = excludeFilter === "language" ||
+				selected.language.length === 0 ||
+				selected.language.includes(String(movie.Idioma || ""));
+
+			const matchesQuality = excludeFilter === "quality" ||
+				selected.quality.length === 0 ||
+				selected.quality.includes(String(movie["Calidad Visual"] || ""));
+
+			return (
+				matchesSearch &&
+				matchesGenre &&
+				matchesYear &&
+				matchesLanguage &&
+				matchesQuality
+			);
+
+		});
+
+	}
+
+
+	// =====================================================
+	// ACTUALIZAR OPCIONES DE LOS FILTROS
+	// =====================================================
+
+	function updateDependentFilters() {
+
+		const filters = getFilterDefinitions();
+
+		// Eliminar selecciones que ya no tienen resultados.
+		// Se repite para mantener todos los filtros compatibles.
+
+		let changed = true;
+
+		while (changed) {
+
+			changed = false;
 
 			filters.forEach(filter => {
 
-				if (filter.key === changedFilter) return;
+				const selected = getSelectedFilterValues(filter.key);
 
-				const selected = filter.element.value;
-
-				if (!selected) return;
+				if (selected.length === 0) return;
 
 				const available = getMoviesForFilter(filter.key)
 					.map(filter.field)
-					.filter(value => value !== null &&
+					.filter(value =>
+						value !== null &&
 						value !== undefined &&
 						String(value).trim() !== ""
 					)
 					.map(value => String(value));
 
-				if (!available.includes(selected)) {
-					filter.element.value = "";
-				}
+				selected.forEach(value => {
+
+					if (!available.includes(value)) {
+
+						const checkbox = Array.from(
+							filter.element.querySelectorAll(
+								'input[type="checkbox"]'
+							)
+						).find(input => input.value === value);
+
+						if (checkbox) {
+							checkbox.checked = false;
+							changed = true;
+						}
+
+					}
+
+				});
 
 			});
 
 		}
 
 
-		// Después reconstruir las opciones disponibles.
+		// Reconstruir las opciones disponibles.
 
 		filters.forEach(filter => {
 
-			const selected = filter.element.value;
+			const selected = getSelectedFilterValues(filter.key);
 
 			let values = [
 				...new Set(
@@ -438,46 +503,78 @@
 
 			values.sort(filter.sort);
 
-			filter.element.innerHTML = "";
+			const optionsContainer = filter.element.querySelector(
+				".multi-filter-options"
+			);
 
-			const defaultOption = document.createElement("option");
-			defaultOption.value = "";
-			defaultOption.textContent = filter.placeholder;
+			const button = filter.element.querySelector(
+				".multi-filter-button"
+			);
 
-			filter.element.appendChild(defaultOption);
+			optionsContainer.innerHTML = "";
 
 			values.forEach(value => {
 
-				const option = document.createElement("option");
-				option.value = value;
-				option.textContent = value;
+				const label = document.createElement("label");
 
-				filter.element.appendChild(option);
+				label.className = "multi-filter-option";
+
+				const checkbox = document.createElement("input");
+
+				checkbox.type = "checkbox";
+				checkbox.value = value;
+				checkbox.checked = selected.includes(value);
+
+				const text = document.createElement("span");
+
+				text.textContent = value;
+
+				label.appendChild(checkbox);
+				label.appendChild(text);
+
+				optionsContainer.appendChild(label);
 
 			});
 
-			filter.element.value = selected;
+
+			// Actualizar el texto del botón.
+
+			if (selected.length === 0) {
+
+				button.textContent = filter.placeholder;
+
+			} else if (selected.length === 1) {
+
+				button.textContent = selected[0];
+
+			} else {
+
+				button.textContent =
+					selected.length + " opciones seleccionadas";
+
+			}
 
 		});
 
-    }
+	}
 
 
     // =====================================================
-    // BUSCAR PELÍCULAS
-    // =====================================================
+	// BUSCAR Y FILTRAR PELÍCULAS
+	// =====================================================
 
-    function filterMovies(changedFilter = null) {
+	function filterMovies(changedFilter = null) {
 
-		// Actualizar las opciones de los demás filtros.
-		updateDependentFilters(changedFilter);
+		// Actualizar las opciones disponibles.
+		updateDependentFilters();
 
+		// Obtener las selecciones actuales.
 		const search = normalize(elements.searchInput.value);
 
-		const genre = elements.genreFilter.value;
-		const year = elements.yearFilter.value;
-		const language = elements.languageFilter.value;
-		const quality = elements.qualityFilter.value;
+		const selectedGenre = getSelectedFilterValues("genre");
+		const selectedYear = getSelectedFilterValues("year");
+		const selectedLanguage = getSelectedFilterValues("language");
+		const selectedQuality = getSelectedFilterValues("quality");
 
 		filteredMovies = allMovies.filter(movie => {
 
@@ -499,17 +596,17 @@
 					normalize(value).includes(search)
 				);
 
-			const matchesGenre = !genre ||
-				movie.Genero === genre;
+			const matchesGenre = selectedGenre.length === 0 ||
+				selectedGenre.includes(String(movie.Genero || ""));
 
-			const matchesYear = !year ||
-				String(movie["Año"] || "") === year;
+			const matchesYear = selectedYear.length === 0 ||
+				selectedYear.includes(String(movie["Año"] || ""));
 
-			const matchesLanguage = !language ||
-				movie.Idioma === language;
+			const matchesLanguage = selectedLanguage.length === 0 ||
+				selectedLanguage.includes(String(movie.Idioma || ""));
 
-			const matchesQuality = !quality ||
-				movie["Calidad Visual"] === quality;
+			const matchesQuality = selectedQuality.length === 0 ||
+				selectedQuality.includes(String(movie["Calidad Visual"] || ""));
 
 			return (
 				matchesSearch &&
@@ -1090,25 +1187,43 @@
 
 
     // =====================================================
-    // LIMPIAR FILTROS
-    // =====================================================
+	// LIMPIAR FILTROS
+	// =====================================================
 
-    function clearFilters() {
+	function clearFilters() {
 
-        elements.searchInput.value = "";
+		elements.searchInput.value = "";
 
-        elements.genreFilter.value = "";
-        elements.yearFilter.value = "";
-        elements.languageFilter.value = "";
-		elements.qualityFilter.value = "";
-		
+		elements.clearSearch.classList.remove("visible");
+
+		// Desmarcar todas las casillas.
+
+		const filters = [
+			elements.genreFilter,
+			elements.yearFilter,
+			elements.languageFilter,
+			elements.qualityFilter
+		];
+
+		filters.forEach(filter => {
+
+			filter.querySelectorAll(
+				'input[type="checkbox"]'
+			).forEach(checkbox => {
+
+				checkbox.checked = false;
+
+			});
+
+		});
+
+		// Restaurar orden predeterminado.
+
 		elements.sortFilter.value = "date-desc";
 
-        elements.clearSearch.classList.remove("visible");
+		filterMovies();
 
-        filterMovies();
-
-    }
+	}
 
 
     // =====================================================
@@ -1146,27 +1261,88 @@
         });
 
 
-        // FILTROS
+        // =====================================================
+		// FILTROS DE SELECCIÓN MÚLTIPLE
+		// =====================================================
 
-		elements.genreFilter.addEventListener(
-			"change",
-			() => filterMovies("genre")
-		);
+		const multiFilters = [
+			{
+				key: "genre",
+				element: elements.genreFilter
+			},
+			{
+				key: "year",
+				element: elements.yearFilter
+			},
+			{
+				key: "language",
+				element: elements.languageFilter
+			},
+			{
+				key: "quality",
+				element: elements.qualityFilter
+			}
+		];
 
-		elements.yearFilter.addEventListener(
-			"change",
-			() => filterMovies("year")
-		);
+		multiFilters.forEach(filter => {
 
-		elements.languageFilter.addEventListener(
-			"change",
-			() => filterMovies("language")
-		);
+			// Abrir y cerrar el desplegable.
 
-		elements.qualityFilter.addEventListener(
-			"change",
-			() => filterMovies("quality")
-		);
+			const button = filter.element.querySelector(
+				".multi-filter-button"
+			);
+
+			button.addEventListener("click", event => {
+
+				event.stopPropagation();
+
+				const wasOpen = filter.element.classList.contains("open");
+
+				// Cerrar los demás desplegables.
+
+				multiFilters.forEach(otherFilter => {
+					otherFilter.element.classList.remove("open");
+				});
+
+				// Alternar el desplegable actual.
+
+				if (!wasOpen) {
+					filter.element.classList.add("open");
+				}
+
+			});
+
+
+			// Detectar cambios en las casillas.
+
+			filter.element.addEventListener("change", event => {
+
+				if (
+					event.target.matches('input[type="checkbox"]')
+				) {
+
+					filterMovies(filter.key);
+
+				}
+
+			});
+
+		});
+
+
+		// Cerrar desplegables al hacer clic fuera.
+
+		document.addEventListener("click", event => {
+
+			multiFilters.forEach(filter => {
+
+				if (!filter.element.contains(event.target)) {
+					filter.element.classList.remove("open");
+				}
+
+			});
+
+		});
 		
 		elements.sortFilter.addEventListener(
 			"change",
