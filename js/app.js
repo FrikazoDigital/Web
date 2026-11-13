@@ -19,6 +19,7 @@
     let filteredMovies = [];
 
     let currentPage = 1;
+	let isTop10View = false;
 
     // =====================================================
     // ELEMENTOS HTML
@@ -42,6 +43,8 @@
         sortFilter: document.getElementById("sortFilter"),
 
         clearFilters: document.getElementById("clearFilters"),
+		top10Button: document.getElementById("top10Button"),
+		resultsTitle: document.getElementById("resultsTitle"),
 
         resultsInfo: document.getElementById("resultsInfo"),
         currentPageInfo: document.getElementById("currentPageInfo"),
@@ -600,6 +603,13 @@
 	// =====================================================
 
 	function filterMovies(changedFilter = null) {
+		
+		if (isTop10View) {
+			filteredMovies = getTop10Movies();
+			currentPage = 1;
+			renderCatalog();
+			return;
+		}
 
 		// Actualizar las opciones disponibles.
 		updateDependentFilters();
@@ -799,7 +809,119 @@
         });
 
     }
+	
+	function getTop10Movies() {
 
+		return [...allMovies]
+			.map((movie, index) => ({
+				movie: movie,
+				value: Number(
+					String(movie.TOP ?? "").trim().replace(",", ".")
+				),
+				originalIndex: index
+			}))
+			.filter(item => Number.isFinite(item.value) && item.value > 0)
+			.sort((a, b) =>
+				b.value - a.value || a.originalIndex - b.originalIndex
+			)
+			.slice(0, 10)
+			.map(item => item.movie);
+	}
+
+	function getTopPosition(movie) {
+
+		const top10 = getTop10Movies();
+
+		return top10.findIndex(item =>
+			item.Codigo === movie.Codigo
+		) + 1;
+	}
+	
+	function setTop10ControlsDisabled(disabled) {
+
+		elements.searchInput.disabled = disabled;
+		elements.clearSearch.disabled = disabled;
+		elements.sortFilter.disabled = disabled;
+		elements.clearFilters.disabled = disabled;
+
+		const filters = [
+			elements.genreFilter,
+			elements.yearFilter,
+			elements.languageFilter,
+			elements.qualityFilter
+		];
+
+		filters.forEach(filter => {
+
+			const button = filter.querySelector(".multi-filter-button");
+
+			if (button) button.disabled = disabled;
+
+			filter.querySelectorAll('input[type="checkbox"]')
+				.forEach(checkbox => {
+					checkbox.disabled = disabled;
+				});
+
+			filter.classList.remove("open");
+
+		});
+	}
+
+
+	function toggleTop10() {
+
+		isTop10View = !isTop10View;
+
+		if (isTop10View) {
+
+			// Limpiar búsquedas y filtros anteriores.
+			elements.searchInput.value = "";
+			elements.clearSearch.classList.remove("visible");
+
+			const filters = [
+				elements.genreFilter,
+				elements.yearFilter,
+				elements.languageFilter,
+				elements.qualityFilter
+			];
+
+			filters.forEach(filter => {
+				filter.querySelectorAll('input[type="checkbox"]')
+					.forEach(checkbox => {
+						checkbox.checked = false;
+					});
+			});
+
+			updateDependentFilters();
+
+			elements.sortFilter.value = "date-desc";
+
+			// Mostrar únicamente el TOP 10.
+			filteredMovies = getTop10Movies();
+
+			elements.top10Button.textContent = "↩ Ver catálogo";
+			elements.top10Button.classList.add("active");
+
+			setTop10ControlsDisabled(true);
+
+		} else {
+
+			elements.top10Button.textContent = "★ TOP 10";
+			elements.top10Button.classList.remove("active");
+
+			setTop10ControlsDisabled(false);
+
+			// Recuperar el catálogo completo.
+			clearFilters();
+
+			return;
+		}
+
+		currentPage = 1;
+
+		renderCatalog();
+
+	}
 
     // =====================================================
     // CREAR TARJETA DE PELÍCULA
@@ -858,6 +980,15 @@
 
         posterContainer.className = "movie-poster";
 		
+		const topPosition = getTopPosition(movie);
+
+		if (topPosition > 0) {
+			const topBadge = document.createElement("span");
+			topBadge.className = "top-badge";
+			topBadge.textContent = `★ TOP ${topPosition}`;
+			posterContainer.appendChild(topBadge);
+		}
+
 		// Etiqueta NUEVO
 
 		if (esNuevo(movie)) {
@@ -1015,10 +1146,17 @@
             startIndex + PAGE_SIZE
         );
 
-        elements.resultsInfo.textContent =
-            totalResults === 1
-                ? "1 resultado encontrado"
-                : totalResults + " resultados encontrados";
+        if (elements.resultsTitle) {
+			elements.resultsTitle.textContent = isTop10View
+				? "TOP 10 - Películas y Series Más Vistas"
+				: "Resultados en el Catálogo";
+		}
+
+		elements.resultsInfo.textContent = isTop10View
+			? "Las 10 películas y series con mayor TOP"
+			: totalResults === 1
+				? "1 resultado encontrado"
+				: totalResults + " resultados encontrados";
 
         elements.currentPageInfo.textContent =
             totalPages > 0
@@ -1483,7 +1621,13 @@
 			}
 		);
 
-
+		// Boton TOP 10
+		
+		elements.top10Button.addEventListener(
+			"click",
+			toggleTop10
+		);
+		
         // LIMPIAR TODOS LOS FILTROS
 
         elements.clearFilters.addEventListener(
@@ -1514,7 +1658,7 @@
             }
 
         });
-
+		
     }
 
 
