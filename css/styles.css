@@ -1132,29 +1132,101 @@ button {
 }
 
 /* =====================================================
-   ETIQUETA NUEVO
+   DISEÑOS ALTERNATIVOS DE NUEVO
    ===================================================== */
 
-.movie-poster {
-    position: relative;
-}
+/* CINTA DIAGONAL */
 
-.new-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 5;
-
-    padding: 6px 11px;
-
+.new-badge-ribbon {
+    top: 15px;
+    left: -32px;
+    width: 120px;
+    padding: 7px 0;
     background: #E53935;
     color: #FFFFFF;
+    transform: rotate(-45deg);
+}
 
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.8px;
+/* CÁPSULA ROJA */
 
+.new-badge-pill {
+    top: 10px;
+    right: 10px;
+    left: auto;
+    width: auto;
+    padding: 6px 12px;
+    background: #E53935;
+    color: #FFFFFF;
+    border-radius: 20px;
+    transform: none;
+}
+
+/* VERDE NEÓN */
+
+.new-badge-neon {
+    top: 10px;
+    right: 10px;
+    left: auto;
+    width: auto;
+    padding: 6px 12px;
+    background: #39FF14;
+    color: #101010;
     border-radius: 5px;
+    box-shadow: 0 0 8px #39FF14, 0 0 16px #39FF14;
+    transform: none;
+}
 
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+/* EXPLOSIVA */
+
+.new-badge-burst {
+    top: 12px;
+    right: 8px;
+    left: auto;
+    width: auto;
+    padding: 10px;
+    background: #FFD600;
+    color: #D50000;
+    clip-path: polygon(
+        50% 0%, 62% 20%, 85% 8%,
+        82% 35%, 100% 50%, 80% 65%,
+        88% 90%, 62% 80%, 50% 100%,
+        38% 80%, 12% 90%, 20% 65%,
+        0% 50%, 18% 35%, 15% 8%,
+        38% 20%
+    );
+    transform: none;
+}
+
+/* ANIMADA */
+
+.new-badge-animated {
+    top: 10px;
+    right: 10px;
+    left: auto;
+    width: auto;
+    padding: 6px 12px;
+    /*background: linear-gradient(90deg, #8E24AA, #E91E63);*/
+	background: linear-gradient(90deg, #E60000, #E60000);
+	/*background: linear-gradient(
+		90deg,
+		#FFD600 0%,
+		#FF6D00 40%,
+		#00D9FF 60%,
+		#075BFF 100%
+	);*/
+    color: #FFFFFF;
+    border-radius: 5px;
+    transform: none;
+    animation: newBadgeGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes newBadgeGlow {
+    from {
+        /*box-shadow: 0 0 4px #E91E63;*/
+		box-shadow: 0 0 5px #E60000;
+    }
+    to {
+        /*box-shadow: 0 0 15px #E91E63;*/
+		box-shadow: 0 0 15px #E60000;
+    }
 }
