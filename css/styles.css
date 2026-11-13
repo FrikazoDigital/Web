@@ -494,10 +494,11 @@ button {
 	background-color: hsl(var(--genre-hue), 55%, 35%);
     color: #ffffff;
 	
-	position: absolute;
+	/* Para que el Genero quede encima del Poster */
+	/*position: absolute;
     top: 10px;
     left: 10px;
-    z-index: 2;
+    z-index: 2;*/
 }
 
 
