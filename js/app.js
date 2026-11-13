@@ -552,8 +552,7 @@
 
         [
             movie["Año"],
-            movie.Idioma,
-            movie.Duracion
+            movie.Idioma ? "Idioma " + movie.Idioma : ""
         ].filter(Boolean).forEach(value => {
 
             const span = document.createElement("span");
@@ -579,7 +578,8 @@
 				getGenreHue(movie.Genero)
 			);
 			
-			posterContainer.appendChild(genre);
+			info.appendChild(genre);
+			/*posterContainer.appendChild(genre);*/
 
 		}
 
@@ -794,7 +794,7 @@
         elements.detailSubtitle.textContent =
             [
                 movie["Año"],
-                movie["Titulo Ingles"],
+                movie.Idioma ? "Idioma " + movie.Idioma : "",
                 movie.Duracion
             ].filter(Boolean).join(" · ");
 
@@ -848,6 +848,7 @@
         elements.detailFields.innerHTML = "";
 
         const ignoredFields = [
+			"Codigo",
 			"Titulo",
 			"Titulo Ingles",
 			"Genero",
@@ -859,17 +860,15 @@
 		];
 		
 		const fieldOrder = [
-			"Codigo",
-			"Idioma",
-			"Tamaño (MB)",
-			"Formato",
-			"Duracion",
-			"Resolucion",
+			"Titulo Ingles",
 			"Imagen",
 			"Calidad Visual",
-			"Fecha Ingreso",
+			"Resolucion",
+			"Tamaño (MB)",
+			"Formato",
+			"Idioma",
 			"Capitulos",
-			
+			"Fecha Ingreso",
 			"Saga",
 			"Observaciones"
 		];
