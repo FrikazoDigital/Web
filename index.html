@@ -20,6 +20,40 @@
     <script src="js/app.js" defer></script>
 </head>
 
+<!-- VISOR AMPLIADO DE POSTER -->
+<div id="posterViewer" class="poster-viewer">
+
+    <button
+        type="button"
+        id="closePosterViewer"
+        class="poster-viewer-close"
+        title="Cerrar"
+    >
+        &times;
+    </button>
+
+    <div class="poster-viewer-controls">
+
+        <button type="button" id="zoomOut" title="Alejar">
+            −
+        </button>
+
+        <button type="button" id="resetZoom" title="Restablecer zoom">
+            ↺
+        </button>
+
+        <button type="button" id="zoomIn" title="Acercar">
+            +
+        </button>
+
+    </div>
+
+    <div id="posterViewerArea" class="poster-viewer-area">
+        <img id="posterViewerImage" src="" alt="Póster ampliado">
+    </div>
+
+</div>
+
 <body>
 
     <!-- ENCABEZADO -->
