@@ -560,6 +560,12 @@
 
             const yearA = Number(a["Año"]) || 0;
             const yearB = Number(b["Año"]) || 0;
+			
+			const durationA = (Number(a.h) || 0) * 60 + (Number(a.m) || 0);
+			const durationB = (Number(b.h) || 0) * 60 + (Number(b.m) || 0);
+
+			const sizeA = Number(a["Tamaño (MB)"]) || 0;
+			const sizeB = Number(b["Tamaño (MB)"]) || 0;
 
             switch (sort) {
 
@@ -578,6 +584,18 @@
                 default:
                     return titleA.localeCompare(titleB, "es");
 				
+				case "duration-asc":
+					return durationA - durationB;
+
+				case "duration-desc":
+					return durationB - durationA;
+
+				case "size-asc":
+					return sizeA - sizeB;
+
+				case "size-desc":
+					return sizeB - sizeA;
+								
 				case "date-desc":
 					const fechaA = convertirFecha(a["Fecha Ingreso"]);
 					const fechaB = convertirFecha(b["Fecha Ingreso"]);
