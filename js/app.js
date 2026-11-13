@@ -578,8 +578,8 @@
 				"--genre-hue",
 				getGenreHue(movie.Genero)
 			);
-
-			info.appendChild(genre);
+			
+			posterContainer.appendChild(genre);
 
 		}
 
