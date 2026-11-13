@@ -86,16 +86,28 @@
         <section class="filters-section">
 
             <div class="filters-heading">
-                <h3>Explorar catálogo</h3>
+				<h3>Explorar catálogo</h3>
 
-                <button
-                    type="button"
-                    id="clearFilters"
-                    class="clear-filters"
-                >
-                    Limpiar filtros
-                </button>
-            </div>
+				<div class="filters-actions">
+
+					<button
+						type="button"
+						id="top10Button"
+						class="top10-button"
+					>
+						★ TOP 10
+					</button>
+
+					<button
+						type="button"
+						id="clearFilters"
+						class="clear-filters"
+					>
+						Limpiar filtros
+					</button>
+
+				</div>
+			</div>
 
             <div class="filters-container">
 
@@ -166,7 +178,7 @@
             <div class="results-heading">
 
                 <div>
-                    <h3>Resultados en el Catálogo</h3>
+                    <h3 id="resultsTitle">Resultados en el Catálogo</h3>
 
                     <p id="resultsInfo">
                         Preparando catálogo...
