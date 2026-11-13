@@ -301,8 +301,8 @@
 			"Dual",
 			"Latino",
 			"Español",
-			"Subs",
-			"English Sub",
+			"Sub Español",
+			"Sub Ingles",
 			"Music",
 		];
 
