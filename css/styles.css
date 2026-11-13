@@ -1465,3 +1465,218 @@ button {
 
 }
 
+/* =========================================================
+   PELÍCULAS ALEATORIAS - ¿QUÉ VERÉ HOY?
+   ========================================================= */
+
+/* Contenedor principal */
+
+.random-movies-section {
+    margin-top: 25px;
+    padding: 25px;
+    background: #202633;
+    border: 1px solid #354258;
+    border-radius: 12px;
+}
+
+.random-movies-section[hidden],
+.random-movie-result[hidden],
+.random-movie-empty[hidden] {
+    display: none !important;
+}
+
+/* Encabezado */
+
+.random-movies-heading {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.random-movies-heading h3 {
+    margin: 0 0 10px;
+    color: #FFD700;
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.random-movies-heading p {
+    margin: 0;
+    color: #C5CDDA;
+    font-size: 0.95rem;
+}
+
+/* Filtros */
+
+.random-movies-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 650px;
+    margin: 0 auto 25px;
+}
+
+.random-movies-filters .filter-group {
+    min-width: 0;
+}
+
+.random-movies-filters .filter-group > label {
+    display: block;
+    margin-bottom: 8px;
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+/* Acciones */
+
+.random-movies-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Botón principal */
+
+.choose-random-movie {
+    padding: 13px 28px;
+    border: 1px solid #D99A00;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    color: #202020;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.choose-random-movie:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 16px rgba(255, 193, 7, 0.35);
+}
+
+/* Botón volver */
+
+.back-to-catalog {
+    padding: 13px 22px;
+    border: 1px solid #1976D2;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2196F3, #075BFF);
+    color: #FFFFFF;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-to-catalog:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 16px rgba(33, 150, 243, 0.35);
+}
+
+/* Resultado */
+
+.random-movie-result {
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid #465268;
+}
+
+.random-movie-result > h3 {
+    margin: 0 0 25px;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+/* Centrar la ficha seleccionada */
+
+#randomMovieGrid {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+#randomMovieGrid .movie-card {
+    width: 100%;
+    max-width: 280px;
+}
+
+/* Mensaje sin coincidencias */
+
+.random-movie-empty {
+    margin: 25px auto 0;
+    padding: 15px;
+    max-width: 650px;
+    border: 1px solid #D99A00;
+    border-radius: 8px;
+    background: rgba(255, 193, 7, 0.08);
+    color: #FFD700;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Botón de acceso a la sección */
+
+.random-movies-button {
+    padding: 9px 16px;
+    border: 1px solid #D99A00;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    color: #202020;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.random-movies-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.35);
+}
+
+.random-movies-button.active {
+    background: #1976D2;
+    border-color: #1976D2;
+    color: #FFFFFF;
+}
+
+/* Adaptación a celulares */
+
+@media (max-width: 600px) {
+
+    .random-movies-section {
+        padding: 16px;
+        margin-top: 18px;
+    }
+
+    .random-movies-heading h3 {
+        font-size: 1.25rem;
+    }
+
+    .random-movies-heading p {
+        font-size: 0.85rem;
+    }
+
+    .random-movies-filters {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .random-movies-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .choose-random-movie,
+    .back-to-catalog {
+        width: 100%;
+    }
+
+    #randomMovieGrid .movie-card {
+        max-width: 260px;
+    }
+
+}
+
