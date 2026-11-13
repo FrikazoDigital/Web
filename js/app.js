@@ -270,7 +270,9 @@
 		if (!filter) return [];
 
 		return Array.from(
-			filter.querySelectorAll('input[type="checkbox"]:checked')
+			filter.querySelectorAll(
+				'input[type="checkbox"]:checked:not([data-select-all])'
+			)
 		).map(input => input.value);
 
 	}
@@ -512,6 +514,40 @@
 			);
 
 			optionsContainer.innerHTML = "";
+
+			// =================================================
+			// OPCIÓN SELECCIONAR TODAS
+			// =================================================
+
+			const selectAllLabel = document.createElement("label");
+
+			selectAllLabel.className =
+				"multi-filter-option multi-filter-select-all";
+
+			const selectAllCheckbox = document.createElement("input");
+
+			selectAllCheckbox.type = "checkbox";
+			selectAllCheckbox.setAttribute("data-select-all", "true");
+
+			selectAllCheckbox.checked =
+				values.length > 0 &&
+				values.every(value => selected.includes(value));
+
+			selectAllCheckbox.disabled = values.length === 0;
+
+			const selectAllText = document.createElement("span");
+
+			selectAllText.textContent = "Seleccionar Todas";
+
+			selectAllLabel.appendChild(selectAllCheckbox);
+			selectAllLabel.appendChild(selectAllText);
+
+			optionsContainer.appendChild(selectAllLabel);
+
+
+			// =================================================
+			// OPCIONES INDIVIDUALES
+			// =================================================
 
 			values.forEach(value => {
 
@@ -1320,6 +1356,22 @@
 				if (
 					event.target.matches('input[type="checkbox"]')
 				) {
+
+					// Si se seleccionó o deseleccionó "Seleccionar todas".
+
+					if (event.target.hasAttribute("data-select-all")) {
+
+						const selectAll = event.target.checked;
+
+						filter.element.querySelectorAll(
+							'input[type="checkbox"]:not([data-select-all])'
+						).forEach(checkbox => {
+
+							checkbox.checked = selectAll;
+
+						});
+
+					}
 
 					filterMovies(filter.key);
 
