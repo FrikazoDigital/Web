@@ -167,8 +167,8 @@ button {
 .hero-content {
     width: 100%;
     max-width: 750px;
-
-	flex-direction: column;
+	
+    flex-direction: column;
     align-items: center;
     text-align: center;
 }
@@ -188,7 +188,7 @@ button {
     font-weight: 800;
     margin-bottom: 12px;
 	white-space: normal;
-
+	
 	overflow-wrap: break-word;
     max-width: 100%;
 }
@@ -493,6 +493,11 @@ button {
 	
 	background-color: hsl(var(--genre-hue), 55%, 35%);
     color: #ffffff;
+	
+	position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
 }
 
 
