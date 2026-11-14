@@ -23,6 +23,15 @@
 	let isRandomMoviesView = false;
 
 	let lastRandomMovie = null;
+	
+	// =====================================================
+	// CARRITO DE COMPRAS
+	// =====================================================
+
+	const CART_STORAGE_KEY = "frikazoDigitalCart";
+
+	let cartItems = [];
+	let currentDetailMovie = null;
 
     // =====================================================
     // ELEMENTOS HTML
@@ -90,7 +99,21 @@
         detailGenre: document.getElementById("detailGenre"),
         detailTitle: document.getElementById("detailTitle"),
         detailSubtitle: document.getElementById("detailSubtitle"),
-        detailFields: document.getElementById("detailFields")
+        detailFields: document.getElementById("detailFields"),
+		
+		// CARRITO DE COMPRAS
+		cartButton: document.getElementById("cartButton"),
+		cartCount: document.getElementById("cartCount"),
+		cartSection: document.getElementById("cartSection"),
+		cartInfo: document.getElementById("cartInfo"),
+		cartList: document.getElementById("cartList"),
+		makeOrder: document.getElementById("makeOrder"),
+		emptyCart: document.getElementById("emptyCart"),
+		clearCart: document.getElementById("clearCart"),
+		backFromCart: document.getElementById("backFromCart"),
+		addToCart: document.getElementById("addToCart"),
+		cartFeedback: document.getElementById("cartFeedback"),
+		filtersSection: document.querySelector(".filters-section")
 
     };
 
@@ -131,7 +154,341 @@
         );
 
     }
+	
+	// =====================================================
+	// FUNCIONES DEL CARRITO DE COMPRAS
+	// =====================================================
 
+	// Cargar carrito desde localStorage
+	function loadCart() {
+
+		try {
+
+			const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+
+			cartItems = savedCart ? JSON.parse(savedCart) : [];
+
+			if (!Array.isArray(cartItems)) {
+				cartItems = [];
+			}
+
+			cartItems = cartItems.filter(item =>
+				item &&
+				typeof item.key === "string" &&
+				typeof item.title === "string"
+			);
+
+		} catch (error) {
+
+			console.error("Error al cargar el carrito:", error);
+
+			cartItems = [];
+
+		}
+
+		updateCartCount();
+
+	}
+
+
+	// Guardar carrito en localStorage
+	function saveCart() {
+
+		try {
+
+			localStorage.setItem(
+				CART_STORAGE_KEY,
+				JSON.stringify(cartItems)
+			);
+
+		} catch (error) {
+
+			console.error("Error al guardar el carrito:", error);
+
+			alert("No fue posible guardar el carrito en este navegador.");
+
+		}
+
+		updateCartCount();
+
+	}
+
+
+	// Actualizar contador
+	function updateCartCount() {
+
+		elements.cartCount.textContent = cartItems.length;
+
+	}
+
+
+	// Agregar película o serie
+	function addMovieToCart() {
+
+		if (!currentDetailMovie) return;
+
+		const movie = currentDetailMovie;
+
+		const title = String(movie.Titulo || "").trim();
+
+		const key = normalize(title);
+
+		if (!key) return;
+
+		const alreadyExists = cartItems.some(item =>
+			item.key === key
+		);
+
+		if (alreadyExists) {
+
+			elements.cartFeedback.textContent =
+				"Esta película o serie ya está en tu carrito.";
+
+			elements.cartFeedback.hidden = false;
+
+			return;
+
+		}
+
+		cartItems.push({
+			key: key,
+			title: title
+		});
+
+		saveCart();
+
+		elements.cartFeedback.textContent =
+			"¡Agregado al Carrito Correctamente!";
+
+		elements.cartFeedback.hidden = false;
+
+		elements.addToCart.textContent = "✓ Agregado al Carrito";
+		elements.addToCart.classList.add("added");
+
+	}
+
+
+	// Buscar película o serie en el catálogo
+	function findCartMovie(item) {
+
+		return allMovies.find(movie =>
+			normalize(movie.Titulo) === item.key
+		);
+
+	}
+
+
+	// Dibujar el contenido del carrito
+	function renderCart() {
+
+		elements.cartList.innerHTML = "";
+
+		elements.cartInfo.textContent =
+			cartItems.length === 1
+				? "Tienes 1 título en tu carrito."
+				: `Tienes ${cartItems.length} Títulos en tu Carrito.`;
+
+		elements.emptyCart.hidden = cartItems.length > 0;
+		elements.cartList.hidden = cartItems.length === 0;
+
+		cartItems.forEach(item => {
+
+			const movie = findCartMovie(item);
+
+			const cartItem = document.createElement("article");
+
+			cartItem.className = "cart-item";
+			cartItem.dataset.cartKey = item.key;
+
+			// PÓSTER
+			const posterContainer = document.createElement("div");
+
+			posterContainer.className = "cart-item-poster";
+
+			if (movie) {
+
+				const poster = getMoviePoster(movie);
+
+				if (poster) {
+
+					const image = document.createElement("img");
+
+					image.src = poster;
+					image.alt = movie.Titulo;
+
+					posterContainer.appendChild(image);
+
+				} else {
+
+					posterContainer.textContent = "🎬";
+
+				}
+
+			} else {
+
+				posterContainer.textContent = "🎬";
+
+			}
+
+			// INFORMACIÓN
+			const information = document.createElement("div");
+
+			information.className = "cart-item-information";
+
+			const title = document.createElement("h4");
+
+			title.textContent = item.title;
+
+			const genre = document.createElement("p");
+
+			genre.textContent = movie
+				? movie.Genero || "Género no disponible"
+				: "No disponible en el catálogo";
+
+			const year = document.createElement("p");
+
+			year.textContent = movie
+				? movie["Año"] || "Año no disponible"
+				: "";
+
+			information.appendChild(title);
+			information.appendChild(genre);
+			information.appendChild(year);
+
+			// BOTÓN ELIMINAR
+			const removeButton = document.createElement("button");
+
+			removeButton.type = "button";
+
+			removeButton.className = "remove-cart-item";
+
+			removeButton.textContent = "🗑";
+
+			removeButton.title = "Eliminar del carrito";
+
+			removeButton.dataset.cartKey = item.key;
+
+			cartItem.appendChild(posterContainer);
+			cartItem.appendChild(information);
+			cartItem.appendChild(removeButton);
+
+			elements.cartList.appendChild(cartItem);
+
+		});
+
+	}
+
+
+	// Eliminar un título individual
+	function removeCartItem(key) {
+
+		cartItems = cartItems.filter(item =>
+			item.key !== key
+		);
+
+		saveCart();
+
+		renderCart();
+
+	}
+
+
+	// Vaciar carrito
+	function clearShoppingCart() {
+
+		if (cartItems.length === 0) return;
+
+		cartItems = [];
+
+		saveCart();
+
+		renderCart();
+
+	}
+
+	// Crear pedido y abrir WhatsApp
+	function makeWhatsAppOrder() {
+
+		if (cartItems.length === 0) {
+			alert("Tu carrito está Vacío. Agrega Películas o Series antes de hacer un Pedido.");
+			return;
+		}
+
+		const movieList = cartItems
+			.map((item, index) => {
+
+				const movie = findCartMovie(item);
+
+				const year = movie
+					? movie["Año"] || "No disponible"
+					: "No disponible";
+
+				const genre = movie
+					? movie.Genero || "No disponible"
+					: "No disponible";
+
+				return `${index + 1}. ${item.title}\n   📅 Año: ${year}\n   🎭 Género: ${genre}`;
+
+			})
+			.join("\n\n");
+
+		const message =
+			`¡Hola, Frikazo Digital! 👋\n\n` +
+			`Quiero realizar el siguiente pedido:\n\n` +
+			`${movieList}\n\n` +
+			`🎬 Total de Títulos: ${cartItems.length}\n\n` +
+			`Quedo atento. ¡Muchas gracias!`;
+
+		const whatsappURL =
+			`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+		window.open(whatsappURL, "_blank");
+	}
+
+	// Abrir sección del carrito
+	function openCart() {
+
+		// Salir de películas aleatorias si está activa
+		if (isRandomMoviesView) {
+			toggleRandomMovies();
+		}
+
+		// Salir de TOP 10 si está activo
+		if (isTop10View) {
+			toggleTop10();
+		}
+
+		elements.filtersSection.hidden = true;
+
+		elements.catalogSection.hidden = true;
+
+		elements.cartSection.hidden = false;
+
+		renderCart();
+
+		elements.cartSection.scrollIntoView({
+			behavior: "smooth",
+			block: "start"
+		});
+
+	}
+
+
+	// Volver al catálogo
+	function closeCart() {
+
+		elements.cartSection.hidden = true;
+
+		elements.filtersSection.hidden = false;
+
+		elements.catalogSection.hidden = false;
+
+		elements.filtersSection.scrollIntoView({
+			behavior: "smooth",
+			block: "start"
+		});
+
+	}
 
     // =====================================================
     // CONFIGURAR IDENTIDAD DEL CATÁLOGO
@@ -1673,6 +2030,12 @@
     // =====================================================
 
     function openDetails(movie) {
+		
+		currentDetailMovie = movie;
+
+		elements.addToCart.textContent = "🛒 Agregar al Carrito";
+		elements.addToCart.classList.remove("added");
+		elements.cartFeedback.hidden = true;
 
         elements.detailTitle.textContent = movie.Titulo || "";
 
@@ -2321,7 +2684,49 @@
             "click",
             closeDetails
         );
+		
+		// =====================================================
+		// EVENTOS DEL CARRITO
+		// =====================================================
 
+		elements.cartButton.addEventListener("click", openCart);
+
+		elements.backFromCart.addEventListener("click", closeCart);
+
+		elements.addToCart.addEventListener("click", addMovieToCart);
+
+		elements.clearCart.addEventListener("click", clearShoppingCart);
+		
+		elements.makeOrder.addEventListener("click", makeWhatsAppOrder);
+
+		// Eliminar títulos individualmente
+		elements.cartList.addEventListener("click", event => {
+
+			// Si se presiona el botón de eliminar
+			const button = event.target.closest(".remove-cart-item");
+
+			if (button) {
+				removeCartItem(button.dataset.cartKey);
+				return;
+			}
+
+			// Si se presiona cualquier otra parte de la película
+			const cartItemElement = event.target.closest(".cart-item");
+
+			if (!cartItemElement) return;
+
+			const key = cartItemElement.dataset.cartKey;
+
+			const item = cartItems.find(item => item.key === key);
+
+			if (!item) return;
+
+			const movie = findCartMovie(item);
+
+			if (movie) {
+				openDetails(movie);
+			}
+		});
 
         // CERRAR CON ESCAPE
 
@@ -2361,7 +2766,9 @@
     // =====================================================
 
     async function initialize() {
-
+		
+		loadCart();
+		
         configureBrand();
 
         connectEvents();
@@ -2417,7 +2824,7 @@
             elements.loadingMessage.hidden = true;
 
             if (CONFIG.DEBUG) {
-                console.log("Catálogo iniciado correctamente.");
+                console.log("Catálogo Iniciado Correctamente.");
             }
 
         } catch (error) {

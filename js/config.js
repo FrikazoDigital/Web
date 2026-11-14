@@ -51,6 +51,15 @@ window.CATALOGO_CONFIG = {
 	// "neon"		Verde neón
 	// "burst"		Explosiva
 	// "animated"	Animada
-	NEW_BADGE_STYLE: "animated"
-
+	NEW_BADGE_STYLE: "animated",
+	
+	// Numero WhatsApp
+	WHATSAPP_NUMBER: "573006318594"
 };
+
+
+
+
+
+
+
