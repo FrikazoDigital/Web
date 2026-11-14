@@ -20,42 +20,42 @@
     <script src="js/app.js" defer></script>
 </head>
 
-<!-- VISOR AMPLIADO DE POSTER -->
-<div id="posterViewer" class="poster-viewer">
-
-    <button
-        type="button"
-        id="closePosterViewer"
-        class="poster-viewer-close"
-        title="Cerrar"
-    >
-        &times;
-    </button>
-
-    <div class="poster-viewer-controls">
-
-        <button type="button" id="zoomOut" title="Alejar">
-            −
-        </button>
-
-        <button type="button" id="resetZoom" title="Restablecer zoom">
-            ↺
-        </button>
-
-        <button type="button" id="zoomIn" title="Acercar">
-            +
-        </button>
-
-    </div>
-
-    <div id="posterViewerArea" class="poster-viewer-area">
-        <img id="posterViewerImage" src="" alt="Póster ampliado">
-    </div>
-
-</div>
-
 <body>
+	
+	<!-- VISOR AMPLIADO DE POSTER -->
+	<div id="posterViewer" class="poster-viewer">
 
+		<button
+			type="button"
+			id="closePosterViewer"
+			class="poster-viewer-close"
+			title="Cerrar"
+		>
+			&times;
+		</button>
+
+		<div class="poster-viewer-controls">
+
+			<button type="button" id="zoomOut" title="Alejar">
+				−
+			</button>
+
+			<button type="button" id="resetZoom" title="Restablecer zoom">
+				↺
+			</button>
+
+			<button type="button" id="zoomIn" title="Acercar">
+				+
+			</button>
+
+		</div>
+
+		<div id="posterViewerArea" class="poster-viewer-area">
+			<img id="posterViewerImage" src="" alt="Póster ampliado">
+		</div>
+
+	</div>
+	
     <!-- ENCABEZADO -->
     <header class="header">
 
@@ -139,7 +139,15 @@
 					>
 						🎲 ¿Qué veré hoy?
 					</button>
-
+					
+					<button
+						type="button"
+						id="cartButton"
+						class="cart-button"
+					>
+						🛒 Carrito (<span id="cartCount">0</span>)
+					</button>
+					
 					<button
 						type="button"
 						id="clearFilters"
@@ -296,7 +304,58 @@
 			</div>
 			
         </section>
+		
+		<!-- SECCIÓN CARRITO DE COMPRAS -->
+        <section id="cartSection" class="cart-section" hidden>
 
+            <div class="cart-heading">
+
+                <div>
+                    <h3>🛒 Carrito de Compras</h3>
+
+                    <p id="cartInfo">
+                        Tus Peliculas y Series seleccionadas.
+                    </p>
+                </div>
+
+                <div class="cart-actions">
+				  <button type="button" id="makeOrder" class="make-order">
+					📲 Hacer Pedido
+				  </button>
+
+				  <button type="button" id="clearCart" class="clear-cart">
+					Vaciar carrito
+				  </button>
+
+				  <button type="button" id="backFromCart" class="back-from-cart">
+					↩ Volver al catálogo
+				  </button>
+				</div>
+
+            </div>
+
+            <!-- CARRITO VACÍO -->
+            <div id="emptyCart" class="empty-cart" hidden>
+
+                <div class="empty-cart-icon">🛒</div>
+
+                <h3>Tu Carrito está Vacío</h3>
+
+                <p>
+                    Explora el Catálogo y Agrega las Películas
+                    y Series que te interesen.
+                </p>
+
+            </div>
+
+            <!-- LISTADO DE PELÍCULAS Y SERIES -->
+            <div id="cartList" class="cart-list">
+
+                <!-- Los elementos se generan desde JavaScript -->
+
+            </div>
+
+        </section>
 
         <!-- RESULTADOS -->
         <section class="catalog-section">
@@ -423,7 +482,24 @@
                     >
                         <!-- Los campos se generan desde JavaScript -->
                     </div>
+					
+					<!-- BOTÓN AGREGAR AL CARRITO -->
+                    <div class="detail-cart-actions">
 
+                        <button
+                            type="button"
+                            id="addToCart"
+                            class="add-to-cart"
+                        >
+                            🛒 Agregar al Carrito
+                        </button>
+
+                        <p id="cartFeedback" class="cart-feedback" hidden>
+                            ¡Agregado al Carrito!
+                        </p>
+
+                    </div>
+					
                 </div>
 
             </div>
