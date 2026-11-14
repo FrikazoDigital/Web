@@ -2056,3 +2056,14 @@ button {
     box-shadow: 0 4px 12px rgba(50, 205, 101, .35);
 }
 
+@media (max-width: 600px) {
+
+    .random-movies-button {
+        padding: 9px 6px;
+        font-size: 11px;
+        white-space: normal;
+        line-height: 1.2;
+        min-width: 0;
+    }
+
+}
