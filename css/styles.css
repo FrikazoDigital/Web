@@ -1436,21 +1436,22 @@ button {
 
     /* Botones en una sola fila */
     .filters-actions {
-        display: flex;
-        flex-direction: row;
-        align-items: stretch;
-        justify-content: space-between;
-        width: 100%;
-        gap: 10px;
-    }
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-rows: repeat(2, auto);
+		width: 100%;
+		gap: 10px;
+	}
 
     .filters-actions button {
-        flex: 1;
-        min-width: 0;
-        padding: 10px 8px;
-        font-size: 13px;
-        white-space: nowrap;
-    }
+		width: 100%;
+		min-width: 0;
+		min-height: 42px;
+		padding: 10px 6px;
+		font-size: 12px;
+		white-space: normal;
+		line-height: 1.2;
+	}
 
     /* Texto debajo de los botones */
     .filters-heading h3 {
