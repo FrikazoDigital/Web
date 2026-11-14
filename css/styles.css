@@ -1688,10 +1688,10 @@ button {
 /* Botón del carrito */
 .cart-button {
     padding: 9px 16px;
-    border: 1px solid #16803C;
+    border: 1px solid #E87516;
     border-radius: 7px;
-    background: linear-gradient(135deg, #32CD65, #16803C);
-    color: #FFFFFF;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #252525;
     font-weight: 900;
     cursor: pointer;
     transition: all .2s ease;
@@ -1699,7 +1699,7 @@ button {
 
 .cart-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(50, 205, 101, .35);
+    box-shadow: 0 4px 12px rgba(255, 165, 0, .35);
 }
 
 /* =====================================================
@@ -1927,10 +1927,10 @@ button {
 
 .add-to-cart {
     padding: 12px 22px;
-    border: 1px solid #16803C;
+    border: 1px solid #E87516;
     border-radius: 8px;
-    background: linear-gradient(135deg, #32CD65, #16803C);
-    color: #FFFFFF;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #252525;
     font-weight: 900;
     cursor: pointer;
     transition: all .2s ease;
@@ -1938,7 +1938,7 @@ button {
 
 .add-to-cart:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(50, 205, 101, .35);
+    box-shadow: 0 4px 12px rgba(255, 165, 0, .35);
 }
 
 .add-to-cart.added {
