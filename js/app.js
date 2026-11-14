@@ -242,7 +242,7 @@
 		if (alreadyExists) {
 
 			elements.cartFeedback.textContent =
-				"Esta película o serie ya está en tu carrito.";
+				"Esta Película o Serie Ya está en tu Carrito.";
 
 			elements.cartFeedback.hidden = false;
 
@@ -427,7 +427,7 @@
 					? movie.Genero || "No disponible"
 					: "No disponible";
 
-				return `${index + 1}. ${item.title}\n   📅 Año: ${year}\n   🎭 Género: ${genre}`;
+				return `${index + 1}. ${item.title}\n   🎭 Género: ${genre}\n   📅 Año: ${year}`;
 
 			})
 			.join("\n\n");
@@ -436,7 +436,7 @@
 			`¡Hola, Frikazo Digital! 👋\n\n` +
 			`Quiero realizar el siguiente pedido:\n\n` +
 			`${movieList}\n\n` +
-			`🎬 Total de Títulos: ${cartItems.length}\n\n` +
+			`🎬 Títulos Totales: ${cartItems.length}\n\n` +
 			`Quedo atento. ¡Muchas gracias!`;
 
 		const whatsappURL =
