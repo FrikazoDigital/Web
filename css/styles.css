@@ -2205,7 +2205,7 @@ button {
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 14px;
     overflow: hidden;
-	--movie-banner-duration: 75s;
+	--movie-banner-duration: 100s;
 }
 
 .movie-banner[hidden] {
@@ -2278,7 +2278,7 @@ button {
     animation: movieBannerScroll var(--movie-banner-duration) linear infinite;
 
     will-change: transform;
-	 --movie-banner-duration: 60s;
+	 --movie-banner-duration: 100s;
 }
 
 /* DOS GRUPOS IDÉNTICOS PARA EL BUCLE */
