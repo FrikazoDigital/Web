@@ -2294,8 +2294,8 @@ button {
 
 /* DETENER AL PASAR EL CURSOR O ENFOCAR */
 
-.movie-banner:hover .movie-banner-track,
-.movie-banner:focus-within .movie-banner-track,
+.movie-banner:hover:not(.is-dragging) .movie-banner-track,
+.movie-banner:focus-within:not(.is-dragging) .movie-banner-track,
 .movie-banner.is-paused .movie-banner-track {
     animation-play-state: paused;
 }

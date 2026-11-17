@@ -1010,7 +1010,7 @@
 			suppressBannerClick = false;
 
 			// Pausar el movimiento automático.
-			banner.classList.add("is-paused");
+			banner.classList.add("is-paused", "is-dragging");
 
 			// Capturar el movimiento del mouse o dedo.
 			const captureTarget = event.target.closest(".movie-banner-card");
@@ -1060,8 +1060,13 @@
 
 			isDragging = false;
 
-			// Reanudar el movimiento automático.
-			banner.classList.remove("is-paused");
+			// Quitar estados de pausa y arrastre.
+			banner.classList.remove("is-paused", "is-dragging");
+
+			// Reanudar inmediatamente la animación.
+			if (bannerAnimation) {
+				bannerAnimation.play();
+			}
 
 		}
 
