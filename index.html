@@ -319,17 +319,31 @@
                 </div>
 
                 <div class="cart-actions">
-				  <button type="button" id="makeOrder" class="make-order">
-					📲 Hacer Pedido
-				  </button>
 
-				  <button type="button" id="clearCart" class="clear-cart">
-					Vaciar carrito
-				  </button>
+					<button type="button" id="pricesPdfButton" class="prices-pdf-button">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M6 2h9l5 5v15H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
+							<path d="M14 2v6h6"/>
+							<path d="M7 16h2a1.5 1.5 0 0 0 0-3H7v5"/>
+							<path d="M13 18v-5h1a2.5 2.5 0 0 1 0 5h-1Z"/>
+							<path d="M18 13h-2v5"/>
+							<path d="M16 15.5h1.5"/>
+						</svg>
+						Precios, Combos y Promociones
+					</button>
 
-				  <button type="button" id="backFromCart" class="back-from-cart">
-					↩ Volver al catálogo
-				  </button>
+					<button type="button" id="makeOrder" class="make-order">
+						📲 Hacer Pedido
+					</button>
+
+					<button type="button" id="clearCart" class="clear-cart">
+						Vaciar carrito
+					</button>
+
+					<button type="button" id="backFromCart" class="back-from-cart">
+						↩ Volver al catálogo
+					</button>
+
 				</div>
 
             </div>
@@ -459,14 +473,17 @@
             <div class="detail-layout">
 
                 <div class="detail-poster-container">
+					<img id="detailPoster" src="" alt="Póster de la película">
 
-                    <img
-                        id="detailPoster"
-                        src=""
-                        alt="Póster de la película"
-                    >
-
-                </div>
+					<span class="poster-zoom-hint" aria-hidden="true">
+						<svg viewBox="0 0 24 24">
+							<circle cx="10.5" cy="10.5" r="6.5"></circle>
+							<path d="m16 16 5 5"></path>
+							<path d="M10.5 7v7"></path>
+							<path d="M7 10.5h7"></path>
+						</svg>
+					</span>
+				</div>
 
                 <div class="detail-information">
 
@@ -485,20 +502,23 @@
 					
 					<!-- BOTÓN AGREGAR AL CARRITO -->
                     <div class="detail-cart-actions">
+					
+					  <button type="button" id="addToCart" class="add-to-cart">
+						🛒 Agregar al Carrito
+					  </button>
 
-                        <button
-                            type="button"
-                            id="addToCart"
-                            class="add-to-cart"
-                        >
-                            🛒 Agregar al Carrito
-                        </button>
+					  <button type="button" id="searchTrailer" class="youtube-button">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+						  <path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
+						</svg>
+						Ver Trailer
+					  </button>
 
-                        <p id="cartFeedback" class="cart-feedback" hidden>
-                            ¡Agregado al Carrito!
-                        </p>
+					  <p id="cartFeedback" class="cart-feedback" hidden>
+						¡Agregado al carrito!
+					  </p>
 
-                    </div>
+					</div>
 					
                 </div>
 
