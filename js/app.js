@@ -1013,9 +1013,13 @@
 			banner.classList.add("is-paused");
 
 			// Capturar el movimiento del mouse o dedo.
-			track.setPointerCapture(event.pointerId);
+			const captureTarget = event.target.closest(".movie-banner-card");
 
-			event.preventDefault();
+			if (captureTarget) {
+				captureTarget.setPointerCapture(event.pointerId);
+			}
+
+			//event.preventDefault();
 
 		});
 
