@@ -24,6 +24,9 @@
 
 	let lastRandomMovie = null;
 	
+	// PELÍCULAS Y SERIES DEL BANNER
+	let bannerMovies = [];
+	
 	// =====================================================
 	// CARRITO DE COMPRAS
 	// =====================================================
@@ -115,7 +118,11 @@
 		addToCart: document.getElementById("addToCart"),
 		cartFeedback: document.getElementById("cartFeedback"),
 		filtersSection: document.querySelector(".filters-section"),
-		searchTrailer: document.getElementById("searchTrailer")
+		searchTrailer: document.getElementById("searchTrailer"),
+		
+		// BANNER ANIMADO
+        movieBanner: document.getElementById("movieBanner"),
+        movieBannerTrack: document.getElementById("movieBannerTrack")
 
     };
 
@@ -733,7 +740,332 @@
         );
 
     }
+	
+	// =====================================================
+    // BANNER ANIMADO DE PELÍCULAS Y SERIES
+    // =====================================================
 
+    // Mezclar aleatoriamente un arreglo.
+    function shuffleBannerArray(array) {
+
+        const shuffled = [...array];
+
+        for (let i = shuffled.length - 1; i > 0; i--) {
+
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [shuffled[i], shuffled[j]] =
+                [shuffled[j], shuffled[i]];
+
+        }
+
+        return shuffled;
+
+    }
+
+
+    // Seleccionar dos títulos aleatorios por género.
+    function getBannerMovies() {
+
+        const genres = new Map();
+
+        allMovies.forEach(movie => {
+
+            const genre = String(movie.Genero || "").trim();
+
+            if (!genre) return;
+
+            const key = normalize(genre);
+
+            if (!genres.has(key)) {
+
+                genres.set(key, {
+                    name: genre,
+                    movies: []
+                });
+
+            }
+
+            genres.get(key).movies.push(movie);
+
+        });
+
+        const selectedMovies = [];
+
+        genres.forEach(group => {
+
+            const shuffled = shuffleBannerArray(group.movies);
+
+            selectedMovies.push(
+                ...shuffled.slice(0, 2)
+            );
+
+        });
+
+        // Mezclar también el orden de los géneros.
+        return shuffleBannerArray(selectedMovies);
+
+    }
+
+
+    // Crear una tarjeta del banner.
+    function createBannerCard(movie, index) {
+
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "movie-banner-card";
+
+        button.dataset.movieIndex = index;
+
+        button.setAttribute(
+            "aria-label",
+            "Ver detalles de " + movie.Titulo
+        );
+
+        // PÓSTER
+        const poster = document.createElement("div");
+
+        poster.className = "movie-banner-poster";
+
+        const posterUrl = getMoviePoster(movie);
+
+        if (posterUrl) {
+
+            const image = document.createElement("img");
+
+            image.src = posterUrl;
+            image.alt = "Póster de " + movie.Titulo;
+
+            image.addEventListener("error", () => {
+
+                image.remove();
+
+                const placeholder = document.createElement("span");
+
+                placeholder.className = "movie-banner-placeholder";
+                placeholder.textContent = "🎬";
+
+                poster.appendChild(placeholder);
+
+            });
+
+            poster.appendChild(image);
+
+        } else {
+
+            const placeholder = document.createElement("span");
+
+            placeholder.className = "movie-banner-placeholder";
+            placeholder.textContent = "🎬";
+
+            poster.appendChild(placeholder);
+
+        }
+
+        // TÍTULO
+        const title = document.createElement("span");
+
+        title.className = "movie-banner-title";
+        title.textContent = movie.Titulo;
+
+        // GÉNERO
+        const genre = document.createElement("span");
+
+        genre.className = "movie-banner-genre";
+        genre.textContent = movie.Genero || "";
+
+        button.appendChild(poster);
+        button.appendChild(title);
+        button.appendChild(genre);
+
+        return button;
+
+    }
+
+
+    // Crear una secuencia de tarjetas.
+    function createBannerGroup(duplicate = false) {
+
+        const group = document.createElement("div");
+
+        group.className = "movie-banner-group";
+
+        if (duplicate) {
+
+            group.setAttribute("aria-hidden", "true");
+
+        }
+
+        bannerMovies.forEach((movie, index) => {
+
+            const card = createBannerCard(movie, index);
+
+            if (duplicate) {
+
+                card.tabIndex = -1;
+
+            }
+
+            group.appendChild(card);
+
+        });
+
+        return group;
+
+    }
+
+
+    // Construir el banner.
+    function initializeMovieBanner() {
+
+        bannerMovies = getBannerMovies();
+
+        elements.movieBannerTrack.innerHTML = "";
+
+        if (bannerMovies.length === 0) {
+
+            elements.movieBanner.hidden = true;
+
+            return;
+
+        }
+
+        // Primera secuencia.
+        const firstGroup = createBannerGroup();
+
+        // Segunda secuencia idéntica para el movimiento infinito.
+        const secondGroup = createBannerGroup(true);
+
+        elements.movieBannerTrack.appendChild(firstGroup);
+        elements.movieBannerTrack.appendChild(secondGroup);
+
+        elements.movieBanner.hidden = false;
+
+    }
+
+
+    // =====================================================
+	// EVENTOS DEL BANNER ANIMADO
+	// =====================================================
+
+	function connectMovieBannerEvents() {
+
+		let startX = 0;
+		let startTime = 0;
+		let bannerAnimation = null;
+		let bannerDuration = 0;
+		let bannerWidth = 0;
+		let isDragging = false;
+		let suppressBannerClick = false;
+
+		const track = elements.movieBannerTrack;
+		const banner = elements.movieBanner;
+
+		// -------------------------------------------------
+		// ABRIR DETALLES AL HACER CLIC EN UNA PELÍCULA
+		// -------------------------------------------------
+
+		track.addEventListener("click", event => {
+
+			// Evitar abrir detalles si el usuario estaba arrastrando.
+			if (suppressBannerClick) {
+				suppressBannerClick = false;
+				return;
+			}
+
+			const card = event.target.closest(".movie-banner-card");
+
+			if (!card) return;
+
+			const index = Number(card.dataset.movieIndex);
+			const movie = bannerMovies[index];
+
+			if (movie) openDetails(movie);
+		});
+
+		// -------------------------------------------------
+		// COMENZAR ARRASTRE
+		// -------------------------------------------------
+
+		track.addEventListener("pointerdown", event => {
+
+			if (event.button !== 0) return;
+
+			bannerAnimation = track.getAnimations()[0];
+
+			if (!bannerAnimation) return;
+
+			const firstGroup = track.querySelector(".movie-banner-group");
+
+			if (!firstGroup) return;
+
+			bannerDuration = bannerAnimation.effect.getTiming().duration;
+			bannerWidth = firstGroup.scrollWidth;
+
+			startX = event.clientX;
+			startTime = Number(bannerAnimation.currentTime) || 0;
+
+			isDragging = true;
+			suppressBannerClick = false;
+
+			// Pausar el movimiento automático.
+			banner.classList.add("is-paused");
+
+			// Capturar el movimiento del mouse o dedo.
+			track.setPointerCapture(event.pointerId);
+
+			event.preventDefault();
+
+		});
+
+		// -------------------------------------------------
+		// MOVER EL BANNER
+		// -------------------------------------------------
+
+		track.addEventListener("pointermove", event => {
+
+			if (!isDragging || !bannerAnimation) return;
+
+			const distance = event.clientX - startX;
+
+			if (Math.abs(distance) > 5) {
+				suppressBannerClick = true;
+			}
+
+			// Convertir el desplazamiento en tiempo
+			// de animación para conservar el movimiento infinito.
+			let newTime = startTime -
+				(distance * bannerDuration / bannerWidth);
+
+			// Mantener el tiempo dentro del ciclo.
+			newTime = ((newTime % bannerDuration) + bannerDuration)
+				% bannerDuration;
+
+			bannerAnimation.currentTime = newTime;
+
+		});
+
+		// -------------------------------------------------
+		// FINALIZAR ARRASTRE
+		// -------------------------------------------------
+
+		function finishBannerDrag() {
+
+			if (!isDragging) return;
+
+			isDragging = false;
+
+			// Reanudar el movimiento automático.
+			banner.classList.remove("is-paused");
+
+		}
+
+		track.addEventListener("pointerup", finishBannerDrag);
+
+		track.addEventListener("pointercancel", finishBannerDrag);
+
+	}
 
     // =====================================================
     // ACTUALIZAR ESTADÍSTICAS
@@ -2680,6 +3012,8 @@
 		connectPosterViewerEvents();
 		
 		connectRandomFilterEvents();
+		
+		connectMovieBannerEvents();
 
 		elements.randomMoviesButton.addEventListener(
 			"click",
@@ -2978,9 +3312,13 @@
 
             // 2. Cargar pósteres de Drive
 
-            await loadPosters();
+			await loadPosters();
 
-            // 3. Actualizar estadísticas
+			// 3. Construir banner animado
+
+			initializeMovieBanner();
+
+			// 4. Actualizar estadísticas
 
             updateStats();
 
