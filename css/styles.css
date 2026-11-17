@@ -2068,3 +2068,122 @@ button {
     }
 
 }
+
+/* Botón de búsqueda de tráiler en YouTube */
+.youtube-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 12px 20px;
+    border: 1px solid #CC0000;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #FF3333, #CC0000);
+    color: #FFFFFF;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.youtube-button svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.youtube-button:hover {
+    background: linear-gradient(135deg, #FF4D4D, #B30000);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 0, 0, .30);
+}
+
+/* Indicador de ampliación del póster */
+.detail-poster-container {
+    position: relative;
+}
+
+.poster-zoom-hint {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    color: #FFFFFF;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.poster-zoom-hint svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Iconos de los bloques de información */
+.detail-field-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.detail-field-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    width: 22px;
+    flex-shrink: 0;
+}
+
+/* Botón de precios, combos y promociones */
+
+.prices-pdf-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 10px 16px;
+
+    background: linear-gradient(135deg, #E53935, #B71C1C);
+    border: 1px solid #9F1717;
+    border-radius: 8px;
+
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 14px;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.prices-pdf-button svg {
+    width: 21px;
+    height: 21px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    flex-shrink: 0;
+}
+
+.prices-pdf-button:hover {
+    background: linear-gradient(135deg, #FF514B, #D32F2F);
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.35);
+    transform: translateY(-2px);
+}
+
+

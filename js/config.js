@@ -54,7 +54,9 @@ window.CATALOGO_CONFIG = {
 	NEW_BADGE_STYLE: "animated",
 	
 	// Numero WhatsApp
-	WHATSAPP_NUMBER: "573006318594"
+	WHATSAPP_NUMBER: "573006318594",
+	
+	PRICES_PDF_URL: "https://drive.google.com/file/d/1AL0-zwZikpbeJilTyPF38fyDi2p3QdYm/view?usp=sharing"
 };
 
 

@@ -108,12 +108,14 @@
 		cartInfo: document.getElementById("cartInfo"),
 		cartList: document.getElementById("cartList"),
 		makeOrder: document.getElementById("makeOrder"),
+		pricesPdfButton: document.getElementById("pricesPdfButton"),
 		emptyCart: document.getElementById("emptyCart"),
 		clearCart: document.getElementById("clearCart"),
 		backFromCart: document.getElementById("backFromCart"),
 		addToCart: document.getElementById("addToCart"),
 		cartFeedback: document.getElementById("cartFeedback"),
-		filtersSection: document.querySelector(".filters-section")
+		filtersSection: document.querySelector(".filters-section"),
+		searchTrailer: document.getElementById("searchTrailer")
 
     };
 
@@ -405,7 +407,21 @@
 		renderCart();
 
 	}
+	
+	// Boton PDF Precios Combos Promociones
+	function openPricesPDF() {
 
+		const pdfURL = CONFIG.PRICES_PDF_URL;
+
+		if (!pdfURL) {
+			alert("No se ha configurado el enlace del PDF de precios.");
+			return;
+		}
+
+		window.open(pdfURL, "_blank", "noopener,noreferrer");
+
+	}
+	
 	// Crear pedido y abrir WhatsApp
 	function makeWhatsAppOrder() {
 
@@ -413,7 +429,27 @@
 			alert("Tu carrito está Vacío. Agrega Películas o Series antes de hacer un Pedido.");
 			return;
 		}
+		
+		 // Convertir MB a MB o GB
+		function formatSize(sizeMB) {
+			const size = Number(
+				String(sizeMB ?? "").trim().replace(",", ".")
+			);
 
+			if (!Number.isFinite(size) || size < 0) {
+				return "No disponible";
+			}
+
+			if (size >= 1024) {
+				return `${(size / 1024).toFixed(2)} GB`;
+			}
+
+			return `${Math.round(size)} MB`;
+		}
+		
+		let totalSizeMB = 0;
+		let missingSizes = false;
+		
 		const movieList = cartItems
 			.map((item, index) => {
 
@@ -426,18 +462,41 @@
 				const genre = movie
 					? movie.Genero || "No disponible"
 					: "No disponible";
+				
+				const sizeMB = movie
+					? Number(String(movie["Tamaño (MB)"] ?? "").trim().replace(",", "."))
+					: NaN;
 
-				return `${index + 1}. ${item.title}\n   🎭 Género: ${genre}\n   📅 Año: ${year}`;
+				let sizeText;
+				
+				if (Number.isFinite(sizeMB) && sizeMB >= 0) {
+					totalSizeMB += sizeMB;
+					sizeText = formatSize(sizeMB);
+				} else {
+					sizeText = "No disponible";
+					missingSizes = true;
+				}
+
+				return `${index + 1}. ${item.title}\n` +
+					`   🎭 Género: ${genre}\n` +
+					`   📅 Año: ${year}\n` +
+					`   💾 Peso: ${sizeText}`;
 
 			})
 			.join("\n\n");
-
+		
+		const totalSizeText = formatSize(totalSizeMB);
+		
 		const message =
 			`¡Hola, Frikazo Digital! 👋\n\n` +
 			`Quiero realizar el siguiente pedido:\n\n` +
 			`${movieList}\n\n` +
-			`🎬 Títulos Totales: ${cartItems.length}\n\n` +
-			`Quedo atento. ¡Muchas gracias!`;
+			`🎬 Títulos Totales: ${cartItems.length}\n` +
+			`💾 Peso Total: ${totalSizeText}` +
+			(missingSizes
+				? `\n⚠️ Algunos Tamaños no están Disponibles en el Catálogo.`
+				: "") +
+			`\n\nQuedo atento. ¡Muchas gracias!`;
 
 		const whatsappURL =
 			`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -2028,7 +2087,23 @@
     // =====================================================
     // ABRIR FICHA DE DETALLES
     // =====================================================
+	
+	// Buscar tráiler en YouTube
+	function searchMovieTrailer() {
 
+		if (!currentDetailMovie) return;
+
+		const title = String(currentDetailMovie.Titulo || "").trim();
+		const year = String(currentDetailMovie["Año"] || "").trim();
+
+		const searchText = `${title} ${year} trailer`;
+
+		const youtubeURL =
+			`https://www.youtube.com/results?search_query=${encodeURIComponent(searchText)}`;
+
+		window.open(youtubeURL, "_blank");
+	}
+	
     function openDetails(movie) {
 		
 		currentDetailMovie = movie;
@@ -2365,9 +2440,9 @@
 
     function renderDetailFields(movie) {
 
-        elements.detailFields.innerHTML = "";
+		elements.detailFields.innerHTML = "";
 
-        const ignoredFields = [
+		const ignoredFields = [
 			"Codigo",
 			"Titulo",
 			"Titulo Ingles",
@@ -2379,7 +2454,7 @@
 			"#",
 			"Vista"
 		];
-		
+
 		const fieldOrder = [
 			"Titulo Ingles",
 			"Imagen",
@@ -2393,7 +2468,21 @@
 			"Observaciones"
 		];
 
-        fieldOrder.forEach(key => {
+		// Iconos para los títulos de los bloques
+		const fieldIcons = {
+			"Titulo Ingles": "🌎",
+			"Imagen": "🖼️",
+			"Calidad Visual": "👁️",
+			"Resolucion": "🖥️",
+			"Tamaño (MB)": "💾",
+			"Formato": "🎞️",
+			"Capitulos": "📺",
+			"Fecha Ingreso": "📅",
+			"Saga": "🎬",
+			"Observaciones": "📝"
+		};
+
+		fieldOrder.forEach(key => {
 
 			const value = movie[key];
 
@@ -2413,16 +2502,38 @@
 			const label = document.createElement("span");
 
 			label.className = "detail-field-label";
-			label.textContent = key;
+
+			// Agregar icono cuando el campo lo tenga definido
+			if (fieldIcons[key]) {
+
+				const icon = document.createElement("span");
+
+				icon.className = "detail-field-icon";
+				icon.textContent = fieldIcons[key];
+
+				label.appendChild(icon);
+
+				const labelText = document.createElement("span");
+				labelText.textContent = key;
+
+				label.appendChild(labelText);
+
+			} else {
+
+				label.textContent = key;
+
+			}
 
 			const content = document.createElement("span");
 
 			content.className = "detail-field-value";
+
 			if (key === "Tamaño (MB)") {
 				content.textContent = Number(value).toLocaleString("es-CO");
 			} else {
 				content.textContent = value;
 			}
+
 			if (key === "Calidad Visual") {
 				content.classList.add("quality-" + normalize(value));
 			}
@@ -2434,7 +2545,7 @@
 
 		});
 
-    }
+	}
 
 
     // =====================================================
@@ -2529,7 +2640,6 @@
             filterMovies("search");
 
         });
-
 
         // LIMPIAR BÚSQUEDA
 
@@ -2698,6 +2808,10 @@
 		elements.clearCart.addEventListener("click", clearShoppingCart);
 		
 		elements.makeOrder.addEventListener("click", makeWhatsAppOrder);
+		
+		elements.searchTrailer.addEventListener("click", searchMovieTrailer);
+		
+		elements.pricesPdfButton.addEventListener("click", openPricesPDF);
 
 		// Eliminar títulos individualmente
 		elements.cartList.addEventListener("click", event => {
