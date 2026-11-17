@@ -447,8 +447,18 @@
 			return `${Math.round(size)} MB`;
 		}
 		
+		function formatCurrency(value) {
+			return "$" + Number(value).toLocaleString("es-CO", {
+				maximumFractionDigits: 0
+			});
+		}
+		
 		let totalSizeMB = 0;
+		let totalPrice = 0;
+		let totalTickets = 0;
+		
 		let missingSizes = false;
+		let missingPrices = false;
 		
 		const movieList = cartItems
 			.map((item, index) => {
@@ -463,6 +473,7 @@
 					? movie.Genero || "No disponible"
 					: "No disponible";
 				
+				// Calcular tamaño
 				const sizeMB = movie
 					? Number(String(movie["Tamaño (MB)"] ?? "").trim().replace(",", "."))
 					: NaN;
@@ -476,25 +487,82 @@
 					sizeText = "No disponible";
 					missingSizes = true;
 				}
+				
+				// Determinar si es serie
+				const isSeries = movie
+					? normalize(movie.Genero) === normalize("Series")
+					: false;
+
+				// Determinar precio según el género
+				let itemPrice = NaN;
+
+				if (movie) {
+
+					itemPrice = Number(
+						isSeries
+							? CONFIG.SERIES_PRICE
+							: CONFIG.MOVIE_PRICE
+					);
+				}
+				
+				let priceText;
+				let ticketsText;
+
+				if (Number.isFinite(itemPrice) && itemPrice >= 0) {
+
+					totalPrice += itemPrice;
+					priceText = formatCurrency(itemPrice);
+
+					const ticketValue = Number(CONFIG.TICKET_VALUE);
+
+					if (Number.isFinite(ticketValue) && ticketValue > 0) {
+						const itemTickets = Math.floor(itemPrice / ticketValue);
+
+						totalTickets += itemTickets;
+						ticketsText = itemTickets.toLocaleString("es-CO");
+					} else {
+						ticketsText = "No disponible";
+					}
+
+				} else {
+					priceText = "No disponible";
+					ticketsText = "No disponible";
+					missingPrices = true;
+				}
+				
+				const chaptersText = isSeries
+					? `   📺 Capítulos: ${movie?.Capitulos || "No disponible"}\n`
+					: "";
 
 				return `${index + 1}. ${item.title}\n` +
 					`   🎭 Género: ${genre}\n` +
+					chaptersText +
 					`   📅 Año: ${year}\n` +
-					`   💾 Peso: ${sizeText}`;
+					`   💾 Peso: ${sizeText}\n` +
+					`   💰 Valor: ${priceText}\n` +
+					`   🎟️ Tickets: ${ticketsText}`;
 
 			})
 			.join("\n\n");
 		
 		const totalSizeText = formatSize(totalSizeMB);
+		const totalPriceText = missingPrices
+			? "No disponible"
+			: formatCurrency(totalPrice);
 		
 		const message =
 			`¡Hola, Frikazo Digital! 👋\n\n` +
 			`Quiero realizar el siguiente pedido:\n\n` +
 			`${movieList}\n\n` +
 			`🎬 Títulos Totales: ${cartItems.length}\n` +
-			`💾 Peso Total: ${totalSizeText}` +
+			`💾 Peso Total: ${totalSizeText}\n` +
+			`💰 Valor Total: ${totalPriceText}\n` +
+			`🎟️ Tickets Totales: ${missingPrices ? "No disponible" : totalTickets.toLocaleString("es-CO")}` +
 			(missingSizes
 				? `\n⚠️ Algunos Tamaños no están Disponibles en el Catálogo.`
+				: "") +
+			(missingPrices
+				? `\n⚠️ Algunos Precios no están Disponibles.`
 				: "") +
 			`\n\nQuedo atento. ¡Muchas gracias!`;
 

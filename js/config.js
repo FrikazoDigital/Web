@@ -56,7 +56,12 @@ window.CATALOGO_CONFIG = {
 	// Numero WhatsApp
 	WHATSAPP_NUMBER: "573006318594",
 	
-	PRICES_PDF_URL: "https://drive.google.com/file/d/1AL0-zwZikpbeJilTyPF38fyDi2p3QdYm/view?usp=sharing"
+	PRICES_PDF_URL: "https://drive.google.com/file/d/1AL0-zwZikpbeJilTyPF38fyDi2p3QdYm/view?usp=sharing",
+	
+	//Precios Peliculas y Series
+	MOVIE_PRICE: 4000,
+	SERIES_PRICE: 30000,
+	TICKET_VALUE: 100
 };
 
 
