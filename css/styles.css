@@ -2508,6 +2508,17 @@ button {
     box-shadow: 0 5px 15px rgba(0,0,0,0.35);
 }
 
+/* ETIQUETA NUEVO - EXCLUSIVA DEL BANNER */
+
+.movie-banner-poster .new-badge {
+    top: 8px;
+    right: 8px;
+    left: auto;
+
+    font-size: 8px;
+    padding: 6px 14px;
+}
+
 .movie-banner-poster img {
     display: block;
     width: 100%;
