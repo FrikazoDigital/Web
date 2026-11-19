@@ -2965,6 +2965,7 @@ button {
     gap: 12px;
 
     width: 100%;
+    min-width: 0;
     min-height: 52px;
     padding: 6px 8px;
 
@@ -2977,6 +2978,9 @@ button {
     font-size: 13px;
     font-weight: 750;
     text-align: left;
+
+    white-space: normal;
+    overflow-wrap: break-word;
 
     cursor: pointer;
     transition: background 0.2s ease, transform 0.2s ease;
