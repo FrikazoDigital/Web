@@ -2511,8 +2511,8 @@ button {
 /* ETIQUETA NUEVO - EXCLUSIVA DEL BANNER */
 
 .movie-banner-poster .new-badge {
-    top: 8px;
-    right: 8px;
+    top: 0px;
+    right: 0px;
     left: auto;
 
     font-size: 8px;
