@@ -753,7 +753,9 @@
 		if (isTop10View) {
 			toggleTop10();
 		}
-
+		
+		elements.heroSection.hidden = true;
+		
 		elements.filtersSection.hidden = true;
 
 		elements.catalogSection.hidden = true;
@@ -774,7 +776,9 @@
 	function closeCart() {
 
 		elements.cartSection.hidden = true;
-
+		
+		elements.heroSection.hidden = false;
+		
 		elements.filtersSection.hidden = false;
 
 		elements.catalogSection.hidden = false;
@@ -2430,11 +2434,25 @@
 			updateDependentFilters();
 
 			elements.sortFilter.value = "date-desc";
+			
+			// Ocultar buscador y filtros.
+			elements.heroSection.hidden = true;
+			elements.filtersContainer.hidden = true;
 
+			// Ocultar botones de otras secciones,
+			// conservando el botón TOP 10 para poder regresar.
+			elements.filtersSection
+				.querySelectorAll(".filters-heading button")
+				.forEach(button => {
+					if (button !== elements.top10Button) {
+						button.hidden = true;
+					}
+				});
+			
 			// Mostrar únicamente el TOP 10.
 			filteredMovies = getTop10Movies();
 
-			elements.top10Button.textContent = "↩ Ver catálogo";
+			elements.top10Button.textContent = "↩ Volver al Catálogo";
 			elements.top10Button.classList.add("active");
 
 			setTop10ControlsDisabled(true);
@@ -2443,6 +2461,17 @@
 
 			elements.top10Button.textContent = "★ TOP 10";
 			elements.top10Button.classList.remove("active");
+			
+			// Restaurar buscador y filtros.
+			elements.heroSection.hidden = false;
+			elements.filtersContainer.hidden = false;
+
+			// Restaurar botones de las demás secciones.
+			elements.filtersSection
+				.querySelectorAll(".filters-heading button")
+				.forEach(button => {
+					button.hidden = false;
+				});
 
 			setTop10ControlsDisabled(false);
 
