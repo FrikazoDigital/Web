@@ -2930,76 +2930,161 @@ button {
 }
 
 /* =========================================================
-   BOTONES DE MI COLECCIÓN - FICHA DE DETALLES
+   MI COLECCIÓN - ACCIONES EN LA FICHA DE DETALLES
    ========================================================= */
+
+/* CONTENEDOR */
 
 .detail-collection-actions {
     width: 100%;
     margin-top: 15px;
-    padding: 14px;
+    padding: 5px 0;
 
     display: flex;
     flex-direction: column;
 
-    background: var(--surface);
-    border: 1px solid #354258;
-    border-radius: 10px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
 }
 
-.detail-collection-title {
-    margin-bottom: 12px;
-    color: var(--primary);
-    font-size: 14px;
-    font-weight: 800;
-}
+/* LISTADO DE ACCIONES */
 
 .detail-collection-buttons {
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 5px;
 }
 
-.collection-action-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-	
-	width: 100%;
-    box-sizing: border-box;
-	
-    padding: 10px 14px;
+/* ELEMENTO INTERACTIVO */
 
-    background: #293344;
-    border: 1px solid #465268;
+.collection-action-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 52px;
+    padding: 6px 8px;
+
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.09);
     border-radius: 7px;
 
     color: #D5DCE7;
-    font-size: 12px;
-    font-weight: 800;
+    font-size: 13px;
+    font-weight: 750;
+    text-align: left;
 
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+/* ICONOS */
+
+.collection-action-button svg {
+    display: block;
+    flex-shrink: 0;
+
+    width: 38px;
+    height: 38px;
+    padding: 9px;
+
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    border-radius: 9px;
+
     transition: all 0.2s ease;
 }
 
-.collection-action-button:hover {
-    background: #354258;
-    border-color: var(--primary);
-    transform: translateY(-2px);
+/* COLORES DE LOS ICONOS */
+
+/* Estado natural: fondo blanco */
+
+.collection-action-button svg {
+    background: #FFFFFF;
+    stroke: #333333;
 }
 
-/* BOTONES ACTIVADOS */
+/* Estado activado: cada icono toma su color */
+
+/* FAVORITA ACTIVADA */
+
+.collection-action-button.favorite.active svg {
+    background: linear-gradient(145deg, #FF4568, #D90035);
+    stroke: #FFFFFF;
+
+    box-shadow:
+        0 0 6px rgba(255, 35, 75, 0.85),
+        0 0 13px rgba(255, 35, 75, 0.55);
+}
+
+/* VISTA ACTIVADA */
+
+.collection-action-button.watched.active svg {
+    background: linear-gradient(145deg, #35A5FF, #0060D9);
+    stroke: #FFFFFF;
+
+    box-shadow:
+        0 0 6px rgba(20, 130, 255, 0.85),
+        0 0 13px rgba(20, 130, 255, 0.55);
+}
+
+/* OBTENIDA ACTIVADA */
+
+.collection-action-button.obtained.active svg {
+    background: linear-gradient(145deg, #19D99A, #008B5C);
+    stroke: #FFFFFF;
+
+    box-shadow:
+        0 0 6px rgba(0, 220, 145, 0.85),
+        0 0 13px rgba(0, 220, 145, 0.55);
+}
+
+/* HOVER */
+
+.collection-action-button:hover {
+    background: rgba(255,255,255,0.06);
+    transform: translateX(3px);
+}
+
+/* ESTADOS ACTIVADOS */
 
 .collection-action-button.active {
-    background: linear-gradient(135deg, #FFD700, #FF9800);
-    border-color: #D99A00;
-    color: #202020;
+    background: rgba(255,255,255,0.07);
+    color: #FFFFFF;
+}
+
+.collection-action-button.favorite.active svg {
+    fill: #FFFFFF;
+    stroke: #FFFFFF;
+}
+
+.collection-action-button.watched.active svg circle {
+    fill: #FFFFFF;
+}
+
+.collection-action-button.obtained.active svg {
+    fill: rgba(255,255,255,0.25);
+}
+
+/* ACCESIBILIDAD */
+
+.collection-action-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
 }
 
 /* MENSAJE DE CONFIRMACIÓN */
 
 .collection-feedback {
-    margin-top: 12px;
+    margin-top: 10px;
     color: #70D99A;
     font-size: 12px;
     font-weight: 700;
@@ -3007,26 +3092,6 @@ button {
 
 .collection-feedback[hidden] {
     display: none !important;
-}
-
-/* ADAPTACIÓN A MÓVILES */
-
-@media (max-width: 600px) {
-
-    .detail-collection-actions {
-        padding: 14px;
-    }
-
-    .detail-collection-buttons {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
-
-    .collection-action-button {
-        width: 100%;
-        min-height: 42px;
-    }
-
 }
 
 /* =========================================================
@@ -3052,7 +3117,7 @@ button {
 /* Dejar espacio debajo de la etiqueta NUEVO */
 
 .collection-status-icons.has-new {
-    top: 48px;
+    top: 55px;
 }
 
 /* Iconos individuales */
@@ -3064,16 +3129,85 @@ button {
 
     width: 30px;
     height: 30px;
+    padding: 5px;
 
-    background: rgba(11, 13, 18, 0.88);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: none;
     border-radius: 8px;
-
-    font-size: 16px;
 
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.45);
 
     cursor: help;
+}
+
+/* SVG */
+
+.collection-status-icon svg {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* FAVORITA */
+
+.collection-status-icon.favorite {
+    background: linear-gradient(145deg, #FF4568, #D90035);
+    border: 1px solid rgba(255, 120, 145, 0.8);
+
+    box-shadow:
+        0 0 6px rgba(255, 35, 75, 0.85),
+        0 0 13px rgba(255, 35, 75, 0.55),
+        0 2px 7px rgba(0, 0, 0, 0.45);
+}
+
+.collection-status-icon.favorite svg {
+    fill: #FFFFFF;
+    stroke: #FFFFFF;
+}
+
+/* VISTA */
+
+.collection-status-icon.watched {
+    background: linear-gradient(145deg, #35A5FF, #0060D9);
+    border: 1px solid rgba(120, 190, 255, 0.8);
+
+    box-shadow:
+        0 0 6px rgba(20, 130, 255, 0.85),
+        0 0 13px rgba(20, 130, 255, 0.55),
+        0 2px 7px rgba(0, 0, 0, 0.45);
+}
+
+.collection-status-icon.watched svg circle {
+    fill: #FFFFFF;
+}
+
+/* OBTENIDA */
+
+.collection-status-icon.obtained {
+    background: linear-gradient(145deg, #19D99A, #008B5C);
+    border: 1px solid rgba(110, 255, 195, 0.8);
+
+    box-shadow:
+        0 0 6px rgba(0, 220, 145, 0.85),
+        0 0 13px rgba(0, 220, 145, 0.55),
+        0 2px 7px rgba(0, 0, 0, 0.45);
+}
+
+.collection-status-icon.obtained svg {
+    fill: rgba(255, 255, 255, 0.25);
+}
+
+/* EFECTO AL PASAR EL CURSOR */
+
+.collection-status-icon:hover {
+    filter: brightness(1.2);
+    transform: scale(1.08);
 }
 
 /* =========================================================

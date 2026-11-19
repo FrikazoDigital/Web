@@ -2388,39 +2388,59 @@
         }
 
         const statusDefinitions = [
-            {
-                type: "favorites",
-                icon: "❤️",
-                label: "Favorita"
-            },
-            {
-                type: "watched",
-                icon: "👁️",
-                label: "Vista"
-            },
-            {
-                type: "obtained",
-                icon: "📥",
-                label: "Obtenida"
-            }
-        ];
+			{
+				type: "favorites",
+				className: "favorite",
+				label: "Favorita",
+				svg: `
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>
+					</svg>
+				`
+			},
+			{
+				type: "watched",
+				className: "watched",
+				label: "Vista",
+				svg: `
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+						<circle cx="12" cy="12" r="3"/>
+					</svg>
+				`
+			},
+			{
+				type: "obtained",
+				className: "obtained",
+				label: "Obtenida",
+				svg: `
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M3 7h18v13H3z"/>
+						<path d="M3 7l2-4h14l2 4"/>
+						<path d="M12 11v6"/>
+						<path d="m9 14 3 3 3-3"/>
+					</svg>
+				`
+			}
+		];
 
-        statusDefinitions.forEach(status => {
+		statusDefinitions.forEach(status => {
 
-            if (isInCollection(status.type, movie)) {
+			if (isInCollection(status.type, movie)) {
 
-                const icon = document.createElement("span");
+				const icon = document.createElement("span");
 
-                icon.className = "collection-status-icon";
-                icon.textContent = status.icon;
-                icon.title = status.label;
-                icon.setAttribute("aria-label", status.label);
+				icon.className = `collection-status-icon ${status.className}`;
+				icon.innerHTML = status.svg;
+				icon.title = status.label;
+				icon.setAttribute("aria-label", status.label);
+				icon.setAttribute("role", "img");
 
-                collectionIcons.appendChild(icon);
+				collectionIcons.appendChild(icon);
 
-            }
+			}
 
-        });
+		});
 
         // Agregar el contenedor únicamente si tiene indicadores.
         if (collectionIcons.children.length > 0) {
@@ -2749,20 +2769,20 @@
 			{
 				type: "favorites",
 				element: elements.collectionFavoriteButton,
-				inactiveText: "♡ Favorita",
-				activeText: "♥ Favorita"
+				activeLabel: "Quitar de Favoritas",
+				inactiveLabel: "Agregar a Favoritas"
 			},
 			{
 				type: "watched",
 				element: elements.collectionWatchedButton,
-				inactiveText: "👁️ Vista",
-				activeText: "✓ Vista"
+				activeLabel: "Quitar de Vistas",
+				inactiveLabel: "Marcar como Vista"
 			},
 			{
 				type: "obtained",
 				element: elements.collectionObtainedButton,
-				inactiveText: "📥 Obtenida",
-				activeText: "✓ Obtenida"
+				activeLabel: "Quitar de Obtenidas",
+				inactiveLabel: "Marcar como Obtenida"
 			}
 		];
 
@@ -2775,9 +2795,19 @@
 
 			item.element.classList.toggle("active", active);
 
-			item.element.textContent = active
-				? item.activeText
-				: item.inactiveText;
+			item.element.setAttribute(
+				"aria-pressed",
+				String(active)
+			);
+
+			item.element.setAttribute(
+				"aria-label",
+				active ? item.activeLabel : item.inactiveLabel
+			);
+
+			item.element.title = active
+				? item.activeLabel
+				: item.inactiveLabel;
 
 		});
 

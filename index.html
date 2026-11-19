@@ -614,34 +614,49 @@
 					<!-- MI COLECCIÓN -->
 					<div class="detail-collection-actions">
 
-						<p class="detail-collection-title">
-							📚 Mi Colección
-						</p>
-
 						<div class="detail-collection-buttons">
 
 							<button
 								type="button"
 								id="collectionFavoriteButton"
-								class="collection-action-button"
-								data-collection-type="favorites">
-								♡ Favorita
+								class="collection-action-button favorite"
+								data-collection-type="favorites"
+								title="Marcar como favorita"
+								aria-label="Marcar como favorita">
+								<svg viewBox="0 0 24 24" aria-hidden="true">
+									<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>
+								</svg>
+								<span>Favorita</span>
 							</button>
 
 							<button
 								type="button"
 								id="collectionWatchedButton"
-								class="collection-action-button"
-								data-collection-type="watched">
-								👁️ Vista
+								class="collection-action-button watched"
+								data-collection-type="watched"
+								title="Marcar como vista"
+								aria-label="Marcar como vista">
+								<svg viewBox="0 0 24 24" aria-hidden="true">
+									<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+									<circle cx="12" cy="12" r="3"/>
+								</svg>
+								<span>Vista</span>
 							</button>
 
 							<button
 								type="button"
 								id="collectionObtainedButton"
-								class="collection-action-button"
-								data-collection-type="obtained">
-								📥 Obtenida
+								class="collection-action-button obtained"
+								data-collection-type="obtained"
+								title="Marcar como obtenida"
+								aria-label="Marcar como obtenida">
+								<svg viewBox="0 0 24 24" aria-hidden="true">
+									<path d="M3 7h18v13H3z"/>
+									<path d="M3 7l2-4h14l2 4"/>
+									<path d="M12 11v6"/>
+									<path d="m9 14 3 3 3-3"/>
+								</svg>
+								<span>Obtenida</span>
 							</button>
 
 						</div>
