@@ -1463,9 +1463,14 @@ button {
 }
 
 .top10-button.active {
-    background: #1976D2;
+    background: linear-gradient(135deg, #2196F3, #075BFF);
     border-color: #1976D2;
     color: #FFFFFF;
+}
+
+.top10-button.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.35);
 }
 
 /* =========================================================
