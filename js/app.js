@@ -578,7 +578,8 @@
 			`🎬 Títulos Totales: ${cartItems.length}\n` +
 			`💾 Peso Total: ${totalSizeText}\n` +
 			`💰 Valor Total: ${totalPriceText}\n` +
-			`🎟️ Tickets Totales: ${missingPrices ? "No disponible" : totalTickets.toLocaleString("es-CO")}` +
+			`🎟️ Tickets Totales: ${missingPrices ? "No disponible" : totalTickets.toLocaleString("es-CO")}\n\n` +
+			`📢 Recuerda Ver los Combos y Promociones Vigentes para Aplicar a Descuentos !!!` +
 			(missingSizes
 				? `\n⚠️ Algunos Tamaños no están Disponibles en el Catálogo.`
 				: "") +
