@@ -3078,6 +3078,29 @@ button {
     fill: rgba(255,255,255,0.25);
 }
 
+/* ADAPTACIÓN A CELULARES */
+
+@media (max-width: 600px) {
+
+    .detail-collection-buttons {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .collection-action-button {
+        gap: 10px;
+        padding: 6px 5px;
+        font-size: 12px;
+    }
+
+    .collection-action-button svg {
+        width: 34px;
+        height: 34px;
+        padding: 8px;
+    }
+
+}
+
 /* ACCESIBILIDAD */
 
 .collection-action-button:focus-visible {
