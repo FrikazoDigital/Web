@@ -445,31 +445,44 @@
             <div class="collection-tabs">
 
                 <button
-                    type="button"
-                    class="collection-tab active"
-                    data-collection-type="favorites"
-                >
-                    ❤️ Favoritas
-                    <span id="favoritesCount">0</span>
-                </button>
+					type="button"
+					class="collection-tab active"
+					data-collection-type="favorites"
+				>
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>
+					</svg>
+					Favoritas
+					<span id="favoritesCount">0</span>
+				</button>
 
-                <button
-                    type="button"
-                    class="collection-tab"
-                    data-collection-type="watched"
-                >
-                    👁️ Vistas
-                    <span id="watchedCount">0</span>
-                </button>
+				<button
+					type="button"
+					class="collection-tab"
+					data-collection-type="watched"
+				>
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+						<circle cx="12" cy="12" r="3"/>
+					</svg>
+					Vistas
+					<span id="watchedCount">0</span>
+				</button>
 
-                <button
-                    type="button"
-                    class="collection-tab"
-                    data-collection-type="obtained"
-                >
-                    📥 Obtenidas
-                    <span id="obtainedCount">0</span>
-                </button>
+				<button
+					type="button"
+					class="collection-tab"
+					data-collection-type="obtained"
+				>
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M3 7h18v13H3z"/>
+						<path d="M3 7l2-4h14l2 4"/>
+						<path d="M12 11v6"/>
+						<path d="m9 14 3 3 3-3"/>
+					</svg>
+					Obtenidas
+					<span id="obtainedCount">0</span>
+				</button>
 
             </div>
 
