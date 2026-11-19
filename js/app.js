@@ -2938,6 +2938,7 @@
 				labelText.textContent = key;
 
 				label.appendChild(labelText);
+				
 
 			} else {
 
@@ -2956,27 +2957,38 @@
 			}
 
 			if (key === "Calidad Visual") {
-
 				content.classList.add("quality-" + normalize(value));
 
 				field.classList.add("quality-field-trigger");
 				field.setAttribute("role", "button");
 				field.setAttribute("tabindex", "0");
-				field.setAttribute("aria-label", "Ver todos los niveles de calidad visual");
+				field.setAttribute("aria-label", "Ver Todos los Niveles de Calidad Visual");
 
+				// ICONO DE INFORMACIÓN
+				const infoIcon = document.createElement("span");
+				infoIcon.className = "quality-info-icon";
+				infoIcon.innerHTML = `
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<circle cx="12" cy="12" r="9"></circle>
+						<path d="M12 11v5"></path>
+						<path d="M12 8h.01"></path>
+					</svg>
+				`;
+				infoIcon.title = "Consultar Niveles de Calidad Visual";
+
+				field.appendChild(infoIcon);
+
+				// EVENTOS PARA ABRIR LA VENTANA
 				field.addEventListener("click", () => {
 					toggleQualityPopup(field, value);
 				});
 
 				field.addEventListener("keydown", event => {
-
 					if (event.key === "Enter" || event.key === " ") {
 						event.preventDefault();
 						toggleQualityPopup(field, value);
 					}
-
 				});
-
 			}
 
 			field.appendChild(label);

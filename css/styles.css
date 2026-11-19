@@ -2639,6 +2639,41 @@ button {
     height: 17px;
 }
 
+/* ICONO INFORMATIVO EN CALIDAD VISUAL */
+.quality-field-trigger {
+    position: relative;
+}
+
+.quality-info-icon {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    color: var(--text-muted);
+    opacity: 0.8;
+    pointer-events: none;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.quality-info-icon svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.quality-field-trigger:hover .quality-info-icon {
+    color: var(--primary);
+    opacity: 1;
+}
+
 
 
 
