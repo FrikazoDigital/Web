@@ -2674,6 +2674,389 @@ button {
     opacity: 1;
 }
 
+/* BOTÓN MI COLECCIÓN */
+.my-collection-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 9px 16px;
+
+    border: 1px solid #D99A00;
+    border-radius: 7px;
+
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    color: #202020;
+
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.my-collection-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.35);
+}
+
+.my-collection-button svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* =========================================================
+   MI COLECCIÓN
+   ========================================================= */
+
+/* CONTENEDOR PRINCIPAL */
+
+.my-collection-section {
+    width: 100%;
+    margin-bottom: 35px;
+    padding: 25px;
+    background: var(--background-secondary);
+    border: 1px solid #303947;
+    border-radius: 12px;
+}
+
+/* ENCABEZADO */
+
+.collection-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #465268;
+}
+
+.collection-heading h3 {
+    margin: 0 0 7px;
+    color: var(--primary);
+    font-size: 1.35rem;
+}
+
+.collection-heading p {
+    margin: 0;
+    color: var(--text-secondary, #AAB3C2);
+    font-size: 0.95rem;
+}
+
+/* BOTÓN VOLVER AL CATÁLOGO */
+
+.back-from-collection {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid #465268;
+    border-radius: 7px;
+    color: #FFFFFF;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-from-collection:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* PESTAÑAS DE LA COLECCIÓN */
+
+.collection-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.collection-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-width: 145px;
+    padding: 12px 18px;
+    background: var(--surface);
+    border: 1px solid #465268;
+    border-radius: 8px;
+    color: #D5DCE7;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.collection-tab:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.collection-tab.active {
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    border-color: #D99A00;
+    color: #202020;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+}
+
+.collection-tab span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 23px;
+    height: 23px;
+    padding: 0 6px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+
+/* ESTADO DE COLECCIÓN VACÍA */
+
+.empty-collection {
+    padding: 55px 20px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px dashed #465268;
+    border-radius: 10px;
+}
+
+.empty-collection-icon {
+    margin-bottom: 15px;
+    font-size: 3rem;
+}
+
+.empty-collection h3 {
+    margin: 0 0 10px;
+    color: #FFFFFF;
+    font-size: 1.2rem;
+}
+
+.empty-collection p {
+    max-width: 500px;
+    margin: 0 auto;
+    color: #AAB3C2;
+    line-height: 1.6;
+}
+
+/* DISEÑO RESPONSIVE */
+
+@media (max-width: 600px) {
+
+    .my-collection-section {
+        padding: 16px;
+    }
+
+    .collection-heading {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .back-from-collection {
+        width: 100%;
+    }
+
+    .collection-tabs {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .collection-tab {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .empty-collection {
+        padding: 40px 15px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .my-collection-section {
+        padding: 16px;
+    }
+
+    .collection-heading {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .back-from-collection {
+        width: 100%;
+    }
+
+    .collection-tabs {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .collection-tab {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .empty-collection {
+        padding: 40px 15px;
+    }
+
+}
+
+/* =========================================================
+   BOTONES DE MI COLECCIÓN - FICHA DE DETALLES
+   ========================================================= */
+
+.detail-collection-actions {
+    margin-top: 22px;
+    padding: 17px;
+    background: var(--surface);
+    border: 1px solid #354258;
+    border-radius: 10px;
+}
+
+.detail-collection-title {
+    margin-bottom: 13px;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.detail-collection-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.collection-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 10px 14px;
+
+    background: #293344;
+    border: 1px solid #465268;
+    border-radius: 7px;
+
+    color: #D5DCE7;
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.collection-action-button:hover {
+    background: #354258;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* BOTONES ACTIVADOS */
+
+.collection-action-button.active {
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    border-color: #D99A00;
+    color: #202020;
+}
+
+/* MENSAJE DE CONFIRMACIÓN */
+
+.collection-feedback {
+    margin-top: 12px;
+    color: #70D99A;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.collection-feedback[hidden] {
+    display: none !important;
+}
+
+/* ADAPTACIÓN A MÓVILES */
+
+@media (max-width: 600px) {
+
+    .detail-collection-actions {
+        padding: 14px;
+    }
+
+    .detail-collection-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .collection-action-button {
+        width: 100%;
+        min-height: 42px;
+    }
+
+}
+
+/* =========================================================
+   INDICADORES DE MI COLECCIÓN EN LOS PÓSTERES
+   ========================================================= */
+
+.movie-poster {
+    position: relative;
+}
+
+.collection-status-icons {
+    position: absolute;
+    top: 10px;
+    right: 8px;
+    z-index: 5;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+}
+
+/* Dejar espacio debajo de la etiqueta NUEVO */
+
+.collection-status-icons.has-new {
+    top: 48px;
+}
+
+/* Iconos individuales */
+
+.collection-status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    background: rgba(11, 13, 18, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.45);
+
+    cursor: help;
+}
+
+
+
 
 
 

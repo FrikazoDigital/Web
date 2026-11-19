@@ -148,6 +148,22 @@
 
 				<div class="filters-actions">
 
+					<!-- MI COLECCIÓN -->
+					<button
+						type="button"
+						id="myCollectionButton"
+						class="my-collection-button"
+					>
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
+							<path d="M8 7h8"/>
+							<path d="M8 11h8"/>
+						</svg>
+						Mi Colección
+					</button>
+
+					<!-- TOP 10 -->
 					<button
 						type="button"
 						id="top10Button"
@@ -156,6 +172,7 @@
 						★ TOP 10
 					</button>
 
+					<!-- PELÍCULAS ALEATORIAS -->
 					<button
 						type="button"
 						id="randomMoviesButton"
@@ -163,7 +180,8 @@
 					>
 						🎲 ¿Qué veré hoy?
 					</button>
-					
+
+					<!-- CARRITO -->
 					<button
 						type="button"
 						id="cartButton"
@@ -171,7 +189,8 @@
 					>
 						🛒 Carrito (<span id="cartCount">0</span>)
 					</button>
-					
+
+					<!-- LIMPIAR FILTROS -->
 					<button
 						type="button"
 						id="clearFilters"
@@ -393,6 +412,86 @@
 
             </div>
 
+         </section>
+
+        <!-- SECCIÓN MI COLECCIÓN -->
+        <section id="myCollectionSection" class="my-collection-section" hidden>
+
+            <div class="collection-heading">
+
+                <div>
+                    <h3>📚 Mi Colección</h3>
+
+                    <p id="collectionInfo">
+                        Organiza tus Películas y Series Favoritas.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="backFromCollection"
+                    class="back-from-collection"
+                >
+                    ↩ Volver al Catálogo
+                </button>
+
+            </div>
+
+            <!-- CATEGORÍAS DE LA COLECCIÓN -->
+            <div class="collection-tabs">
+
+                <button
+                    type="button"
+                    class="collection-tab active"
+                    data-collection-type="favorites"
+                >
+                    ❤️ Favoritas
+                    <span id="favoritesCount">0</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="collection-tab"
+                    data-collection-type="watched"
+                >
+                    👁️ Vistas
+                    <span id="watchedCount">0</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="collection-tab"
+                    data-collection-type="obtained"
+                >
+                    📥 Obtenidas
+                    <span id="obtainedCount">0</span>
+                </button>
+
+            </div>
+
+            <!-- COLECCIÓN VACÍA -->
+            <div id="emptyCollection" class="empty-collection" hidden>
+
+                <div class="empty-collection-icon">📚</div>
+
+                <h3 id="emptyCollectionTitle">
+                    Todavía No tienes Favoritas
+                </h3>
+
+                <p id="emptyCollectionText">
+                    Explora el Catálogo y Agrega las Películas y Series que te Interesen.
+                </p>
+
+            </div>
+
+            <!-- LISTADO DE ELEMENTOS -->
+            <div
+                id="collectionGrid"
+                class="catalog-grid"
+            >
+                <!-- Los elementos se generan desde JavaScript -->
+            </div>
+
         </section>
 
         <!-- RESULTADOS -->
@@ -541,6 +640,45 @@
 					  <p id="cartFeedback" class="cart-feedback" hidden>
 						¡Agregado al carrito!
 					  </p>
+
+					</div>
+					
+					<!-- MI COLECCIÓN -->
+					<div class="detail-collection-actions">
+
+						<p class="detail-collection-title">
+							📚 Mi Colección
+						</p>
+
+						<div class="detail-collection-buttons">
+
+							<button
+								type="button"
+								id="collectionFavoriteButton"
+								class="collection-action-button"
+								data-collection-type="favorites">
+								♡ Favorita
+							</button>
+
+							<button
+								type="button"
+								id="collectionWatchedButton"
+								class="collection-action-button"
+								data-collection-type="watched">
+								👁️ Vista
+							</button>
+
+							<button
+								type="button"
+								id="collectionObtainedButton"
+								class="collection-action-button"
+								data-collection-type="obtained">
+								📥 Obtenida
+							</button>
+
+						</div>
+
+						<p id="collectionFeedback" class="collection-feedback" hidden></p>
 
 					</div>
 					

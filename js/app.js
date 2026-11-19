@@ -37,6 +37,20 @@
 
 	let cartItems = [];
 	let currentDetailMovie = null;
+	
+	// =====================================================
+	// MI COLECCIÓN
+	// =====================================================
+
+	const COLLECTION_STORAGE_KEY = "frikazoDigitalCollection";
+
+	let collectionItems = {
+		favorites: [],
+		watched: [],
+		obtained: []
+	};
+
+	let currentCollectionType = "favorites";
 
     // =====================================================
     // ELEMENTOS HTML
@@ -122,6 +136,26 @@
 		filtersSection: document.querySelector(".filters-section"),
 		searchTrailer: document.getElementById("searchTrailer"),
 		
+		// MI COLECCIÓN - FICHA DE DETALLES
+        collectionFavoriteButton: document.getElementById("collectionFavoriteButton"),
+        collectionWatchedButton: document.getElementById("collectionWatchedButton"),
+        collectionObtainedButton: document.getElementById("collectionObtainedButton"),
+        collectionFeedback: document.getElementById("collectionFeedback"),
+		
+		// MI COLECCIÓN
+		myCollectionButton: document.getElementById("myCollectionButton"),
+		myCollectionSection: document.getElementById("myCollectionSection"),
+		collectionInfo: document.getElementById("collectionInfo"),
+		collectionTabs: document.querySelector(".collection-tabs"),
+		collectionGrid: document.getElementById("collectionGrid"),
+		emptyCollection: document.getElementById("emptyCollection"),
+		emptyCollectionTitle: document.getElementById("emptyCollectionTitle"),
+		emptyCollectionText: document.getElementById("emptyCollectionText"),
+		backFromCollection: document.getElementById("backFromCollection"),
+		favoritesCount: document.getElementById("favoritesCount"),
+		watchedCount: document.getElementById("watchedCount"),
+		obtainedCount: document.getElementById("obtainedCount"),
+
 		// BANNER ANIMADO
         movieBanner: document.getElementById("movieBanner"),
         movieBannerTrack: document.getElementById("movieBannerTrack")
@@ -229,6 +263,113 @@
 	function updateCartCount() {
 
 		elements.cartCount.textContent = cartItems.length;
+
+	}
+	
+	// =====================================================
+	// FUNCIONES DE MI COLECCIÓN
+	// =====================================================
+
+
+	// Cargar Mi Colección desde localStorage
+	function loadCollection() {
+
+		try {
+
+			const savedCollection = localStorage.getItem(
+				COLLECTION_STORAGE_KEY
+			);
+
+			if (savedCollection) {
+
+				const parsedCollection = JSON.parse(savedCollection);
+
+				if (
+					parsedCollection &&
+					typeof parsedCollection === "object" &&
+					!Array.isArray(parsedCollection)
+				) {
+
+					collectionItems = {
+						favorites: Array.isArray(parsedCollection.favorites)
+							? parsedCollection.favorites
+							: [],
+
+						watched: Array.isArray(parsedCollection.watched)
+							? parsedCollection.watched
+							: [],
+
+						obtained: Array.isArray(parsedCollection.obtained)
+							? parsedCollection.obtained
+							: []
+					};
+
+				}
+
+			}
+
+			// Validar los elementos almacenados.
+			Object.keys(collectionItems).forEach(type => {
+
+				collectionItems[type] = collectionItems[type].filter(item =>
+					item &&
+					typeof item.key === "string" &&
+					typeof item.title === "string"
+				);
+
+			});
+
+		} catch (error) {
+
+			console.error("Error al cargar Mi Colección:", error);
+
+			collectionItems = {
+				favorites: [],
+				watched: [],
+				obtained: []
+			};
+
+		}
+
+		updateCollectionCounts();
+
+	}
+
+
+	// Guardar Mi Colección en localStorage
+	function saveCollection() {
+
+		try {
+
+			localStorage.setItem(
+				COLLECTION_STORAGE_KEY,
+				JSON.stringify(collectionItems)
+			);
+
+		} catch (error) {
+
+			console.error("Error al guardar Mi Colección:", error);
+
+			alert("No fue posible guardar Mi Colección en este navegador.");
+
+		}
+
+		updateCollectionCounts();
+
+	}
+
+
+	// Actualizar contadores de las categorías
+	function updateCollectionCounts() {
+
+		elements.favoritesCount.textContent =
+			collectionItems.favorites.length;
+
+		elements.watchedCount.textContent =
+			collectionItems.watched.length;
+
+		elements.obtainedCount.textContent =
+			collectionItems.obtained.length;
 
 	}
 
@@ -2233,6 +2374,59 @@
 
 		}
 		
+		// =====================================================
+        // INDICADORES DE MI COLECCIÓN
+        // =====================================================
+
+        const collectionIcons = document.createElement("div");
+
+        collectionIcons.className = "collection-status-icons";
+
+        // Si existe la etiqueta NUEVO, bajar los indicadores.
+        if (esNuevo(movie)) {
+            collectionIcons.classList.add("has-new");
+        }
+
+        const statusDefinitions = [
+            {
+                type: "favorites",
+                icon: "❤️",
+                label: "Favorita"
+            },
+            {
+                type: "watched",
+                icon: "👁️",
+                label: "Vista"
+            },
+            {
+                type: "obtained",
+                icon: "📥",
+                label: "Obtenida"
+            }
+        ];
+
+        statusDefinitions.forEach(status => {
+
+            if (isInCollection(status.type, movie)) {
+
+                const icon = document.createElement("span");
+
+                icon.className = "collection-status-icon";
+                icon.textContent = status.icon;
+                icon.title = status.label;
+                icon.setAttribute("aria-label", status.label);
+
+                collectionIcons.appendChild(icon);
+
+            }
+
+        });
+
+        // Agregar el contenedor únicamente si tiene indicadores.
+        if (collectionIcons.children.length > 0) {
+            posterContainer.appendChild(collectionIcons);
+        }
+		
         if (posterUrl) {
 
             const image = document.createElement("img");
@@ -2528,9 +2722,266 @@
 		window.open(youtubeURL, "_blank");
 	}
 	
+	// =====================================================
+	// FUNCIONES DE INTERACCIÓN CON MI COLECCIÓN
+	// =====================================================
+
+	// Comprobar si un título pertenece a una categoría
+	function isInCollection(type, movie) {
+
+		if (!movie) return false;
+
+		const key = normalize(movie.Titulo);
+
+		return collectionItems[type].some(item =>
+			item.key === key
+		);
+
+	}
+
+
+	// Actualizar el estado visual de los botones de la ficha
+	function updateCollectionButtons() {
+
+		if (!currentDetailMovie) return;
+
+		const buttons = [
+			{
+				type: "favorites",
+				element: elements.collectionFavoriteButton,
+				inactiveText: "♡ Favorita",
+				activeText: "♥ Favorita"
+			},
+			{
+				type: "watched",
+				element: elements.collectionWatchedButton,
+				inactiveText: "👁️ Vista",
+				activeText: "✓ Vista"
+			},
+			{
+				type: "obtained",
+				element: elements.collectionObtainedButton,
+				inactiveText: "📥 Obtenida",
+				activeText: "✓ Obtenida"
+			}
+		];
+
+		buttons.forEach(item => {
+
+			const active = isInCollection(
+				item.type,
+				currentDetailMovie
+			);
+
+			item.element.classList.toggle("active", active);
+
+			item.element.textContent = active
+				? item.activeText
+				: item.inactiveText;
+
+		});
+
+	}
+
+
+	// Agregar o quitar un título de una categoría
+	function toggleCollection(type) {
+
+		if (!currentDetailMovie) return;
+
+		const key = normalize(currentDetailMovie.Titulo);
+
+		const collection = collectionItems[type];
+
+		const index = collection.findIndex(item =>
+			item.key === key
+		);
+
+		let message = "";
+
+		if (index >= 0) {
+
+			// El título ya existe: quitarlo
+			collection.splice(index, 1);
+
+			message = "Se Quitó de Mi Colección.";
+
+		} else {
+
+			// El título no existe: agregarlo
+			collection.push({
+				key: key,
+				title: currentDetailMovie.Titulo
+			});
+
+			message = "Se Agregó a Mi Colección.";
+
+		}
+
+		saveCollection();
+
+		updateCollectionButtons();
+		
+		// Actualizar los indicadores de los pósteres.
+		renderCatalog();
+
+		// Si Mi Colección está abierta, actualizar también sus tarjetas.
+		if (!elements.myCollectionSection.hidden) {
+			renderCollection();
+		}
+		
+		elements.collectionFeedback.textContent = message;
+
+		elements.collectionFeedback.hidden = false;
+
+	}
+	
+	// =====================================================
+    // MOSTRAR CONTENIDO DE MI COLECCIÓN
+    // =====================================================
+
+    function renderCollection() {
+
+        const categories = {
+            favorites: {
+                name: "Favoritas",
+                info: "Tus Películas y Series Favoritas.",
+                emptyTitle: "Todavía No Tienes Favoritas",
+                emptyText: "Explora el Catálogo y Agrega las Películas y Series que te Interesen."
+            },
+            watched: {
+                name: "Vistas",
+                info: "Películas y Series que Ya Has Visto.",
+                emptyTitle: "Todavía No Tienes Películas Vistas",
+                emptyText: "Cuando Veas una Película o Serie, Agrégala a esta Categoría."
+            },
+            obtained: {
+                name: "Obtenidas",
+                info: "Películas y Series que Ya Has Obtenido.",
+                emptyTitle: "Todavía No Tienes Películas Obtenidas",
+                emptyText: "Agrega Aquí las Películas y Series que Ya Has Obtenido."
+            }
+        };
+
+        const category = categories[currentCollectionType];
+
+        // Actualizar información de la categoría
+        elements.collectionInfo.textContent = category.info;
+
+        // Actualizar pestaña activa
+        elements.collectionTabs.querySelectorAll(".collection-tab")
+            .forEach(tab => {
+
+                tab.classList.toggle(
+                    "active",
+                    tab.dataset.collectionType === currentCollectionType
+                );
+
+            });
+
+        // Obtener títulos guardados
+        const savedItems = collectionItems[currentCollectionType];
+
+        // Relacionar los títulos guardados con el catálogo
+        const movies = savedItems
+            .map(item => allMovies.find(movie =>
+                normalize(movie.Titulo) === item.key
+            ))
+            .filter(Boolean);
+
+        // Limpiar tarjetas anteriores
+        elements.collectionGrid.innerHTML = "";
+
+        // Mostrar mensaje si no hay resultados
+        if (movies.length === 0) {
+
+            elements.emptyCollection.hidden = false;
+
+            elements.emptyCollectionTitle.textContent =
+                savedItems.length === 0
+                    ? category.emptyTitle
+                    : "No Hay Títulos Disponibles";
+
+            elements.emptyCollectionText.textContent =
+                savedItems.length === 0
+                    ? category.emptyText
+                    : "Los Títulos Guardados No Se Encuentran Actualmente en el Catálogo.";
+
+            return;
+
+        }
+
+        elements.emptyCollection.hidden = true;
+
+        // Mostrar las tarjetas
+        movies.forEach(movie => {
+
+            elements.collectionGrid.appendChild(
+                createMovieCard(movie)
+            );
+
+        });
+
+    }
+
+
+    // =====================================================
+    // ABRIR MI COLECCIÓN
+    // =====================================================
+
+    function openMyCollection() {
+
+        // Salir de películas aleatorias si está activa
+        if (isRandomMoviesView) {
+            toggleRandomMovies();
+        }
+
+        // Salir de TOP 10 si está activo
+        if (isTop10View) {
+            toggleTop10();
+        }
+
+        elements.filtersSection.hidden = true;
+
+        elements.catalogSection.hidden = true;
+
+        elements.myCollectionSection.hidden = false;
+
+        renderCollection();
+
+        elements.myCollectionSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    // =====================================================
+    // VOLVER AL CATÁLOGO DESDE MI COLECCIÓN
+    // =====================================================
+
+    function closeMyCollection() {
+
+        elements.myCollectionSection.hidden = true;
+
+        elements.filtersSection.hidden = false;
+
+        elements.catalogSection.hidden = false;
+
+        elements.filtersSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+	
     function openDetails(movie) {
 		
 		currentDetailMovie = movie;
+		
+		updateCollectionButtons();
+		elements.collectionFeedback.hidden = true;
 
 		elements.addToCart.textContent = "🛒 Agregar al Carrito";
 		elements.addToCart.classList.remove("added");
@@ -3149,7 +3600,12 @@
         elements.detailModal.setAttribute("aria-hidden", "true");
 
         document.body.style.overflow = "";
-
+		
+		// Actualizar Mi Colección si está abierta
+		if (!elements.myCollectionSection.hidden) {
+			renderCollection();
+		}
+		
     }
 
 
@@ -3403,6 +3859,54 @@
 		
 		elements.searchTrailer.addEventListener("click", searchMovieTrailer);
 		
+		// =====================================================
+        // EVENTOS DE NAVEGACIÓN DE MI COLECCIÓN
+        // =====================================================
+
+        // Abrir Mi Colección
+        elements.myCollectionButton.addEventListener(
+            "click",
+            openMyCollection
+        );
+
+        // Volver al catálogo
+        elements.backFromCollection.addEventListener(
+            "click",
+            closeMyCollection
+        );
+
+        // Cambiar entre categorías
+        elements.collectionTabs.addEventListener("click", event => {
+
+            const tab = event.target.closest(".collection-tab");
+
+            if (!tab) return;
+
+            currentCollectionType = tab.dataset.collectionType;
+
+            renderCollection();
+
+        });
+		
+		// =====================================================
+        // EVENTOS DE MI COLECCIÓN - FICHA DE DETALLES
+        // =====================================================
+
+        elements.collectionFavoriteButton.addEventListener(
+            "click",
+            () => toggleCollection("favorites")
+        );
+
+        elements.collectionWatchedButton.addEventListener(
+            "click",
+            () => toggleCollection("watched")
+        );
+
+        elements.collectionObtainedButton.addEventListener(
+            "click",
+            () => toggleCollection("obtained")
+        );
+		
 		elements.pricesPdfButton.addEventListener("click", openPricesPDF);
 
 		// Eliminar títulos individualmente
@@ -3474,6 +3978,8 @@
     async function initialize() {
 		
 		loadCart();
+		
+		loadCollection();
 		
         configureBrand();
 
