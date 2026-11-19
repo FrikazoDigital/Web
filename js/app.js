@@ -26,6 +26,8 @@
 	
 	// PELÍCULAS Y SERIES DEL BANNER
 	let bannerMovies = [];
+	let qualityPopup = null;
+	let qualityPopupEventsConnected = false;
 	
 	// =====================================================
 	// CARRITO DE COMPRAS
@@ -319,14 +321,24 @@
 				const poster = getMoviePoster(movie);
 
 				if (poster) {
-
 					const image = document.createElement("img");
-
 					image.src = poster;
 					image.alt = movie.Titulo;
-
 					posterContainer.appendChild(image);
 
+					// INDICADOR DE AMPLIACIÓN
+					const zoomHint = document.createElement("span");
+					zoomHint.className = "poster-zoom-hint";
+					zoomHint.innerHTML = `
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<circle cx="10.8" cy="10.8" r="6.8"></circle>
+							<path d="m16 16 5 5"></path>
+							<path d="M10.8 7.5v6.6"></path>
+							<path d="M7.5 10.8h6.6"></path>
+						</svg>
+					`;
+
+					posterContainer.appendChild(zoomHint);
 				} else {
 
 					posterContainer.textContent = "🎬";
@@ -371,9 +383,11 @@
 
 			removeButton.className = "remove-cart-item";
 
-			removeButton.textContent = "🗑";
+			removeButton.textContent = "×";
 
-			removeButton.title = "Eliminar del carrito";
+			removeButton.title = "Eliminar del Carrito";
+
+			removeButton.setAttribute("aria-label", "Eliminar " + item.title);
 
 			removeButton.dataset.cartKey = item.key;
 
@@ -2877,7 +2891,6 @@
 			"Observaciones"
 		];
 
-		// Iconos para los títulos de los bloques
 		const fieldIcons = {
 			"Titulo Ingles": "🌎",
 			"Imagen": "🖼️",
@@ -2912,7 +2925,6 @@
 
 			label.className = "detail-field-label";
 
-			// Agregar icono cuando el campo lo tenga definido
 			if (fieldIcons[key]) {
 
 				const icon = document.createElement("span");
@@ -2944,13 +2956,167 @@
 			}
 
 			if (key === "Calidad Visual") {
+
 				content.classList.add("quality-" + normalize(value));
+
+				field.classList.add("quality-field-trigger");
+				field.setAttribute("role", "button");
+				field.setAttribute("tabindex", "0");
+				field.setAttribute("aria-label", "Ver todos los niveles de calidad visual");
+
+				field.addEventListener("click", () => {
+					toggleQualityPopup(field, value);
+				});
+
+				field.addEventListener("keydown", event => {
+
+					if (event.key === "Enter" || event.key === " ") {
+						event.preventDefault();
+						toggleQualityPopup(field, value);
+					}
+
+				});
+
 			}
 
 			field.appendChild(label);
 			field.appendChild(content);
 
 			elements.detailFields.appendChild(field);
+
+		});
+
+		connectQualityPopupEvents();
+
+	}
+	
+	function toggleQualityPopup(field, currentQuality) {
+
+		if (qualityPopup) {
+			closeQualityPopup();
+			return;
+		}
+
+		const qualityLevels = [
+			"Muy Excelente",
+			"Excelente",
+			"Muy Buena",
+			"Buena",
+			"Buena Baja",
+			"Regular Alta",
+			"Regular",
+			"Medio Mala",
+			"Malisima",
+			"Lo Peor"
+		];
+
+		qualityPopup = document.createElement("div");
+		qualityPopup.className = "quality-level-popup";
+
+		const heading = document.createElement("div");
+		heading.className = "quality-popup-heading";
+		heading.textContent = "Niveles de Calidad Visual";
+
+		qualityPopup.appendChild(heading);
+
+		qualityLevels.forEach(level => {
+
+			const option = document.createElement("div");
+
+			option.className = "quality-level-option";
+
+			if (normalize(level) === normalize(currentQuality)) {
+
+				option.classList.add("quality-current");
+
+				const qualityValue = document.createElement("span");
+
+				qualityValue.className =
+					"detail-field-value quality-" + normalize(level);
+
+				qualityValue.textContent = level;
+
+				option.appendChild(qualityValue);
+
+			} else {
+
+				option.textContent = level;
+
+			}
+
+			qualityPopup.appendChild(option);
+
+		});
+
+		document.body.appendChild(qualityPopup);
+
+		const rect = field.getBoundingClientRect();
+
+		const popupRect = qualityPopup.getBoundingClientRect();
+
+		let left = rect.left;
+		let top = rect.bottom + 8;
+
+		if (left + popupRect.width > window.innerWidth - 12) {
+			left = window.innerWidth - popupRect.width - 12;
+		}
+
+		if (left < 12) {
+			left = 12;
+		}
+
+		if (top + popupRect.height > window.innerHeight - 12) {
+			top = rect.top - popupRect.height - 8;
+		}
+
+		if (top < 12) {
+			top = 12;
+		}
+
+		qualityPopup.style.left = left + "px";
+		qualityPopup.style.top = top + "px";
+
+	}
+
+	function closeQualityPopup() {
+
+		if (qualityPopup) {
+			qualityPopup.remove();
+			qualityPopup = null;
+		}
+
+	}
+
+	function connectQualityPopupEvents() {
+
+		if (qualityPopupEventsConnected) {
+			return;
+		}
+
+		qualityPopupEventsConnected = true;
+
+		document.addEventListener("click", event => {
+
+			if (!qualityPopup) {
+				return;
+			}
+
+			if (
+				qualityPopup.contains(event.target) ||
+				event.target.closest(".quality-field-trigger")
+			) {
+				return;
+			}
+
+			closeQualityPopup();
+
+		});
+
+		document.addEventListener("keydown", event => {
+
+			if (event.key === "Escape" && qualityPopup) {
+				closeQualityPopup();
+			}
 
 		});
 
@@ -2962,7 +3128,9 @@
     // =====================================================
 
     function closeDetails() {
-
+		
+		closeQualityPopup();
+		
         elements.detailModal.classList.remove("open");
 
         elements.detailModal.setAttribute("aria-hidden", "true");

@@ -985,6 +985,112 @@ button {
 }
 
 /* =========================================================
+   VENTANA INFORMATIVA - NIVELES DE CALIDAD VISUAL
+   ========================================================= */
+
+.quality-field-trigger {
+    cursor: pointer;
+    transition: background 0.2s ease, border 0.2s ease;
+}
+
+.quality-field-trigger:hover {
+    background: #242d3b;
+    outline: 1px solid #465268;
+}
+
+.quality-field-trigger:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Ventana emergente */
+
+.quality-level-popup {
+    position: fixed;
+    z-index: 11000;
+
+    width: 245px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+
+    overflow-y: auto;
+
+    padding: 12px;
+
+    background: #171c26;
+    border: 1px solid #465268;
+    border-radius: 10px;
+
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65);
+
+    animation: qualityPopupAppear 0.18s ease;
+}
+
+/* Encabezado */
+
+.quality-popup-heading {
+    margin-bottom: 10px;
+    padding-bottom: 9px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+}
+
+/* Niveles */
+
+.quality-level-option {
+    display: flex;
+    align-items: center;
+
+    min-height: 32px;
+    margin-bottom: 5px;
+    padding: 6px 10px;
+
+    background: #303640;
+    border: 1px solid #424b59;
+    border-radius: 6px;
+
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 650;
+	
+	width: 100%;
+}
+
+/* Nivel actual */
+
+.quality-level-option.quality-current {
+    background: transparent;
+    border: none;
+    padding: 3px 0;
+}
+
+.quality-level-option .detail-field-value {
+    display: block;
+    width: 100%;
+    margin: 0;
+    text-align: left;
+}
+
+/* Animación */
+
+@keyframes qualityPopupAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
    FILTROS DE SELECCIÓN MÚLTIPLE
    ========================================================= */
 
@@ -1818,7 +1924,8 @@ button {
 /* PÓSTER */
 
 .cart-item-poster {
-    width: 65px;
+    position: relative;
+	width: 65px;
     min-width: 65px;
     height: 92px;
     display: flex;
@@ -1861,25 +1968,40 @@ button {
 /* BOTÓN ELIMINAR */
 
 .remove-cart-item {
-    width: 39px;
-    height: 39px;
-    min-width: 39px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #714044;
+
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+	
+	margin-right: 24px;
+	
+    padding: 0;
+
+    background: #D93636;
+    border: 1px solid #B92B2B;
     border-radius: 7px;
-    background: rgba(217, 83, 79, .10);
-    color: #FF7772;
-    font-size: 1.05rem;
+
+    color: #FFFFFF;
+
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+
     cursor: pointer;
-    transition: all .2s ease;
+
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .remove-cart-item:hover {
-    background: #D9534F;
-    border-color: #D9534F;
-    color: #FFFFFF;
+    background: #B92B2B;
+    transform: scale(1.08);
+}
+
+.remove-cart-item:active {
+    transform: scale(0.95);
 }
 
 /* CARRITO VACÍO */
@@ -2478,6 +2600,21 @@ button {
 .movie-banner-card img {
     -webkit-user-drag: none;
     user-select: none;
+}
+
+/* LUPA EN LOS PÓSTERES DEL CARRITO */
+
+.cart-item-poster .poster-zoom-hint {
+    width: 30px;
+    height: 30px;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+}
+
+.cart-item-poster .poster-zoom-hint svg {
+    width: 17px;
+    height: 17px;
 }
 
 
