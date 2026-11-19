@@ -2459,7 +2459,7 @@
 
 		} else {
 
-			elements.top10Button.textContent = "★ TOP 10";
+			elements.top10Button.textContent = "🥇 TOP 10";
 			elements.top10Button.classList.remove("active");
 			
 			// Restaurar buscador y filtros.
@@ -2549,7 +2549,7 @@
 		if (topPosition > 0) {
 			const topBadge = document.createElement("span");
 			topBadge.className = "top-badge";
-			topBadge.textContent = `★ TOP ${topPosition}`;
+			topBadge.textContent = `🥇 TOP ${topPosition}`;
 			posterContainer.appendChild(topBadge);
 		}
 
