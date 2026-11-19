@@ -80,7 +80,6 @@
 		
 		// PELÍCULAS ALEATORIAS
 		randomMoviesButton: document.getElementById("randomMoviesButton"),
-		
 		randomMoviesSection: document.getElementById("randomMoviesSection"),
 		randomGenreFilter: document.getElementById("randomGenreFilter"),
 		randomYearFilter: document.getElementById("randomYearFilter"),
@@ -1888,7 +1887,7 @@
 			quality: getSelectedFilterValues("quality")
 		};
 
-		return allMovies.filter(movie => {
+		return getMoviesForCurrentView().filter(movie => {
 
 			const searchValues = [
 				movie.Titulo,
@@ -1948,47 +1947,55 @@
 		// Eliminar selecciones que ya no tienen resultados.
 		// Se repite para mantener todos los filtros compatibles.
 
-		let changed = true;
+		// En el catálogo se mantienen las reglas originales.
+		// En Mi Colección se conservan las selecciones
+		// aunque no existan resultados en la categoría activa.
 
-		while (changed) {
+		if (elements.myCollectionSection.hidden) {
 
-			changed = false;
+			let changed = true;
 
-			filters.forEach(filter => {
+			while (changed) {
 
-				const selected = getSelectedFilterValues(filter.key);
+				changed = false;
 
-				if (selected.length === 0) return;
+				filters.forEach(filter => {
 
-				const available = getMoviesForFilter(filter.key)
-					.map(filter.field)
-					.filter(value =>
-						value !== null &&
-						value !== undefined &&
-						String(value).trim() !== ""
-					)
-					.map(value => String(value));
+					const selected = getSelectedFilterValues(filter.key);
 
-				selected.forEach(value => {
+					if (selected.length === 0) return;
 
-					if (!available.includes(value)) {
+					const available = getMoviesForFilter(filter.key)
+						.map(filter.field)
+						.filter(value =>
+							value !== null &&
+							value !== undefined &&
+							String(value).trim() !== ""
+						)
+						.map(value => String(value));
 
-						const checkbox = Array.from(
-							filter.element.querySelectorAll(
-								'input[type="checkbox"]'
-							)
-						).find(input => input.value === value);
+					selected.forEach(value => {
 
-						if (checkbox) {
-							checkbox.checked = false;
-							changed = true;
+						if (!available.includes(value)) {
+
+							const checkbox = Array.from(
+								filter.element.querySelectorAll(
+									'input[type="checkbox"]'
+								)
+							).find(input => input.value === value);
+
+							if (checkbox) {
+								checkbox.checked = false;
+								changed = true;
+							}
+
 						}
 
-					}
+					});
 
 				});
 
-			});
+			}
 
 		}
 
@@ -2011,6 +2018,20 @@
 						.map(value => String(value))
 				)
 			];
+
+			// Conservar las opciones seleccionadas en Mi Colección,
+			// aunque no estén disponibles en la categoría actual.
+
+			if (!elements.myCollectionSection.hidden) {
+
+				values = [
+					...new Set([
+						...values,
+						...selected
+					])
+				];
+
+			}
 
 			values.sort(filter.sort);
 
@@ -2128,7 +2149,7 @@
 		const selectedLanguage = getSelectedFilterValues("language");
 		const selectedQuality = getSelectedFilterValues("quality");
 
-		filteredMovies = allMovies.filter(movie => {
+		filteredMovies = getMoviesForCurrentView().filter(movie => {
 
 			const searchValues = [
 				movie.Titulo,
@@ -2174,7 +2195,11 @@
 
 		currentPage = 1;
 
-		renderCatalog();
+		if (!elements.myCollectionSection.hidden) {
+			renderCollection();
+		} else {
+			renderCatalog();
+		}
 
 	}
 
@@ -2898,6 +2923,29 @@
 		);
 
 	}
+	
+	// =====================================================
+	// OBTENER PELÍCULAS DE LA VISTA ACTUAL
+	// =====================================================
+
+	function getMoviesForCurrentView() {
+
+		// Si Mi Colección está abierta, obtener únicamente
+		// las películas de la categoría seleccionada.
+
+		if (!elements.myCollectionSection.hidden) {
+
+			return allMovies.filter(movie =>
+				isInCollection(currentCollectionType, movie)
+			);
+
+		}
+
+		// Si estamos en el catálogo, devolver todas.
+
+		return allMovies;
+
+	}
 
 
 	// Actualizar el estado visual de los botones de la ficha
@@ -2995,9 +3043,9 @@
 		// Actualizar los indicadores de los pósteres.
 		renderCatalog();
 
-		// Si Mi Colección está abierta, actualizar también sus tarjetas.
+		// Si Mi Colección está abierta, recalcular sus resultados.
 		if (!elements.myCollectionSection.hidden) {
-			renderCollection();
+			filterMovies();
 		}
 		
 		elements.collectionFeedback.textContent = message;
@@ -3012,87 +3060,108 @@
 
     function renderCollection() {
 
-        const categories = {
-            favorites: {
-                name: "Favoritas",
-                info: "Tus Películas y Series Favoritas.",
-                emptyTitle: "Todavía No Tienes Favoritas",
-                emptyText: "Explora el Catálogo y Agrega las Películas y Series que te Interesen."
-            },
-            watched: {
-                name: "Vistas",
-                info: "Películas y Series que Ya Has Visto.",
-                emptyTitle: "Todavía No Tienes Películas Vistas",
-                emptyText: "Cuando Veas una Película o Serie, Agrégala a esta Categoría."
-            },
-            obtained: {
-                name: "Obtenidas",
-                info: "Películas y Series que Ya Has Obtenido.",
-                emptyTitle: "Todavía No Tienes Películas Obtenidas",
-                emptyText: "Agrega Aquí las Películas y Series que Ya Has Obtenido."
-            }
-        };
+		const categories = {
+			favorites: {
+				name: "Favoritas",
+				info: "Tus Películas y Series Favoritas.",
+				emptyTitle: "Todavía No Tienes Favoritas",
+				emptyText: "Explora el Catálogo y Agrega las Películas y Series que te Interesen."
+			},
+			watched: {
+				name: "Vistas",
+				info: "Películas y Series que Ya Has Visto.",
+				emptyTitle: "Todavía No Tienes Películas Vistas",
+				emptyText: "Cuando Veas una Película o Serie, Agrégala a esta Categoría."
+			},
+			obtained: {
+				name: "Obtenidas",
+				info: "Películas y Series que Ya Has Obtenido.",
+				emptyTitle: "Todavía No Tienes Películas Obtenidas",
+				emptyText: "Agrega Aquí las Películas y Series que Ya Has Obtenido."
+			}
+		};
 
-        const category = categories[currentCollectionType];
+		const category = categories[currentCollectionType];
 
-        // Actualizar información de la categoría
-        elements.collectionInfo.textContent = category.info;
+		// Actualizar información de la categoría
+		elements.collectionInfo.textContent = category.info;
 
-        // Actualizar pestaña activa
-        elements.collectionTabs.querySelectorAll(".collection-tab")
-            .forEach(tab => {
+		// Actualizar pestaña activa
+		elements.collectionTabs.querySelectorAll(".collection-tab")
+			.forEach(tab => {
 
-                tab.classList.toggle(
-                    "active",
-                    tab.dataset.collectionType === currentCollectionType
-                );
+				tab.classList.toggle(
+					"active",
+					tab.dataset.collectionType === currentCollectionType
+				);
 
-            });
+			});
 
-        // Obtener títulos guardados
-        const savedItems = collectionItems[currentCollectionType];
+		// Obtener títulos guardados
+		const savedItems = collectionItems[currentCollectionType];
 
-        // Relacionar los títulos guardados con el catálogo
-        const movies = savedItems
-            .map(item => allMovies.find(movie =>
-                normalize(movie.Titulo) === item.key
-            ))
-            .filter(Boolean);
+		// Relacionar los títulos guardados con el catálogo
+		const savedMovies = savedItems
+			.map(item => allMovies.find(movie =>
+				normalize(movie.Titulo) === item.key
+			))
+			.filter(Boolean);
 
-        // Limpiar tarjetas anteriores
-        elements.collectionGrid.innerHTML = "";
+		// Obtener los resultados filtrados de la colección activa
+		const movies = filteredMovies.filter(movie =>
+			isInCollection(currentCollectionType, movie)
+		);
 
-        // Mostrar mensaje si no hay resultados
-        if (movies.length === 0) {
+		// Limpiar tarjetas anteriores
+		elements.collectionGrid.innerHTML = "";
 
-            elements.emptyCollection.hidden = false;
+		// Determinar si se debe mostrar un mensaje
+		if (movies.length === 0) {
 
-            elements.emptyCollectionTitle.textContent =
-                savedItems.length === 0
-                    ? category.emptyTitle
-                    : "No Hay Títulos Disponibles";
+			elements.emptyCollection.hidden = false;
 
-            elements.emptyCollectionText.textContent =
-                savedItems.length === 0
-                    ? category.emptyText
-                    : "Los Títulos Guardados No Se Encuentran Actualmente en el Catálogo.";
+			if (savedItems.length === 0) {
 
-            return;
+				elements.emptyCollectionTitle.textContent =
+					category.emptyTitle;
 
-        }
+				elements.emptyCollectionText.textContent =
+					category.emptyText;
 
-        elements.emptyCollection.hidden = true;
+			} else if (savedMovies.length === 0) {
 
-        // Mostrar las tarjetas
-        movies.forEach(movie => {
+				elements.emptyCollectionTitle.textContent =
+					"No Hay Títulos Disponibles";
 
-            elements.collectionGrid.appendChild(
-                createMovieCard(movie)
-            );
+				elements.emptyCollectionText.textContent =
+					"Los Títulos Guardados No Se Encuentran Actualmente en el Catálogo.";
 
-        });
+			} else {
 
-    }
+				elements.emptyCollectionTitle.textContent =
+					"No Encontramos Resultados";
+
+				elements.emptyCollectionText.textContent =
+					"Intenta Cambiar la Búsqueda o los Filtros Seleccionados.";
+
+			}
+
+			return;
+
+		}
+
+		elements.emptyCollection.hidden = true;
+
+		// Mostrar las tarjetas
+		movies.forEach(movie => {
+
+			elements.collectionGrid.appendChild(
+				createMovieCard(movie)
+			);
+
+		});
+
+	}
 
 
     // =====================================================
@@ -3100,31 +3169,22 @@
     // =====================================================
 
     function openMyCollection() {
+		if (isRandomMoviesView) toggleRandomMovies();
+		if (isTop10View) toggleTop10();
 
-        // Salir de películas aleatorias si está activa
-        if (isRandomMoviesView) {
-            toggleRandomMovies();
-        }
+		elements.filtersSection.hidden = false;
+		elements.filtersSection.querySelector(".filters-heading").hidden = true;
 
-        // Salir de TOP 10 si está activo
-        if (isTop10View) {
-            toggleTop10();
-        }
+		elements.catalogSection.hidden = true;
+		elements.myCollectionSection.hidden = false;
 
-        elements.filtersSection.hidden = true;
+		filterMovies();
 
-        elements.catalogSection.hidden = true;
-
-        elements.myCollectionSection.hidden = false;
-
-        renderCollection();
-
-        elements.myCollectionSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-    }
+		elements.myCollectionSection.scrollIntoView({
+			behavior: "smooth",
+			block: "start"
+		});
+	}
 
 
     // =====================================================
@@ -3132,19 +3192,16 @@
     // =====================================================
 
     function closeMyCollection() {
+		elements.myCollectionSection.hidden = true;
+		elements.filtersSection.hidden = false;
+		elements.filtersSection.querySelector(".filters-heading").hidden = false;
+		elements.catalogSection.hidden = false;
 
-        elements.myCollectionSection.hidden = true;
-
-        elements.filtersSection.hidden = false;
-
-        elements.catalogSection.hidden = false;
-
-        elements.filtersSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-    }
+		elements.filtersSection.scrollIntoView({
+			behavior: "smooth",
+			block: "start"
+		});
+	}
 	
     function openDetails(movie) {
 		
@@ -3973,18 +4030,19 @@
 
 		});
 		
-		elements.sortFilter.addEventListener(
-			"change",
-			() => {
+		elements.sortFilter.addEventListener("change", () => {
 
-				sortMovies();
+			sortMovies();
 
-				currentPage = 1;
+			currentPage = 1;
 
+			if (!elements.myCollectionSection.hidden) {
+				renderCollection();
+			} else {
 				renderCatalog();
-
 			}
-		);
+
+		});
 
 		// Boton TOP 10
 		
@@ -4048,15 +4106,15 @@
         // Cambiar entre categorías
         elements.collectionTabs.addEventListener("click", event => {
 
-            const tab = event.target.closest(".collection-tab");
+			const tab = event.target.closest(".collection-tab");
 
-            if (!tab) return;
+			if (!tab) return;
 
-            currentCollectionType = tab.dataset.collectionType;
+			currentCollectionType = tab.dataset.collectionType;
 
-            renderCollection();
+			filterMovies();
 
-        });
+		});
 		
 		// =====================================================
         // EVENTOS DE MI COLECCIÓN - FICHA DE DETALLES
