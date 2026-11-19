@@ -3718,16 +3718,56 @@
 		}
 
 		const qualityLevels = [
-			"Muy Excelente",
-			"Excelente",
-			"Muy Buena",
-			"Buena",
-			"Buena Baja",
-			"Regular Alta",
-			"Regular",
-			"Medio Mala",
-			"Malisima",
-			"Lo Peor"
+			{
+				level: 10,
+				quality: "Muy Excelente",
+				image: "Blu Ray - Full HD - 1080p"
+			},
+			{
+				level: 9,
+				quality: "Excelente",
+				image: "Blu Ray - HD - 720p"
+			},
+			{
+				level: 8,
+				quality: "Muy Buena",
+				image: "DVD - 480p"
+			},
+			{
+				level: 7,
+				quality: "Buena",
+				image: "VGA"
+			},
+			{
+				level: 6,
+				quality: "Buena Baja",
+				image: "VGARip"
+			},
+			{
+				level: 5,
+				quality: "Regular Alta",
+				image: "HVGA"
+			},
+			{
+				level: 4,
+				quality: "Regular",
+				image: "HVGA"
+			},
+			{
+				level: 3,
+				quality: "Medio Mala",
+				image: "HVGA"
+			},
+			{
+				level: 2,
+				quality: "Malisima",
+				image: "HVGA"
+			},
+			{
+				level: 1,
+				quality: "Lo Peor",
+				image: "HVGA"
+			}
 		];
 
 		qualityPopup = document.createElement("div");
@@ -3739,34 +3779,46 @@
 
 		qualityPopup.appendChild(heading);
 
-		qualityLevels.forEach(level => {
+		const table = document.createElement("div");
+		table.className = "quality-popup-table";
 
-			const option = document.createElement("div");
+		qualityLevels.forEach(item => {
 
-			option.className = "quality-level-option";
+			const row = document.createElement("div");
+			row.className = "quality-popup-row";
 
-			if (normalize(level) === normalize(currentQuality)) {
+			const levelCell = document.createElement("div");
+			levelCell.className = "quality-popup-cell";
 
-				option.classList.add("quality-current");
+			const qualityCell = document.createElement("div");
+			qualityCell.className = "quality-popup-cell";
 
-				const qualityValue = document.createElement("span");
+			const imageCell = document.createElement("div");
+			imageCell.className = "quality-popup-cell";
 
-				qualityValue.className =
-					"detail-field-value quality-" + normalize(level);
+			const qualityClass = "quality-" + normalize(item.quality);
 
-				qualityValue.textContent = level;
+			[levelCell, qualityCell, imageCell].forEach(cell => {
+				cell.classList.add(qualityClass);
+			});
 
-				option.appendChild(qualityValue);
+			levelCell.textContent = item.level;
+			qualityCell.textContent = item.quality;
+			imageCell.textContent = item.image;
 
-			} else {
-
-				option.textContent = level;
-
+			if (normalize(item.quality) === normalize(currentQuality)) {
+				row.classList.add("quality-current");
 			}
 
-			qualityPopup.appendChild(option);
+			row.appendChild(levelCell);
+			row.appendChild(qualityCell);
+			row.appendChild(imageCell);
+
+			table.appendChild(row);
 
 		});
+
+		qualityPopup.appendChild(table);
 
 		document.body.appendChild(qualityPopup);
 
