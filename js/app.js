@@ -952,9 +952,9 @@
 
             const shuffled = shuffleBannerArray(group.movies);
 
-            selectedMovies.push(
-                ...shuffled.slice(0, 2)
-            );
+            const cantidad = CONFIG.BANNER_MOVIES_PER_CATEGORY || 2;
+
+			selectedMovies.push(...shuffled.slice(0, cantidad));
 
         });
 
@@ -1018,7 +1018,23 @@
             poster.appendChild(placeholder);
 
         }
+		
+		// ETIQUETA NUEVO
 
+        if (esNuevo(movie)) {
+
+            const newBadge = document.createElement("span");
+
+            newBadge.className =
+                "new-badge new-badge-" +
+                (CONFIG.NEW_BADGE_STYLE || "ribbon");
+
+            newBadge.textContent = "NUEVO";
+
+            poster.appendChild(newBadge);
+
+        }
+		
         // TÍTULO
         const title = document.createElement("span");
 

@@ -53,6 +53,8 @@ window.CATALOGO_CONFIG = {
 	// "animated"	Animada
 	NEW_BADGE_STYLE: "animated",
 	
+	BANNER_MOVIES_PER_CATEGORY: 4,
+	
 	// Numero WhatsApp
 	WHATSAPP_NUMBER: "573006318594",
 	
