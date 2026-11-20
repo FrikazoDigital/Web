@@ -19,6 +19,8 @@
     let filteredMovies = [];
 
     let currentPage = 1;
+	let currentCollectionPage = 1;
+	
 	let isTop10View = false;
 	let isRandomMoviesView = false;
 
@@ -159,6 +161,7 @@
 		collectionInfo: document.getElementById("collectionInfo"),
 		collectionTabs: document.querySelector(".collection-tabs"),
 		collectionGrid: document.getElementById("collectionGrid"),
+		collectionPagination: document.getElementById("collectionPagination"),
 		emptyCollection: document.getElementById("emptyCollection"),
 		emptyCollectionTitle: document.getElementById("emptyCollectionTitle"),
 		emptyCollectionText: document.getElementById("emptyCollectionText"),
@@ -2376,9 +2379,16 @@
 		currentPage = 1;
 
 		if (!elements.myCollectionSection.hidden) {
+
+			// Reiniciar paginación de Mi Colección
+			currentCollectionPage = 1;
+
 			renderCollection();
+
 		} else {
+
 			renderCatalog();
+
 		}
 
 	}
@@ -3268,20 +3278,20 @@
 		const categories = {
 			favorites: {
 				name: "Favoritas",
-				info: "Tus Películas y Series Favoritas.",
-				emptyTitle: "Todavía No Tienes Favoritas",
+				info: "Películas y Series Favoritas.",
+				emptyTitle: "Todavía No Tienes Películas y Series Favoritas",
 				emptyText: "Explora el Catálogo y Agrega las Películas y Series que te Interesen."
 			},
 			watched: {
 				name: "Vistas",
 				info: "Películas y Series que Ya Has Visto.",
-				emptyTitle: "Todavía No Tienes Películas Vistas",
+				emptyTitle: "Todavía No Tienes Películas y Series Vistas",
 				emptyText: "Cuando Veas una Película o Serie, Agrégala a esta Categoría."
 			},
 			obtained: {
 				name: "Obtenidas",
 				info: "Películas y Series que Ya Has Obtenido.",
-				emptyTitle: "Todavía No Tienes Películas Obtenidas",
+				emptyTitle: "Todavía No Tienes Películas y Series Obtenidas",
 				emptyText: "Agrega Aquí las Películas y Series que Ya Has Obtenido."
 			}
 		};
@@ -3320,6 +3330,9 @@
 		// Limpiar tarjetas anteriores
 		elements.collectionGrid.innerHTML = "";
 
+		// Limpiar paginación anterior
+		elements.collectionPagination.innerHTML = "";
+
 		// Determinar si se debe mostrar un mensaje
 		if (movies.length === 0) {
 
@@ -3357,8 +3370,24 @@
 
 		elements.emptyCollection.hidden = true;
 
-		// Mostrar las tarjetas
-		movies.forEach(movie => {
+		// Calcular cantidad de páginas
+		const totalPages = Math.ceil(movies.length / PAGE_SIZE);
+
+		// Asegurar que la página actual sea válida
+		if (currentCollectionPage > totalPages) {
+			currentCollectionPage = totalPages;
+		}
+
+		// Determinar los elementos de la página actual
+		const startIndex = (currentCollectionPage - 1) * PAGE_SIZE;
+
+		const pageMovies = movies.slice(
+			startIndex,
+			startIndex + PAGE_SIZE
+		);
+
+		// Mostrar las tarjetas de la página actual
+		pageMovies.forEach(movie => {
 
 			elements.collectionGrid.appendChild(
 				createMovieCard(movie)
@@ -3366,8 +3395,101 @@
 
 		});
 
-	}
+		// Generar botones de paginación
+		renderCollectionPagination(totalPages);
 
+	}
+	
+	// =====================================================
+	// CREAR PAGINACIÓN DE MI COLECCIÓN
+	// =====================================================
+
+	function renderCollectionPagination(totalPages) {
+
+		elements.collectionPagination.innerHTML = "";
+
+		if (totalPages <= 1) {
+			return;
+		}
+
+		function createButton(label, page, active = false, disabled = false) {
+
+			const button = document.createElement("button");
+
+			button.type = "button";
+			button.textContent = label;
+
+			if (active) {
+				button.classList.add("active");
+				button.setAttribute("aria-current", "page");
+			}
+
+			button.disabled = disabled;
+
+			button.addEventListener("click", () => {
+
+				currentCollectionPage = page;
+
+				renderCollection();
+
+				window.scrollTo({
+					top: elements.collectionGrid.offsetTop - 100,
+					behavior: "smooth"
+				});
+
+			});
+
+			elements.collectionPagination.appendChild(button);
+
+		}
+
+		createButton(
+			"‹",
+			currentCollectionPage - 1,
+			false,
+			currentCollectionPage === 1
+		);
+
+		for (let page = 1; page <= totalPages; page++) {
+
+			// Mostrar páginas cercanas y extremos
+			if (
+				page === 1 ||
+				page === totalPages ||
+				Math.abs(page - currentCollectionPage) <= 2
+			) {
+
+				createButton(
+					page,
+					page,
+					page === currentCollectionPage
+				);
+
+			} else if (
+				page === currentCollectionPage - 3 ||
+				page === currentCollectionPage + 3
+			) {
+
+				const dots = document.createElement("span");
+
+				dots.textContent = "...";
+				dots.style.color = "var(--text-muted)";
+				dots.style.padding = "0 4px";
+
+				elements.collectionPagination.appendChild(dots);
+
+			}
+
+		}
+
+		createButton(
+			"›",
+			currentCollectionPage + 1,
+			false,
+			currentCollectionPage === totalPages
+		);
+
+	}
 
     // =====================================================
     // ABRIR MI COLECCIÓN
@@ -4365,13 +4487,16 @@
         );
 
         // Cambiar entre categorías
-        elements.collectionTabs.addEventListener("click", event => {
+		elements.collectionTabs.addEventListener("click", event => {
 
 			const tab = event.target.closest(".collection-tab");
 
 			if (!tab) return;
 
 			currentCollectionType = tab.dataset.collectionType;
+
+			// Reiniciar paginación de Mi Colección
+			currentCollectionPage = 1;
 
 			filterMovies();
 
