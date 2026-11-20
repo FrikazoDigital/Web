@@ -2840,6 +2840,50 @@ button {
     font-size: 0.95rem;
 }
 
+/* BOTONES EXPORTAR E IMPORTAR */
+
+.collection-heading-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.export-collection-button,
+.import-collection-button {
+    padding: 10px 16px;
+    border-radius: 7px;
+    font-weight: 800;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* EXPORTAR - VERDE */
+
+.export-collection-button {
+    background: linear-gradient(135deg, #19B76A, #087C45);
+    border: 1px solid #087C45;
+}
+
+.export-collection-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 183, 106, 0.35);
+}
+
+/* IMPORTAR - MORADO */
+
+.import-collection-button {
+    background: linear-gradient(135deg, #9B59D0, #663399);
+    border: 1px solid #663399;
+}
+
+.import-collection-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(155, 89, 208, 0.35);
+}
+
 /* BOTÓN VOLVER AL CATÁLOGO */
 
 .back-from-collection {
@@ -3044,7 +3088,20 @@ button {
         align-items: stretch;
         gap: 15px;
     }
+	
+	.collection-heading-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
 
+    .export-collection-button,
+    .import-collection-button {
+        width: 100%;
+        padding: 10px 7px;
+        font-size: 0.82rem;
+    }
+	
     .back-from-collection {
         width: 100%;
     }
@@ -3285,6 +3342,12 @@ button {
     color: #70D99A;
     font-size: 12px;
     font-weight: 700;
+}
+
+/* MENSAJE DE IMPORTACIÓN EN MI COLECCIÓN */
+
+#collectionImportFeedback {
+    margin-bottom: 20px;
 }
 
 .collection-feedback[hidden] {

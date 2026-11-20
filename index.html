@@ -484,16 +484,50 @@
                     </p>
                 </div>
 
-                <button
-                    type="button"
-                    id="backFromCollection"
-                    class="back-from-collection"
-                >
-                    ↩ Volver al Catálogo
-                </button>
+                <div class="collection-heading-actions">
+					
+					<button
+                        type="button"
+                        id="backFromCollection"
+                        class="back-from-collection"
+                    >
+                        ↩ Volver al Catálogo
+                    </button>
+					
+                    <button
+                        type="button"
+                        id="exportCollectionButton"
+                        class="export-collection-button"
+                    >
+                        📥 Exportar
+                    </button>
+
+                    <button
+                        type="button"
+                        id="importCollectionButton"
+                        class="import-collection-button"
+                    >
+                        📤 Importar
+                    </button>
+
+                    <input
+                        type="file"
+                        id="importCollectionFile"
+                        accept=".json,application/json"
+                        hidden
+                    >
+					
+                </div>
 
             </div>
-
+			
+			<!-- MENSAJE DE CONFIRMACIÓN DE MI COLECCIÓN -->
+            <p
+                id="collectionImportFeedback"
+                class="collection-feedback"
+                hidden
+            ></p>
+			
             <!-- CATEGORÍAS DE LA COLECCIÓN -->
             <div class="collection-tabs">
 

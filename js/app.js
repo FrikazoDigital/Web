@@ -147,6 +147,11 @@
         collectionWatchedButton: document.getElementById("collectionWatchedButton"),
         collectionObtainedButton: document.getElementById("collectionObtainedButton"),
         collectionFeedback: document.getElementById("collectionFeedback"),
+		collectionImportFeedback: document.getElementById("collectionImportFeedback"),
+		
+		exportCollectionButton: document.getElementById("exportCollectionButton"),
+		importCollectionButton: document.getElementById("importCollectionButton"),
+		importCollectionFile: document.getElementById("importCollectionFile"),
 		
 		// MI COLECCIÓN
 		myCollectionButton: document.getElementById("myCollectionButton"),
@@ -363,7 +368,178 @@
 		updateCollectionCounts();
 
 	}
+	
+	// =========================================================
+	// EXPORTAR MI COLECCIÓN
+	// =========================================================
 
+	function exportCollection() {
+
+		const exportData = {
+			version: 1,
+			exportedAt: new Date().toISOString(),
+			favorites: collectionItems.favorites,
+			watched: collectionItems.watched,
+			obtained: collectionItems.obtained
+		};
+
+		const json = JSON.stringify(exportData, null, 4);
+
+		const blob = new Blob([json], {
+			type: "application/json"
+		});
+
+		const url = URL.createObjectURL(blob);
+
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = "Frikazo_Digital_-_Mi_Coleccion.json";
+
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+
+		setTimeout(() => {
+			URL.revokeObjectURL(url);
+		}, 1000);
+		
+		// Mostrar mensaje de confirmación.
+		elements.collectionImportFeedback.textContent =
+			"¡Mi Colección Se Exportó Correctamente!";
+
+		elements.collectionImportFeedback.hidden = false;
+
+	}
+	
+	// =========================================================
+	// IMPORTAR MI COLECCIÓN
+	// =========================================================
+
+	function importCollection(file) {
+
+		const reader = new FileReader();
+
+		reader.onload = () => {
+
+			try {
+
+				const importedData = JSON.parse(reader.result);
+
+				const types = [
+					"favorites",
+					"watched",
+					"obtained"
+				];
+
+				// Validar la estructura general del archivo.
+				if (
+					!importedData ||
+					typeof importedData !== "object" ||
+					!types.every(type => Array.isArray(importedData[type]))
+				) {
+					throw new Error("El Archivo No tiene una Estructura Válida.");
+				}
+
+				// Validar todos los registros antes de modificar la colección.
+				for (const type of types) {
+
+					const validItems = importedData[type].every(item =>
+						item &&
+						typeof item.key === "string" &&
+						typeof item.title === "string" &&
+						item.key.trim() !== "" &&
+						item.title.trim() !== ""
+					);
+
+					if (!validItems) {
+						throw new Error("El Archivo contiene Registros No Válidos.");
+					}
+
+				}
+
+				// Preparar la combinación sin modificar todavía los datos actuales.
+				const mergedCollection = {};
+
+				types.forEach(type => {
+
+					const items = new Map();
+
+					// Incorporar los títulos que ya existen.
+					collectionItems[type].forEach(item => {
+
+						const title = item.title.trim();
+						const key = normalize(title);
+
+						if (key) {
+							items.set(key, {
+								key: key,
+								title: title
+							});
+						}
+
+					});
+
+					// Incorporar los títulos del archivo importado.
+					importedData[type].forEach(item => {
+
+						const title = item.title.trim();
+						const key = normalize(title);
+
+						if (key && !items.has(key)) {
+
+							items.set(key, {
+								key: key,
+								title: title
+							});
+
+						}
+
+					});
+
+					mergedCollection[type] = Array.from(items.values());
+
+				});
+
+				// Aplicar la combinación.
+				collectionItems = mergedCollection;
+
+				// Guardar y actualizar la interfaz.
+				saveCollection();
+
+				filterMovies();
+
+				updateCollectionButtons();
+
+				elements.collectionImportFeedback.textContent =
+					"¡Mi Colección se Importó y Combinó Correctamente!";
+
+				elements.collectionImportFeedback.hidden = false;
+
+			} catch (error) {
+
+				console.error("Error al Importar Mi Colección:", error);
+
+				elements.collectionImportFeedback.textContent =
+					"No se Pudo Importar el Archivo. Verifica Que Sea Un Archivo JSON Válido de Mi Colección.";
+
+				elements.collectionImportFeedback.hidden = false;
+
+			}
+
+		};
+
+		reader.onerror = () => {
+
+			elements.collectionImportFeedback.textContent =
+				"No se Pudo Leer el Archivo Seleccionado.";
+
+			elements.collectionImportFeedback.hidden = false;
+
+		};
+
+		reader.readAsText(file);
+
+	}
 
 	// Actualizar contadores de las categorías
 	function updateCollectionCounts() {
@@ -3221,11 +3397,15 @@
     // =====================================================
 
     function closeMyCollection() {
+		elements.collectionImportFeedback.hidden = true;
 		elements.myCollectionSection.hidden = true;
 		elements.filtersSection.hidden = false;
 		elements.filtersSection.querySelector(".filters-heading").hidden = false;
 		elements.catalogSection.hidden = false;
-
+		
+		// Actualizar el catálogo con los datos actuales de Mi Colección.
+		filterMovies();
+		
 		elements.filtersSection.scrollIntoView({
 			behavior: "smooth",
 			block: "start"
@@ -4215,6 +4395,38 @@
             "click",
             () => toggleCollection("obtained")
         );
+		
+		// =====================================================
+		// EVENTOS DE EXPORTAR E IMPORTAR MI COLECCIÓN
+		// =====================================================
+
+		elements.exportCollectionButton.addEventListener(
+			"click",
+			exportCollection
+		);
+
+		// Abrir selector de archivos.
+		elements.importCollectionButton.addEventListener(
+			"click",
+			() => elements.importCollectionFile.click()
+		);
+
+		// Procesar archivo seleccionado.
+		elements.importCollectionFile.addEventListener(
+			"change",
+			event => {
+
+				const file = event.target.files[0];
+
+				if (file) {
+					importCollection(file);
+				}
+
+				// Permitir seleccionar nuevamente el mismo archivo.
+				event.target.value = "";
+
+			}
+		);
 		
 		elements.pricesPdfButton.addEventListener("click", openPricesPDF);
 
