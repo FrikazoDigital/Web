@@ -393,7 +393,7 @@
 
 		const link = document.createElement("a");
 		link.href = url;
-		link.download = "Frikazo_Digital_-_Mi_Coleccion.json";
+		link.download = "Frikazo Digital - Mi Coleccion.json";
 
 		document.body.appendChild(link);
 		link.click();
