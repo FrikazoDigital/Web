@@ -3504,7 +3504,8 @@
 
 		elements.catalogSection.hidden = true;
 		elements.myCollectionSection.hidden = false;
-
+		
+		currentCollectionType = "favorites";
 		filterMovies();
 
 		elements.myCollectionSection.scrollIntoView({
