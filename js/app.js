@@ -74,6 +74,9 @@
         yearFilter: document.getElementById("yearFilter"),
         languageFilter: document.getElementById("languageFilter"),
 		qualityFilter: document.getElementById("qualityFilter"),
+		favoritesFilter: document.getElementById("favoritesFilter"),
+		watchedFilter: document.getElementById("watchedFilter"),
+		obtainedFilter: document.getElementById("obtainedFilter"),
         sortFilter: document.getElementById("sortFilter"),
 
         clearFilters: document.getElementById("clearFilters"),
@@ -1949,12 +1952,14 @@
 	// =====================================================
 
 	function getSelectedFilterValues(filterKey) {
-
 		const filterElements = {
 			genre: elements.genreFilter,
 			year: elements.yearFilter,
 			language: elements.languageFilter,
-			quality: elements.qualityFilter
+			quality: elements.qualityFilter,
+			favorites: elements.favoritesFilter,
+			watched: elements.watchedFilter,
+			obtained: elements.obtainedFilter
 		};
 
 		const filter = filterElements[filterKey];
@@ -1966,7 +1971,6 @@
 				'input[type="checkbox"]:checked:not([data-select-all])'
 			)
 		).map(input => input.value);
-
 	}
 
 
@@ -1995,7 +1999,7 @@
 			"Español",
 			"Sub Español",
 			"Sub Ingles",
-			"Music",
+			"Music"
 		];
 
 		return [
@@ -2050,6 +2054,33 @@
 
 					return indexA - indexB;
 				}
+			},
+			{
+				key: "favorites",
+				element: elements.favoritesFilter,
+				placeholder: "Todas",
+				options: [
+					{ value: "yes", label: "Favoritas" },
+					{ value: "no", label: "No Favoritas" }
+				]
+			},
+			{
+				key: "watched",
+				element: elements.watchedFilter,
+				placeholder: "Todas",
+				options: [
+					{ value: "yes", label: "Vistas" },
+					{ value: "no", label: "No Vistas" }
+				]
+			},
+			{
+				key: "obtained",
+				element: elements.obtainedFilter,
+				placeholder: "Todas",
+				options: [
+					{ value: "yes", label: "Obtenidas" },
+					{ value: "no", label: "No Obtenidas" }
+				]
 			}
 		];
 
@@ -2068,7 +2099,10 @@
 			genre: getSelectedFilterValues("genre"),
 			year: getSelectedFilterValues("year"),
 			language: getSelectedFilterValues("language"),
-			quality: getSelectedFilterValues("quality")
+			quality: getSelectedFilterValues("quality"),
+			favorites: getSelectedFilterValues("favorites"),
+			watched: getSelectedFilterValues("watched"),
+			obtained: getSelectedFilterValues("obtained")
 		};
 
 		return getMoviesForCurrentView().filter(movie => {
@@ -2107,12 +2141,33 @@
 				selected.quality.length === 0 ||
 				selected.quality.includes(String(movie["Calidad Visual"] || ""));
 
+			const matchesFavorites = excludeFilter === "favorites" ||
+				selected.favorites.length === 0 ||
+				selected.favorites.includes(
+					isInCollection("favorites", movie) ? "yes" : "no"
+				);
+
+			const matchesWatched = excludeFilter === "watched" ||
+				selected.watched.length === 0 ||
+				selected.watched.includes(
+					isInCollection("watched", movie) ? "yes" : "no"
+				);
+
+			const matchesObtained = excludeFilter === "obtained" ||
+				selected.obtained.length === 0 ||
+				selected.obtained.includes(
+					isInCollection("obtained", movie) ? "yes" : "no"
+				);
+
 			return (
 				matchesSearch &&
 				matchesGenre &&
 				matchesYear &&
 				matchesLanguage &&
-				matchesQuality
+				matchesQuality &&
+				matchesFavorites &&
+				matchesWatched &&
+				matchesObtained
 			);
 
 		});
@@ -2128,12 +2183,9 @@
 
 		const filters = getFilterDefinitions();
 
-		// Eliminar selecciones que ya no tienen resultados.
-		// Se repite para mantener todos los filtros compatibles.
-
-		// En el catálogo se mantienen las reglas originales.
-		// En Mi Colección se conservan las selecciones
-		// aunque no existan resultados en la categoría activa.
+		// =================================================
+		// ELIMINAR SELECCIONES QUE YA NO TIENEN RESULTADOS
+		// =================================================
 
 		if (elements.myCollectionSection.hidden) {
 
@@ -2144,6 +2196,10 @@
 				changed = false;
 
 				filters.forEach(filter => {
+
+					// Los filtros con opciones fijas no necesitan
+					// comprobar disponibilidad en el catálogo.
+					if (filter.options) return;
 
 					const selected = getSelectedFilterValues(filter.key);
 
@@ -2184,40 +2240,57 @@
 		}
 
 
-		// Reconstruir las opciones disponibles.
+		// =================================================
+		// RECONSTRUIR LAS OPCIONES DISPONIBLES
+		// =================================================
 
 		filters.forEach(filter => {
 
 			const selected = getSelectedFilterValues(filter.key);
 
-			let values = [
-				...new Set(
-					getMoviesForFilter(filter.key)
-						.map(filter.field)
-						.filter(value =>
-							value !== null &&
-							value !== undefined &&
-							String(value).trim() !== ""
-						)
-						.map(value => String(value))
-				)
-			];
+			let options = [];
 
-			// Conservar las opciones seleccionadas en Mi Colección,
-			// aunque no estén disponibles en la categoría actual.
+			// Los filtros de colección tienen opciones fijas.
+			if (filter.options) {
 
-			if (!elements.myCollectionSection.hidden) {
+				options = filter.options;
 
-				values = [
-					...new Set([
-						...values,
-						...selected
-					])
+			} else {
+
+				let values = [
+					...new Set(
+						getMoviesForFilter(filter.key)
+							.map(filter.field)
+							.filter(value =>
+								value !== null &&
+								value !== undefined &&
+								String(value).trim() !== ""
+							)
+							.map(value => String(value))
+					)
 				];
+
+				// Conservar opciones seleccionadas en Mi Colección.
+				if (!elements.myCollectionSection.hidden) {
+
+					values = [
+						...new Set([
+							...values,
+							...selected
+						])
+					];
+
+				}
+
+				values.sort(filter.sort);
+
+				options = values.map(value => ({
+					value: value,
+					label: value
+				}));
 
 			}
 
-			values.sort(filter.sort);
 
 			const optionsContainer = filter.element.querySelector(
 				".multi-filter-options"
@@ -2228,6 +2301,7 @@
 			);
 
 			optionsContainer.innerHTML = "";
+
 
 			// =================================================
 			// OPCIÓN SELECCIONAR TODAS
@@ -2244,10 +2318,10 @@
 			selectAllCheckbox.setAttribute("data-select-all", "true");
 
 			selectAllCheckbox.checked =
-				values.length > 0 &&
-				values.every(value => selected.includes(value));
+				options.length > 0 &&
+				options.every(option => selected.includes(option.value));
 
-			selectAllCheckbox.disabled = values.length === 0;
+			selectAllCheckbox.disabled = options.length === 0;
 
 			const selectAllText = document.createElement("span");
 
@@ -2263,7 +2337,7 @@
 			// OPCIONES INDIVIDUALES
 			// =================================================
 
-			values.forEach(value => {
+			options.forEach(option => {
 
 				const label = document.createElement("label");
 
@@ -2272,12 +2346,12 @@
 				const checkbox = document.createElement("input");
 
 				checkbox.type = "checkbox";
-				checkbox.value = value;
-				checkbox.checked = selected.includes(value);
+				checkbox.value = option.value;
+				checkbox.checked = selected.includes(option.value);
 
 				const text = document.createElement("span");
 
-				text.textContent = value;
+				text.textContent = option.label;
 
 				label.appendChild(checkbox);
 				label.appendChild(text);
@@ -2287,20 +2361,26 @@
 			});
 
 
-			// Actualizar el texto del botón.
+			// =================================================
+			// ACTUALIZAR TEXTO DEL BOTÓN
+			// =================================================
 
-			if (selected.length === 0) {
+			const selectedOptions = options.filter(option =>
+				selected.includes(option.value)
+			);
+
+			if (selectedOptions.length === 0) {
 
 				button.textContent = filter.placeholder;
 
-			} else if (selected.length === 1) {
+			} else if (selectedOptions.length === 1) {
 
-				button.textContent = selected[0];
+				button.textContent = selectedOptions[0].label;
 
 			} else {
 
 				button.textContent =
-					selected.length + " opciones seleccionadas";
+					selectedOptions.length + " opciones seleccionadas";
 
 			}
 
@@ -2314,7 +2394,7 @@
 	// =====================================================
 
 	function filterMovies(changedFilter = null) {
-		
+
 		if (isTop10View) {
 			filteredMovies = getTop10Movies();
 			currentPage = 1;
@@ -2332,6 +2412,10 @@
 		const selectedYear = getSelectedFilterValues("year");
 		const selectedLanguage = getSelectedFilterValues("language");
 		const selectedQuality = getSelectedFilterValues("quality");
+
+		const selectedFavorites = getSelectedFilterValues("favorites");
+		const selectedWatched = getSelectedFilterValues("watched");
+		const selectedObtained = getSelectedFilterValues("obtained");
 
 		filteredMovies = getMoviesForCurrentView().filter(movie => {
 
@@ -2365,12 +2449,30 @@
 			const matchesQuality = selectedQuality.length === 0 ||
 				selectedQuality.includes(String(movie["Calidad Visual"] || ""));
 
+			const matchesFavorites = selectedFavorites.length === 0 ||
+				selectedFavorites.includes(
+					isInCollection("favorites", movie) ? "yes" : "no"
+				);
+
+			const matchesWatched = selectedWatched.length === 0 ||
+				selectedWatched.includes(
+					isInCollection("watched", movie) ? "yes" : "no"
+				);
+
+			const matchesObtained = selectedObtained.length === 0 ||
+				selectedObtained.includes(
+					isInCollection("obtained", movie) ? "yes" : "no"
+				);
+
 			return (
 				matchesSearch &&
 				matchesGenre &&
 				matchesYear &&
 				matchesLanguage &&
-				matchesQuality
+				matchesQuality &&
+				matchesFavorites &&
+				matchesWatched &&
+				matchesObtained
 			);
 
 		});
@@ -2570,7 +2672,10 @@
 			elements.genreFilter,
 			elements.yearFilter,
 			elements.languageFilter,
-			elements.qualityFilter
+			elements.qualityFilter,
+			elements.favoritesFilter,
+			elements.watchedFilter,
+			elements.obtainedFilter
 		];
 
 		filters.forEach(filter => {
@@ -2587,6 +2692,7 @@
 			filter.classList.remove("open");
 
 		});
+
 	}
 
 
@@ -2608,7 +2714,10 @@
 				elements.genreFilter,
 				elements.yearFilter,
 				elements.languageFilter,
-				elements.qualityFilter
+				elements.qualityFilter,
+				elements.favoritesFilter,
+				elements.watchedFilter,
+				elements.obtainedFilter
 			];
 
 			filters.forEach(filter => {
@@ -2621,7 +2730,7 @@
 			updateDependentFilters();
 
 			elements.sortFilter.value = "date-desc";
-			
+
 			// Ocultar buscador y filtros.
 			elements.heroSection.hidden = true;
 			elements.filtersContainer.hidden = true;
@@ -2635,7 +2744,7 @@
 						button.hidden = true;
 					}
 				});
-			
+
 			// Mostrar únicamente el TOP 10.
 			filteredMovies = getTop10Movies();
 
@@ -2648,7 +2757,7 @@
 
 			elements.top10Button.textContent = "🥇 TOP 10";
 			elements.top10Button.classList.remove("active");
-			
+
 			// Restaurar buscador y filtros.
 			elements.heroSection.hidden = false;
 			elements.filtersContainer.hidden = false;
@@ -4275,7 +4384,10 @@
 			elements.genreFilter,
 			elements.yearFilter,
 			elements.languageFilter,
-			elements.qualityFilter
+			elements.qualityFilter,
+			elements.favoritesFilter,
+			elements.watchedFilter,
+			elements.obtainedFilter
 		];
 
 		filters.forEach(filter => {
@@ -4374,6 +4486,18 @@
 			{
 				key: "quality",
 				element: elements.qualityFilter
+			},
+			{
+				key: "favorites",
+				element: elements.favoritesFilter
+			},
+			{
+				key: "watched",
+				element: elements.watchedFilter
+			},
+			{
+				key: "obtained",
+				element: elements.obtainedFilter
 			}
 		];
 
