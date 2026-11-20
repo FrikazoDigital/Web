@@ -1468,6 +1468,10 @@ button {
     color: #FFFFFF;
 }
 
+.top10-button.active {
+    font-size: 17px;
+}
+
 .top10-button.active:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(33, 150, 243, 0.35);
@@ -3562,9 +3566,19 @@ button {
 
 /* EFECTO AL PASAR EL CURSOR */
 
-.make-order:hover {
+.make-order:hover,
+.prices-pdf-button.make-order:hover {
+    background: linear-gradient(135deg, #FFD700, #FF9800);
     box-shadow: 0 0 12px rgba(255, 193, 7, 0.35);
     filter: brightness(1.08);
+    transform: translateY(-2px);
+}
+
+.prices-pdf-button.make-order {
+    font-weight: 900;
+}
+.prices-pdf-button.clear-cart {
+    font-weight: 900;
 }
 
 
