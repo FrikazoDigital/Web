@@ -2388,7 +2388,7 @@ button {
 
     color: #FFFFFF;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 10px;
 
     cursor: pointer;
     transition: all 0.2s ease;
@@ -3580,7 +3580,9 @@ button {
 .prices-pdf-button.clear-cart {
     font-weight: 900;
 }
-
+#clearCollectionButton {
+    font-size: 12px;
+}
 
 
 
