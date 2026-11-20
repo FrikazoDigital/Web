@@ -154,6 +154,7 @@
 		exportCollectionButton: document.getElementById("exportCollectionButton"),
 		importCollectionButton: document.getElementById("importCollectionButton"),
 		importCollectionFile: document.getElementById("importCollectionFile"),
+		clearCollectionButton: document.getElementById("clearCollectionButton"),
 		
 		// MI COLECCIÓN
 		myCollectionButton: document.getElementById("myCollectionButton"),
@@ -3270,6 +3271,44 @@
 	}
 	
 	// =====================================================
+	// VACIAR MI COLECCIÓN
+	// =====================================================
+
+	function clearCollection() {
+
+		const confirmClear = confirm(
+			"¿Estás Seguro de que Deseas Vaciar Mi Colección?\n\n" +
+			"Se Eliminarán Todas las Marcas de:\n\n" +
+			"- Favoritas\n" +
+			"- Vistas\n" +
+			"- Obtenidas\n\n" +
+			"Esta Acción No se puede Deshacer."
+		);
+
+		if (!confirmClear) return;
+
+		// Vaciar las tres categorías.
+		collectionItems = {
+			favorites: [],
+			watched: [],
+			obtained: []
+		};
+
+		// Guardar los cambios y actualizar los contadores.
+		saveCollection();
+
+		// Reiniciar la paginación.
+		currentCollectionPage = 1;
+
+		// Actualizar los botones de la ficha de detalles.
+		updateCollectionButtons();
+
+		// Actualizar el catálogo o Mi Colección.
+		filterMovies();
+
+	}
+
+	// =====================================================
     // MOSTRAR CONTENIDO DE MI COLECCIÓN
     // =====================================================
 
@@ -4552,6 +4591,12 @@
 				event.target.value = "";
 
 			}
+		);
+		
+		// Vaciar Mi Colección.
+		elements.clearCollectionButton.addEventListener(
+			"click",
+			clearCollection
 		);
 		
 		elements.pricesPdfButton.addEventListener("click", openPricesPDF);
