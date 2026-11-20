@@ -3531,6 +3531,42 @@ button {
 
 }
 
+/* =====================================================
+   BOTONES EXPORTAR E IMPORTAR - MI COLECCIÓN
+   ===================================================== */
+
+.export-collection-button,
+.import-collection-button {
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    border: 1px solid #D99A00;
+    color: #202020;
+}
+
+/* EFECTO AL PASAR EL CURSOR */
+
+.export-collection-button:hover,
+.import-collection-button:hover {
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.35);
+    filter: brightness(1.08);
+}
+
+/* =====================================================
+   BOTÓN HACER PEDIDO - CARRITO
+   ===================================================== */
+
+.make-order {
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    border: 1px solid #D99A00;
+    color: #202020;
+}
+
+/* EFECTO AL PASAR EL CURSOR */
+
+.make-order:hover {
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.35);
+    filter: brightness(1.08);
+}
+
 
 
 
