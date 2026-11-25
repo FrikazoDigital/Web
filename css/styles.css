@@ -3648,6 +3648,15 @@ button {
 
 }
 
+/* Ocultar la X nativa del buscador */
+
+.search-container input[type="search"]::-webkit-search-cancel-button,
+.search-container input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+
 
 
 

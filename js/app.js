@@ -4460,14 +4460,19 @@
 			// Ocultar el teclado del celular
 			elements.searchInput.blur();
 
+			// Identificar la sección de resultados visible
+			const resultsSection = elements.myCollectionSection.hidden
+				? elements.catalogResultsSection
+				: elements.myCollectionSection;
+
 			// Desplazarse hasta los resultados
-			elements.catalogResultsSection.scrollIntoView({
+			resultsSection.scrollIntoView({
 				behavior: "smooth",
 				block: "start"
 			});
 
 			// Dar el foco a la sección de resultados
-			elements.catalogResultsSection.focus({
+			resultsSection.focus({
 				preventScroll: true
 			});
 
