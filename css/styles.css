@@ -1109,6 +1109,8 @@ button {
     position: fixed;
     z-index: 11000;
 
+    zoom: 0.90;
+
     width: 390px;
     max-width: calc(100vw - 16px);
     max-height: calc(100vh - 24px);
