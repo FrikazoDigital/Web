@@ -877,9 +877,13 @@ button {
     }
 
     .catalog-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 22px 13px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px 10px;
     }
+	
+	#collectionGrid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
 
     .movie-title {
         font-size: 12px;
