@@ -4268,7 +4268,17 @@
 			row.appendChild(imageCell);
 
 			table.appendChild(row);
+			
+			// Separar los tres grupos de calidad visual.
+			if (item.level === 8 || item.level === 5) {
 
+				const separator = document.createElement("div");
+				separator.className = "quality-popup-separator";
+
+				table.appendChild(separator);
+
+			}
+			
 		});
 
 		qualityPopup.appendChild(table);
