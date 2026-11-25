@@ -115,25 +115,35 @@
 
                 <div class="search-container">
 
-                    <span class="search-icon">⌕</span>
+					<span class="search-icon">⌕</span>
 
-                    <input
-                        type="search"
-                        id="searchInput"
-                        placeholder="Buscar por título, género, año..."
-                        autocomplete="off"
-                    >
+					<input
+						type="search"
+						id="searchInput"
+						placeholder="Buscar por título, género, año..."
+						autocomplete="off"
+					>
 
-                    <button
-                        type="button"
-                        id="clearSearch"
-                        class="clear-search"
-                        aria-label="Limpiar búsqueda"
-                    >
-                        ×
-                    </button>
+					<button
+						type="button"
+						id="searchButton"
+						class="search-button"
+						aria-label="Buscar"
+						title="Buscar"
+					>
+						<span class="search-button-icon">🔍</span>
+					</button>
 
-                </div>
+					<button
+						type="button"
+						id="clearSearch"
+						class="clear-search"
+						aria-label="Limpiar búsqueda"
+					>
+						×
+					</button>
+
+				</div>
 
             </div>
 
@@ -667,7 +677,11 @@
         </section>
 
         <!-- RESULTADOS -->
-        <section class="catalog-section">
+        <section
+			id="catalogResultsSection"
+			class="catalog-section"
+			tabindex="-1"
+		>
 
             <div class="results-heading">
 

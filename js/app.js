@@ -69,6 +69,8 @@
         searchInput: document.getElementById("searchInput"),
 		heroSection: document.querySelector(".hero"),
         clearSearch: document.getElementById("clearSearch"),
+		searchButton: document.getElementById("searchButton"),
+		catalogResultsSection: document.getElementById("catalogResultsSection"),
 
         genreFilter: document.getElementById("genreFilter"),
         yearFilter: document.getElementById("yearFilter"),
@@ -4040,8 +4042,8 @@
 		const fieldOrder = [
 			"Titulo Ingles",
 			"Imagen",
-			"Calidad Visual",
 			"Resolucion",
+			"Calidad Visual",
 			"Tamaño (MB)",
 			"Formato",
 			"Capitulos",
@@ -4450,6 +4452,26 @@
             filterMovies("search");
 
         });
+		
+		// BOTÓN DE BÚSQUEDA
+
+		elements.searchButton.addEventListener("click", () => {
+
+			// Ocultar el teclado del celular
+			elements.searchInput.blur();
+
+			// Desplazarse hasta los resultados
+			elements.catalogResultsSection.scrollIntoView({
+				behavior: "smooth",
+				block: "start"
+			});
+
+			// Dar el foco a la sección de resultados
+			elements.catalogResultsSection.focus({
+				preventScroll: true
+			});
+
+		});
 
         // LIMPIAR BÚSQUEDA
 

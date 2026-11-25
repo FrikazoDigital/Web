@@ -3588,6 +3588,67 @@ button {
     font-size: 12px;
 }
 
+/* =========================================================
+   BOTÓN DE BÚSQUEDA
+   ========================================================= */
+
+.search-container input {
+    flex: 1;
+    min-width: 0;
+}
+
+.search-button {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    margin-left: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #D99A00;
+    border-radius: 8px;
+
+    background: linear-gradient(135deg, #FFD700, #FF9800);
+    color: #202020;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-button-icon {
+    font-size: 21px;
+    line-height: 1;
+    transform: none;
+}
+
+.search-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.35);
+}
+
+.search-button:active {
+    transform: scale(0.95);
+}
+
+/* Adaptación a celulares */
+
+@media (max-width: 650px) {
+
+    .search-button {
+        width: 38px;
+        height: 38px;
+        margin-left: 8px;
+    }
+
+    .search-button-icon {
+        font-size: 27px;
+    }
+
+}
+
+
 
 
 
