@@ -3050,19 +3050,32 @@
 
 		}
 
-		// Construir el texto: Año - Valor seleccionado.
-		const metaText = [year, metaValue].filter(Boolean).join(" - ");
+		// Mostrar el año.
+		if (year) {
 
-		const span = document.createElement("span");
+			const yearSpan = document.createElement("span");
 
-		span.textContent = metaText;
+			yearSpan.textContent = year;
 
-		// Mantener los colores de Calidad Visual.
-		if (currentMovieMeta === "Calidad Visual" && metaValue) {
-			span.classList.add("quality-" + normalize(metaValue));
+			meta.appendChild(yearSpan);
+
 		}
 
-		meta.appendChild(span);
+		// Separador y valor seleccionado.
+		if (metaValue) {
+
+			const metaSpan = document.createElement("span");
+
+			metaSpan.textContent = metaValue;
+
+			// Mantener los colores de Calidad Visual únicamente en su texto.
+			if (currentMovieMeta === "Calidad Visual") {
+				metaSpan.classList.add("quality-" + normalize(metaValue));
+			}
+
+			meta.appendChild(metaSpan);
+
+		}
 
 		info.appendChild(title);
 		info.appendChild(meta);

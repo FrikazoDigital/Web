@@ -1048,6 +1048,57 @@ button {
     color: white;
 }
 
+/* COLORES DE CALIDAD VISUAL EN LAS TARJETAS */
+.movie-meta span[class*="quality-"] {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    font-weight: 700;
+}
+
+.movie-meta span.quality-muyexcelente {
+    background: #123B70;
+    color: white;
+}
+
+.movie-meta span.quality-excelente {
+    background: #1976D2;
+    color: white;
+}
+
+.movie-meta span.quality-muybuena,
+.movie-meta span.quality-buena {
+    background: #2E9D50;
+    color: white;
+}
+
+.movie-meta span.quality-buenabaja {
+    background: #8BCF78;
+    color: #18351B;
+}
+
+.movie-meta span.quality-regularalta {
+    background: #F4D03F;
+    color: #493B00;
+}
+
+.movie-meta span.quality-regular,
+.movie-meta span.quality-mediomala {
+    background: #F39C32;
+    color: #4A2600;
+}
+
+.movie-meta span.quality-malisima {
+    background: #D93636;
+    color: white;
+}
+
+.movie-meta span.quality-lopeor {
+    background: #741F1F;
+    color: white;
+}
+
 /* COLORES DE CALIDAD VISUAL EN LA VENTANA EMERGENTE */
 
 /* Estado normal: todos los niveles en gris oscuro */
