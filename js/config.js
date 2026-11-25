@@ -53,7 +53,7 @@ window.CATALOGO_CONFIG = {
 	// "animated"	Animada
 	NEW_BADGE_STYLE: "animated",
 	
-	BANNER_MOVIES_PER_CATEGORY: 4,
+	BANNER_MOVIES_PER_CATEGORY: 5,
 	
 	// Numero WhatsApp
 	WHATSAPP_NUMBER: "573006318594",
@@ -62,7 +62,7 @@ window.CATALOGO_CONFIG = {
 	
 	//Precios Peliculas y Series
 	MOVIE_PRICE: 4000,
-	SERIES_PRICE: 30000,
+	SERIES_PRICE: 20000,
 	TICKET_VALUE: 100
 };
 
