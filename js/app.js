@@ -53,6 +53,39 @@
 	};
 
 	let currentCollectionType = "favorites";
+	
+	// =====================================================
+	// PREFERENCIA DE INFORMACIÓN EN LAS TARJETAS
+	// =====================================================
+
+	const MOVIE_META_STORAGE_KEY = "frikazoDigitalMovieMeta";
+
+	const VALID_MOVIE_META_OPTIONS = [
+		"Idioma",
+		"Duracion",
+		"Calidad Visual",
+		"Tamaño"
+	];
+
+	let currentMovieMeta = "Idioma";
+	
+	// =====================================================
+	// CARGAR PREFERENCIA DE INFORMACIÓN EN LAS TARJETAS
+	// =====================================================
+
+	function loadMovieMetaPreference() {
+
+		const savedPreference = localStorage.getItem(
+			MOVIE_META_STORAGE_KEY
+		);
+
+		currentMovieMeta = VALID_MOVIE_META_OPTIONS.includes(savedPreference)
+			? savedPreference
+			: "Idioma";
+
+		elements.movieMetaSelector.value = currentMovieMeta;
+
+	}
 
     // =====================================================
     // ELEMENTOS HTML
@@ -82,6 +115,7 @@
         sortFilter: document.getElementById("sortFilter"),
 
         clearFilters: document.getElementById("clearFilters"),
+		movieMetaSelector: document.getElementById("movieMetaSelector"),
 		top10Button: document.getElementById("top10Button"),
 		resultsTitle: document.getElementById("resultsTitle"),
 		
@@ -2978,23 +3012,56 @@
 
         const meta = document.createElement("div");
 
-        meta.className = "movie-meta";
+		meta.className = "movie-meta";
 
-        [
-            movie["Año"],
-            movie.Idioma ? "Idioma " + movie.Idioma : ""
-        ].filter(Boolean).forEach(value => {
+		// Año de la película.
+		const year = movie["Año"] || "";
 
-            const span = document.createElement("span");
+		// Obtener el valor según la opción seleccionada.
+		let metaValue = "";
 
-            span.textContent = value;
+		switch (currentMovieMeta) {
 
-            meta.appendChild(span);
+			case "Idioma":
+				metaValue = "Idioma " + movie.Idioma || "";
+				break;
 
-        });
+			case "Duracion":
+				metaValue = movie.Duracion || "";
+				break;
 
-        info.appendChild(title);
-        info.appendChild(meta);
+			case "Calidad Visual":
+				metaValue = movie["Calidad Visual"] || "";
+				break;
+
+			case "Tamaño":
+
+				const sizeMB = Number(movie["Tamaño (MB)"]);
+
+				if (Number.isFinite(sizeMB) && sizeMB > 0) {
+					metaValue = sizeMB.toLocaleString("es-CO") + " MB";
+				}
+
+				break;
+
+		}
+
+		// Construir el texto: Año - Valor seleccionado.
+		const metaText = [year, metaValue].filter(Boolean).join(" - ");
+
+		const span = document.createElement("span");
+
+		span.textContent = metaText;
+
+		// Mantener los colores de Calidad Visual.
+		if (currentMovieMeta === "Calidad Visual" && metaValue) {
+			span.classList.add("quality-" + normalize(metaValue));
+		}
+
+		meta.appendChild(span);
+
+		info.appendChild(title);
+		info.appendChild(meta);
 
         if (movie.Genero) {
 
@@ -4641,6 +4708,28 @@
 			}
 
 		});
+		
+		// =====================================================
+		// CAMBIAR INFORMACIÓN MOSTRADA EN LAS TARJETAS
+		// =====================================================
+
+		elements.movieMetaSelector.addEventListener("change", () => {
+
+			currentMovieMeta = elements.movieMetaSelector.value;
+
+			localStorage.setItem(
+				MOVIE_META_STORAGE_KEY,
+				currentMovieMeta
+			);
+
+			// Actualizar la vista que se encuentra abierta.
+			if (!elements.myCollectionSection.hidden) {
+				renderCollection();
+			} else {
+				renderCatalog();
+			}
+
+		});
 
 		// Boton TOP 10
 		
@@ -4849,6 +4938,8 @@
 		loadCollection();
 		
         configureBrand();
+		
+		loadMovieMetaPreference();
 
         connectEvents();
 
