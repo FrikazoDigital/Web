@@ -26,11 +26,11 @@
 	
 	/* ESCALA INDEPENDIENTE DE LAS ETIQUETAS */
 	/* NUEVO */
-	--new-badge-scale: 1;
+	--new-badge-scale: 1.1;
 	/* Favoritas, Vistas, Obtenidos */
-	--poster-ui-scale: 0.8;
+	--poster-ui-scale: 0.9;
 	/* TOP 10 */
-	--top10-badge-scale: 1;
+	--top10-badge-scale: 0.9;
 }
 
 
@@ -3432,7 +3432,7 @@ button {
 .collection-status-icons {
     position: absolute;
     top: calc(5.56cqi * var(--poster-ui-scale));
-    right: calc(4.44cqi * var(--poster-ui-scale));
+    right: calc(8cqi * var(--poster-ui-scale));
     z-index: 5;
 
     display: flex;
@@ -3444,7 +3444,7 @@ button {
 /* Dejar espacio debajo de la etiqueta NUEVO */
 
 .collection-status-icons.has-new {
-    top: calc(30.56cqi * var(--poster-ui-scale));
+    top: calc(30.56cqi * var(--new-badge-scale));
 }
 
 /* Iconos individuales */
