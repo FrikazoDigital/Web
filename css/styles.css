@@ -3446,7 +3446,7 @@ button {
 /* Dejar espacio debajo de la etiqueta NUEVO */
 
 .collection-status-icons.has-new {
-    top: calc(30.56cqi * var(--new-badge-scale));
+    top: calc(26cqi * var(--new-badge-scale));
 }
 
 /* Iconos individuales */
