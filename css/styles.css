@@ -321,19 +321,28 @@ button {
 /* SELECTOR DE INFORMACIÓN DE LAS TARJETAS */
 
 .movie-meta-selector {
-    padding: 9px 12px;
+    width: auto;
+    height: 42px;
+    padding: 0 12px;
+
+    background: var(--surface);
+    color: var(--text);
     border: 1px solid var(--border);
     border-radius: 7px;
-    background: var(--card-bg);
-    color: var(--text);
-    font-weight: 700;
-    cursor: pointer;
+
     outline: none;
-    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.movie-meta-selector option {
+    background: var(--surface);
+    color: var(--text);
 }
 
 .movie-meta-selector:focus {
-    border-color: #2196F3;
+    border-color: var(--primary);
 }
 
 .clear-filters:hover {

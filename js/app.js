@@ -2147,6 +2147,8 @@
 				movie.Titulo,
 				movie["Titulo Ingles"],
 				movie.Saga,
+				movie.Universo,
+				movie.Adaptaciones,
 				movie.Genero,
 				movie.Idioma,
 				movie["Año"],
@@ -2459,6 +2461,8 @@
 				movie.Titulo,
 				movie["Titulo Ingles"],
 				movie.Saga,
+				movie.Universo,
+				movie.Adaptaciones,
 				movie.Genero,
 				movie.Idioma,
 				movie["Año"],
@@ -4115,7 +4119,6 @@
 			"Formato",
 			"Capitulos",
 			"Fecha Ingreso",
-			"Saga",
 			"Observaciones"
 		];
 
@@ -4128,7 +4131,6 @@
 			"Formato": "🎞️",
 			"Capitulos": "📺",
 			"Fecha Ingreso": "📅",
-			"Saga": "🎬",
 			"Observaciones": "📝"
 		};
 
