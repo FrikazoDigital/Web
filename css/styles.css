@@ -238,16 +238,42 @@ button {
 }
 
 .clear-search {
-    border: none;
-    background: none;
-    color: #888;
-    font-size: 25px;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    margin-left: 8px;
+    margin-right: 0;
+
     display: none;
-    padding: 0 5px;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #B52A36;
+    border-radius: 8px;
+
+    background: linear-gradient(135deg, #F44336, #C62828);
+    color: #FFFFFF;
+
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 38px;
+
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .clear-search.visible {
-    display: block;
+    display: flex;
+}
+
+.clear-search:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.35);
+}
+
+.clear-search:active {
+    transform: scale(0.95);
 }
 
 
@@ -3655,6 +3681,50 @@ button {
     -webkit-appearance: none;
     appearance: none;
     display: none;
+}
+
+/* Igualar tamaño y alineación de los botones del buscador */
+
+.search-container .clear-search,
+.search-container .search-button {
+    box-sizing: border-box;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Separación entre los dos botones */
+
+.search-container .clear-search {
+    margin-left: 8px;
+    margin-right: 0;
+}
+
+/* Lupa */
+
+.search-container .search-button {
+    margin-left: 8px;
+}
+
+/* Tamaño y centrado de la X */
+
+.search-container .clear-search {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.search-container .clear-search {
+    text-align: center;
+    text-indent: -2px;
+    line-height: 42px;
+    padding-bottom: 3px;
 }
 
 
