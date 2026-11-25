@@ -3727,6 +3727,26 @@ button {
     padding-bottom: 3px;
 }
 
+/* =========================================================
+   ETIQUETAS DE PELÍCULAS Y SERIES - CELULARES
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    /* Etiqueta NUEVO */
+    .movie-card .new-badge {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+
+    /* Etiquetas Favoritas, Vistas y Obtenidas */
+    .movie-card .collection-status-icon {
+        font-size: 10px;
+        padding: 3px;
+    }
+
+}
+
 
 
 
