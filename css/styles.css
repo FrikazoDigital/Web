@@ -421,6 +421,7 @@ button {
 	
 	width: 100%;
     aspect-ratio: 2 / 3;
+	container-type: inline-size;
 
     position: relative;
     overflow: hidden;
@@ -3419,20 +3420,20 @@ button {
 
 .collection-status-icons {
     position: absolute;
-    top: 10px;
-    right: 8px;
+    top: 5.56cqi;
+    right: 4.44cqi;
     z-index: 5;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 7px;
+    gap: 3.89cqi;
 }
 
 /* Dejar espacio debajo de la etiqueta NUEVO */
 
 .collection-status-icons.has-new {
-    top: 55px;
+    top: 30.56cqi;
 }
 
 /* Iconos individuales */
@@ -3442,12 +3443,12 @@ button {
     align-items: center;
     justify-content: center;
 
-    width: 30px;
-    height: 30px;
-    padding: 5px;
+    width: 16.67cqi;
+    height: 16.67cqi;
+    padding: 2.78cqi;
 
     border: none;
-    border-radius: 8px;
+    border-radius: 4.44cqi;
 
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.45);
 
