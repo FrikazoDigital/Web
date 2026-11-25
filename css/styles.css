@@ -23,6 +23,8 @@
 
     --radius: 12px;
     --transition: 0.25s ease;
+	
+	--poster-ui-scale: 0.8;
 }
 
 
@@ -1413,23 +1415,22 @@ button {
 .new-badge-animated {
     position: absolute;
     z-index: 10;
-	
-	top: 10px;
-    right: 10px;
+
+    top: calc(5.56cqi * var(--poster-ui-scale));
+    right: calc(5.56cqi * var(--poster-ui-scale));
     left: auto;
+
     width: auto;
-    padding: 6px 12px;
-    /*background: linear-gradient(90deg, #8E24AA, #E91E63);*/
-	background: linear-gradient(90deg, #E60000, #E60000);
-	/*background: linear-gradient(
-		90deg,
-		#FFD600 0%,
-		#FF6D00 40%,
-		#00D9FF 60%,
-		#075BFF 100%
-	);*/
+    padding:
+        calc(3.33cqi * var(--poster-ui-scale))
+        calc(6.67cqi * var(--poster-ui-scale));
+
+    background: linear-gradient(90deg, #E60000, #E60000);
     color: #FFFFFF;
-    border-radius: 5px;
+
+    font-size: calc(6.67cqi * var(--poster-ui-scale));
+    border-radius: calc(2.78cqi * var(--poster-ui-scale));
+
     transform: none;
     animation: newBadgeGlow 1.8s ease-in-out infinite alternate;
 }
@@ -3420,20 +3421,20 @@ button {
 
 .collection-status-icons {
     position: absolute;
-    top: 5.56cqi;
-    right: 4.44cqi;
+    top: calc(5.56cqi * var(--poster-ui-scale));
+    right: calc(4.44cqi * var(--poster-ui-scale));
     z-index: 5;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3.89cqi;
+    gap: calc(3.89cqi * var(--poster-ui-scale));
 }
 
 /* Dejar espacio debajo de la etiqueta NUEVO */
 
 .collection-status-icons.has-new {
-    top: 30.56cqi;
+    top: calc(30.56cqi * var(--poster-ui-scale));
 }
 
 /* Iconos individuales */
@@ -3443,12 +3444,12 @@ button {
     align-items: center;
     justify-content: center;
 
-    width: 16.67cqi;
-    height: 16.67cqi;
-    padding: 2.78cqi;
+    width: calc(16.67cqi * var(--poster-ui-scale));
+    height: calc(16.67cqi * var(--poster-ui-scale));
+    padding: calc(2.78cqi * var(--poster-ui-scale));
 
     border: none;
-    border-radius: 4.44cqi;
+    border-radius: calc(4.44cqi * var(--poster-ui-scale));
 
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.45);
 
@@ -3726,26 +3727,6 @@ button {
     text-indent: -2px;
     line-height: 42px;
     padding-bottom: 3px;
-}
-
-/* =========================================================
-   ETIQUETAS DE PELÍCULAS Y SERIES - CELULARES
-   ========================================================= */
-
-@media (max-width: 480px) {
-
-    /* Etiqueta NUEVO */
-    .movie-card .new-badge {
-        font-size: 12px;
-        padding: 3px 6px;
-    }
-
-    /* Etiquetas Favoritas, Vistas y Obtenidas */
-    .movie-card .collection-status-icon {
-        font-size: 10px;
-        padding: 3px;
-    }
-
 }
 
 /* Evitar el borde visual al enfocar los resultados */
