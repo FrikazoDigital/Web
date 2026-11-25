@@ -3747,6 +3747,13 @@ button {
 
 }
 
+/* Evitar el borde visual al enfocar los resultados */
+
+#catalogResultsSection:focus,
+#myCollectionSection:focus {
+    outline: none;
+}
+
 
 
 

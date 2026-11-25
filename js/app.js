@@ -4477,6 +4477,20 @@
 			});
 
 		});
+		
+		// BUSCAR DESDE EL TECLADO DEL CELULAR
+
+		elements.searchInput.addEventListener("keydown", (event) => {
+
+			if (event.key === "Enter") {
+
+				event.preventDefault();
+
+				elements.searchButton.click();
+
+			}
+
+		});
 
         // LIMPIAR BÚSQUEDA
 
