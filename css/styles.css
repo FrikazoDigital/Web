@@ -3874,6 +3874,82 @@ button {
         inset 0 1px 2px rgba(255, 255, 255, 0.12);
 }
 
+/* ========================================
+   PELÍCULAS Y SERIES RELACIONADAS
+======================================== */
+
+.detail-related {
+    width: 100%;
+    margin-top: 28px;
+}
+
+.related-section {
+    margin-top: 24px;
+}
+
+.related-section h3 {
+    margin: 0 0 14px;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.related-posters {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 2px 12px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+}
+
+.related-poster-button {
+    flex: 0 0 110px;
+    width: 110px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.related-poster-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.related-poster-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.related-poster-button:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+
+    .detail-related {
+        margin-top: 22px;
+    }
+
+    .related-section {
+        margin-top: 20px;
+    }
+
+    .related-poster-button {
+        flex-basis: 90px;
+        width: 90px;
+    }
+
+}
 
 
 

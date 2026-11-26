@@ -190,6 +190,13 @@
         collectionFeedback: document.getElementById("collectionFeedback"),
 		collectionImportFeedback: document.getElementById("collectionImportFeedback"),
 		
+		relatedSagas: document.getElementById("relatedSagas"),
+		relatedSagasPosters: document.getElementById("relatedSagasPosters"),
+		relatedUniverses: document.getElementById("relatedUniverses"),
+		relatedUniversesPosters: document.getElementById("relatedUniversesPosters"),
+		relatedAdaptations: document.getElementById("relatedAdaptations"),
+		relatedAdaptationsPosters: document.getElementById("relatedAdaptationsPosters"),
+		
 		exportCollectionButton: document.getElementById("exportCollectionButton"),
 		importCollectionButton: document.getElementById("importCollectionButton"),
 		importCollectionFile: document.getElementById("importCollectionFile"),
@@ -1125,6 +1132,101 @@
         );
 
     }
+	
+	function getRelatedMovies(movie, field) {
+
+		// Obtener los nombres relacionados del registro actual
+		const relatedNames = String(movie[field] || "")
+			.split(",")
+			.map(name => normalize(name.trim()))
+			.filter(Boolean);
+
+		if (!relatedNames.length) {
+			return [];
+		}
+
+		// Buscar películas y series que compartan alguna relación
+		return allMovies.filter(candidate => {
+
+			// Excluir el registro actual
+			if (candidate.Codigo === movie.Codigo) {
+				return false;
+			}
+
+			// Obtener las relaciones del mismo campo
+			const candidateNames = String(candidate[field] || "")
+				.split(",")
+				.map(name => normalize(name.trim()))
+				.filter(Boolean);
+
+			// Comprobar si existe alguna coincidencia
+			return relatedNames.some(name => candidateNames.includes(name));
+		});
+	}
+	
+	function renderRelatedMovies(movie) {
+
+		const sections = [
+			{
+				field: "Saga",
+				section: elements.relatedSagas,
+				container: elements.relatedSagasPosters
+			},
+			{
+				field: "Universo",
+				section: elements.relatedUniverses,
+				container: elements.relatedUniversesPosters
+			},
+			{
+				field: "Adaptaciones",
+				section: elements.relatedAdaptations,
+				container: elements.relatedAdaptationsPosters
+			}
+		];
+
+		sections.forEach(item => {
+
+			// Limpiar los pósteres anteriores
+			item.container.innerHTML = "";
+
+			// Buscar películas y series relacionadas
+			const relatedMovies = getRelatedMovies(movie, item.field);
+
+			relatedMovies.forEach(relatedMovie => {
+
+				const posterUrl = getMoviePoster(relatedMovie);
+
+				// No mostrar registros sin póster
+				if (!posterUrl) {
+					return;
+				}
+
+				// Crear botón del póster
+				const button = document.createElement("button");
+				button.type = "button";
+				button.className = "related-poster-button";
+				button.title = relatedMovie.Titulo;
+
+				// Crear imagen
+				const img = document.createElement("img");
+				img.className = "related-poster-image";
+				img.src = posterUrl;
+				img.alt = "Póster de " + relatedMovie.Titulo;
+				img.loading = "lazy";
+
+				// Abrir los detalles al pulsar el póster
+				button.addEventListener("click", () => {
+					openDetails(relatedMovie);
+				});
+
+				button.appendChild(img);
+				item.container.appendChild(button);
+			});
+
+			// Ocultar la sección si no tiene pósteres
+			item.section.hidden = item.container.children.length === 0;
+		});
+	}
 	
 	// =====================================================
     // BANNER ANIMADO DE PELÍCULAS Y SERIES
@@ -3824,6 +3926,8 @@
         elements.detailPoster.alt = "Póster de " + movie.Titulo;
 
         renderDetailFields(movie);
+		
+		renderRelatedMovies(movie);
 
         elements.detailModal.classList.add("open");
 
