@@ -3898,8 +3898,8 @@ button {
     display: flex;
     gap: 12px;
     overflow-x: auto;
-    overflow-y: hidden;
-    padding: 4px 2px 12px;
+    overflow-y: visible;
+    padding: 12px 12px 20px;
     scroll-behavior: smooth;
     scrollbar-width: thin;
 }
