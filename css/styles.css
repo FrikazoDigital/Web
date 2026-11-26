@@ -2479,7 +2479,7 @@ button {
 }
 
 /* Iconos de los bloques de información */
-.detail-field-label {
+/*.detail-field-label {
     display: flex;
     align-items: center;
     gap: 7px;
@@ -2492,6 +2492,33 @@ button {
     font-size: 17px;
     width: 22px;
     flex-shrink: 0;
+}*/
+
+/* Iconos minimalistas de los bloques de información */
+.detail-field-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.detail-field-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+.detail-field-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* Botón de precios, combos y promociones */

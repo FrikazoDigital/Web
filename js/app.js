@@ -4135,7 +4135,7 @@
 			"Observaciones"
 		];
 
-		const fieldIcons = {
+		/*const fieldIcons = {
 			"Titulo Ingles": "🌎",
 			"Imagen": "🖼️",
 			"Calidad Visual": "👁️",
@@ -4145,6 +4145,82 @@
 			"Capitulos": "📺",
 			"Fecha Ingreso": "📅",
 			"Observaciones": "📝"
+		};*/
+		
+		const fieldIcons = {
+
+			"Titulo Ingles": `
+				<svg viewBox="0 0 24 24">
+					<path d="m5 8 6 6"/>
+					<path d="m4 14 6-6 2-3"/>
+					<path d="M2 5h12"/>
+					<path d="M7 2h1"/>
+					<path d="m14 19 3-8 3 8"/>
+					<path d="M15 17h4"/>
+				</svg>
+			`,
+
+			"Imagen": `
+				<svg viewBox="0 0 24 24">
+					<rect x="3" y="3" width="18" height="18" rx="2"/>
+					<circle cx="8.5" cy="8.5" r="1.5"/>
+					<path d="m21 15-5-5L5 21"/>
+				</svg>
+			`,
+
+			"Resolucion": `
+				<svg viewBox="0 0 24 24">
+					<rect x="3" y="3" width="18" height="14" rx="2"/>
+					<path d="M8 21h8"/>
+					<path d="M12 17v4"/>
+				</svg>
+			`,
+
+			"Calidad Visual": `
+				<svg viewBox="0 0 24 24">
+					<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+					<circle cx="12" cy="12" r="3"/>
+				</svg>
+			`,
+
+			"Tamaño (MB)": `
+				<svg viewBox="0 0 24 24">
+					<rect x="3" y="4" width="18" height="16" rx="2"/>
+					<path d="M7 8h10M7 12h10M7 16h6"/>
+				</svg>
+			`,
+
+			"Formato": `
+				<svg viewBox="0 0 24 24">
+					<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>
+					<path d="M14 2v6h6"/>
+					<path d="m10 11 5 3-5 3z"/>
+				</svg>
+			`,
+
+			"Capitulos": `
+				<svg viewBox="0 0 24 24">
+					<path d="M4 5h16M4 10h16M4 15h10"/>
+					<path d="M4 20h10"/>
+					<path d="m17 14 4 3-4 3z"/>
+				</svg>
+			`,
+
+			"Fecha Ingreso": `
+				<svg viewBox="0 0 24 24">
+					<rect x="3" y="5" width="18" height="16" rx="2"/>
+					<path d="M16 3v4M8 3v4M3 11h18"/>
+					<path d="m9 16 2 2 4-4"/>
+				</svg>
+			`,
+
+			"Observaciones": `
+				<svg viewBox="0 0 24 24">
+					<path d="M8 3H5a2 2 0 0 0-2 2v16l4-3h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"/>
+					<path d="M8 7h8M8 11h8M8 15h5"/>
+				</svg>
+			`
+
 		};
 
 		fieldOrder.forEach(key => {
@@ -4173,7 +4249,8 @@
 				const icon = document.createElement("span");
 
 				icon.className = "detail-field-icon";
-				icon.textContent = fieldIcons[key];
+				/*icon.textContent = fieldIcons[key];*/
+				icon.innerHTML = fieldIcons[key];
 
 				label.appendChild(icon);
 
