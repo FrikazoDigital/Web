@@ -3083,7 +3083,189 @@
 			topBadge.textContent = `🥇 TOP ${topPosition}`;
 			posterContainer.appendChild(topBadge);
 		}
+		
+		// ICONOS DE RELACIONES
+		const relationIcons = document.createElement("div");
 
+		relationIcons.className = "relation-type-icons";
+		
+		// Si existe la etiqueta TOP 10, identificarlo para ajustar la posición.
+		if (topPosition > 0) {
+			relationIcons.classList.add("has-top");
+		}
+
+		const relationDefinitions = [
+			{
+				field: "Saga",
+				className: "saga",
+				label: "Saga",
+				svg: `
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+
+						<path d="
+							M12 12 L12 2.5
+							M12 12 L20.2 7.25
+							M12 12 L20.2 16.75
+							M12 12 L12 21.5
+							M12 12 L3.8 16.75
+							M12 12 L3.8 7.25
+						"/>
+
+						<circle cx="12" cy="12" r="2.3"/>
+
+						<circle cx="12" cy="2.5" r="1.5"/>
+						<circle cx="20.2" cy="7.25" r="1.5"/>
+						<circle cx="20.2" cy="16.75" r="1.5"/>
+						<circle cx="12" cy="21.5" r="1.5"/>
+						<circle cx="3.8" cy="16.75" r="1.5"/>
+						<circle cx="3.8" cy="7.25" r="1.5"/>
+
+					</svg>
+				`
+			},
+			{
+				field: "Universo",
+				className: "universe",
+				label: "Universo",
+				svg: `
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+
+						<!-- Planeta -->
+						<circle cx="11.5" cy="12" r="5.5"/>
+
+						<!-- Anillo orbital -->
+						<ellipse
+							cx="12"
+							cy="12"
+							rx="11"
+							ry="3.2"
+							transform="rotate(-30 12 12)"
+						/>
+
+						<!-- Detalle superior del planeta -->
+						<path d="M15.5 7.2 Q17.5 5.5 19.5 5.2"/>
+
+					</svg>
+				`
+			},
+			{
+				field: "Adaptaciones",
+				className: "adaptation",
+				label: "Adaptaciones",
+				svg: `
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+
+						<!-- Máscara sonriente frontal -->
+						<path
+							d="
+								M2.5 5
+								L11.5 3
+								L13.5 13
+								Q14.5 19 9 21
+								Q3.5 21 3 15
+								Z
+							"
+							fill="#ffffff"
+							stroke="none"
+						/>
+
+						<!-- Ojos frontales -->
+						<path
+							d="M4.5 9 Q5.8 8 7 9"
+							fill="none"
+							stroke="#ed1685"
+							stroke-width="1.5"
+							stroke-linecap="round"
+						/>
+
+						<path
+							d="M8.5 8.5 Q9.8 7.5 11 8.5"
+							fill="none"
+							stroke="#ed1685"
+							stroke-width="1.5"
+							stroke-linecap="round"
+						/>
+
+						<!-- Sonrisa frontal -->
+						<path
+							d="M5 13 Q7.8 17.5 11 13"
+							fill="none"
+							stroke="#ed1685"
+							stroke-width="1.8"
+							stroke-linecap="round"
+						/>
+
+						<!-- Máscara triste frontal -->
+						<path
+							d="
+								M12 5
+								L21.5 6.5
+								L21 15
+								Q20.5 20 16.5 20
+								Q12 19 11.5 14
+								Z
+							"
+							fill="#ffffff"
+							stroke="none"
+						/>
+
+						<!-- Ojos frontales -->
+						<path
+							d="M13.5 10 Q15 9 16 10"
+							fill="none"
+							stroke="#ed1685"
+							stroke-width="1.4"
+							stroke-linecap="round"
+						/>
+
+						<path
+							d="M17.5 10.5 Q19 9.5 20 10.5"
+							fill="none"
+							stroke="#ed1685"
+							stroke-width="1.4"
+							stroke-linecap="round"
+						/>
+
+						<!-- Boca triste -->
+						<path
+							d="M14.5 16 Q17 13 19.5 16"
+							fill="none"
+							stroke="#ed1685"
+							stroke-width="1.6"
+							stroke-linecap="round"
+						/>
+
+					</svg>
+				`
+			}
+		];
+
+		relationDefinitions.forEach(relation => {
+
+			// Comprobar si existen otras películas relacionadas.
+			const relatedMovies = getRelatedMovies(movie, relation.field);
+
+			if (relatedMovies.length > 0) {
+
+				const icon = document.createElement("span");
+
+				icon.className =
+					`relation-type-icon ${relation.className}`;
+
+				icon.innerHTML = relation.svg;
+				icon.title = relation.label;
+				icon.setAttribute("aria-label", relation.label);
+				icon.setAttribute("role", "img");
+
+				relationIcons.appendChild(icon);
+			}
+		});
+
+		// Agregar el contenedor solamente si tiene iconos.
+		if (relationIcons.children.length > 0) {
+			posterContainer.appendChild(relationIcons);
+		}
+		
 		// Etiqueta NUEVO
 
 		if (esNuevo(movie)) {

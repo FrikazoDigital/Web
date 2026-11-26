@@ -3982,6 +3982,150 @@ button {
 
 }
 
+/* ========================================
+   ICONOS DE RELACIONES
+======================================== */
+
+.relation-type-icons {
+    position: absolute;
+
+    top: calc(7cqi * var(--poster-ui-scale));
+    left: calc(5cqi * var(--poster-ui-scale));
+
+    z-index: 5;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: calc(3.89cqi * var(--poster-ui-scale));
+}
+
+/* Posición cuando existe la etiqueta TOP 10 */
+
+.relation-type-icons.has-top {
+    top: calc(26cqi * var(--top10-badge-scale));
+}
+
+.relation-type-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: calc(16.67cqi * var(--poster-ui-scale));
+    height: calc(16.67cqi * var(--poster-ui-scale));
+    padding: calc(2.78cqi * var(--poster-ui-scale));
+
+    border-radius: calc(4.44cqi * var(--poster-ui-scale));
+}
+
+.relation-type-icon svg {
+    width: 72%;
+    height: 72%;
+
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* SVG de UNIVERSO y ADAPTACIONES ligeramente más grande */
+.relation-type-icon.universe svg {
+    width: 100%;
+    height: 100%;
+}
+
+.relation-type-icon.adaptation svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* SAGA - VIOLETA */
+
+.relation-type-icon.saga {
+    color: #e33aff;
+
+    background: linear-gradient(
+        145deg,
+        #d52cff 0%,
+        #a000f5 48%,
+        #7100d9 100%
+    );
+
+    border: 2px solid #ed9aff;
+
+    box-shadow:
+        0 0 5px #e83aff,
+        0 0 12px #d000ff,
+        0 0 22px rgba(190, 0, 255, 0.8),
+        inset 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+/* UNIVERSO - NARANJA */
+
+.relation-type-icon.universe {
+    color: #ffae00;
+
+    background: linear-gradient(
+        145deg,
+        #ffbd00 0%,
+        #ff8500 48%,
+        #e85a00 100%
+    );
+
+    border: 2px solid #ffe078;
+
+    box-shadow:
+        0 0 5px #ffb000,
+        0 0 12px #ff9500,
+        0 0 22px rgba(255, 120, 0, 0.8),
+        inset 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+/* ADAPTACIONES - ROSADO */
+
+.relation-type-icon.adaptation {
+    color: #ff2990;
+
+    background: linear-gradient(
+        145deg,
+        #ff4da6 0%,
+        #f00083 48%,
+        #c90065 100%
+    );
+
+    border: 2px solid #ff9bc9;
+
+    box-shadow:
+        0 0 5px #ff2990,
+        0 0 12px #ff0077,
+        0 0 22px rgba(255, 0, 120, 0.8),
+        inset 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+/* ICONOS EN LOS ENCABEZADOS DE CONTENIDO RELACIONADO */
+
+.related-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.related-section h3 .relation-type-icon {
+    flex-shrink: 0;
+
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+
+    border-radius: 8px;
+}
+
+.related-section h3 .relation-type-icon svg {
+    width: 100%;
+    height: 100%;
+}
 
 
 
