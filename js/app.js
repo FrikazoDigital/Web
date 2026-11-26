@@ -3386,7 +3386,7 @@
 
             image.src = posterUrl;
             image.alt = "Póster de " + movie.Titulo;
-            image.loading = "lazy";
+            image.loading = "eager";
 
             image.addEventListener("error", () => {
 
