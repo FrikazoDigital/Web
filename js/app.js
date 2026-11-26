@@ -1151,8 +1151,11 @@
 		// Buscar películas y series que compartan alguna relación
 		return allMovies.filter(candidate => {
 
-			// Excluir el registro actual
-			if (candidate.Codigo === movie.Codigo) {
+			// EXCLUIR LA PELÍCULA ACTUAL SEGÚN LA CONFIGURACIÓN
+			if (
+				!INCLUIR_PELICULA_ACTUAL_EN_RELACIONES &&
+				candidate.Codigo === movie.Codigo
+			) {
 				return false;
 			}
 
@@ -1197,7 +1200,7 @@
 			if (!INCLUIR_PELICULA_ACTUAL_EN_RELACIONES) {
 
 				relatedMovies = relatedMovies.filter(relatedMovie =>
-					relatedMovie !== movie
+					relatedMovie.Codigo !== movie.Codigo
 				);
 
 			}
