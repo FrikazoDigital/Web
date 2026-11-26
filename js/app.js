@@ -1186,44 +1186,137 @@
 
 		sections.forEach(item => {
 
-			// Limpiar los pósteres anteriores
 			item.container.innerHTML = "";
 
-			// Buscar películas y series relacionadas
 			const relatedMovies = getRelatedMovies(movie, item.field);
 
 			relatedMovies.forEach(relatedMovie => {
 
 				const posterUrl = getMoviePoster(relatedMovie);
 
-				// No mostrar registros sin póster
 				if (!posterUrl) {
 					return;
 				}
 
-				// Crear botón del póster
+				// BOTÓN PRINCIPAL
 				const button = document.createElement("button");
 				button.type = "button";
 				button.className = "related-poster-button";
 				button.title = relatedMovie.Titulo;
 
-				// Crear imagen
+				// CONTENEDOR VISUAL DEL PÓSTER
+				const posterContainer = document.createElement("div");
+				posterContainer.className = "related-poster-visual";
+
+				// ETIQUETA NUEVO
+				if (esNuevo(relatedMovie)) {
+
+					const newBadge = document.createElement("span");
+
+					newBadge.className =
+						"new-badge new-badge-" +
+						(CONFIG.NEW_BADGE_STYLE || "ribbon");
+
+					newBadge.textContent = "NUEVO";
+
+					posterContainer.appendChild(newBadge);
+				}
+
+				// INDICADORES DE MI COLECCIÓN
+				const collectionIcons = document.createElement("div");
+
+				collectionIcons.className = "collection-status-icons";
+
+				if (esNuevo(relatedMovie)) {
+					collectionIcons.classList.add("has-new");
+				}
+
+				const statusDefinitions = [
+					{
+						type: "favorites",
+						className: "favorite",
+						label: "Favorita",
+						svg: `
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>
+							</svg>
+						`
+					},
+					{
+						type: "watched",
+						className: "watched",
+						label: "Vista",
+						svg: `
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+								<circle cx="12" cy="12" r="3"/>
+							</svg>
+						`
+					},
+					{
+						type: "obtained",
+						className: "obtained",
+						label: "Obtenida",
+						svg: `
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<path d="M3 7h18v13H3z"/>
+								<path d="M3 7l2-4h14l2 4"/>
+								<path d="M12 11v6"/>
+								<path d="m9 14 3 3 3-3"/>
+							</svg>
+						`
+					}
+				];
+
+				statusDefinitions.forEach(status => {
+
+					if (isInCollection(status.type, relatedMovie)) {
+
+						const icon = document.createElement("span");
+
+						icon.className =
+							`collection-status-icon ${status.className}`;
+
+						icon.innerHTML = status.svg;
+						icon.title = status.label;
+						icon.setAttribute("aria-label", status.label);
+						icon.setAttribute("role", "img");
+
+						collectionIcons.appendChild(icon);
+					}
+				});
+
+				if (collectionIcons.children.length > 0) {
+					posterContainer.appendChild(collectionIcons);
+				}
+
+				// IMAGEN
 				const img = document.createElement("img");
+
 				img.className = "related-poster-image";
 				img.src = posterUrl;
 				img.alt = "Póster de " + relatedMovie.Titulo;
 				img.loading = "lazy";
 
-				// Abrir los detalles al pulsar el póster
+				posterContainer.appendChild(img);
+
+				// AÑO DE ESTRENO
+				const year = document.createElement("span");
+
+				year.className = "related-poster-year";
+				year.textContent = relatedMovie["Año"] || "";
+
+				// NAVEGACIÓN
 				button.addEventListener("click", () => {
 					openDetails(relatedMovie);
 				});
 
-				button.appendChild(img);
+				button.appendChild(posterContainer);
+				button.appendChild(year);
+
 				item.container.appendChild(button);
 			});
 
-			// Ocultar la sección si no tiene pósteres
 			item.section.hidden = item.container.children.length === 0;
 		});
 	}

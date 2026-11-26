@@ -3909,24 +3909,55 @@ button {
     width: 110px;
     padding: 0;
     border: none;
-    border-radius: 8px;
-    overflow: hidden;
     background: transparent;
     cursor: pointer;
+    text-align: left;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .related-poster-button:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.related-poster-visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: 8px;
+    container-type: inline-size;
+    background: var(--bg-secondary);
 }
 
 .related-poster-image {
     display: block;
     width: 100%;
-    aspect-ratio: 2 / 3;
+    height: 100%;
     object-fit: cover;
     border-radius: 8px;
+}
+
+.related-poster-year {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.related-poster-button:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+
+    .related-poster-button {
+        flex-basis: 90px;
+        width: 90px;
+    }
+
 }
 
 .related-poster-button:focus-visible {
