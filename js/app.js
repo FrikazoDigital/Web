@@ -14,6 +14,9 @@
     const CONFIG = window.CATALOGO_CONFIG;
 
     const PAGE_SIZE = CONFIG.PAGE_SIZE || 24;
+	
+	// CONFIGURACIÓN DE PELÍCULAS RELACIONADAS
+	const INCLUIR_PELICULA_ACTUAL_EN_RELACIONES = true;
 
     let allMovies = [];
     let filteredMovies = [];
@@ -1188,7 +1191,16 @@
 
 			item.container.innerHTML = "";
 
-			const relatedMovies = getRelatedMovies(movie, item.field);
+			let relatedMovies = getRelatedMovies(movie, item.field);
+
+			// EXCLUIR LA PELÍCULA ACTUAL SI LA CONFIGURACIÓN LO INDICA
+			if (!INCLUIR_PELICULA_ACTUAL_EN_RELACIONES) {
+
+				relatedMovies = relatedMovies.filter(relatedMovie =>
+					relatedMovie !== movie
+				);
+
+			}
 
 			relatedMovies.forEach(relatedMovie => {
 
