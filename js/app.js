@@ -1219,6 +1219,17 @@
 				// CONTENEDOR VISUAL DEL PÓSTER
 				const posterContainer = document.createElement("div");
 				posterContainer.className = "related-poster-visual";
+				
+				// IDENTIFICAR PELÍCULA ACTUAL
+				if (
+					INCLUIR_PELICULA_ACTUAL_EN_RELACIONES &&
+					relatedMovie === movie
+				) {
+					posterContainer.classList.add(
+						"related-poster-active",
+						item.field.toLowerCase()
+					);
+				}
 
 				// ETIQUETA NUEVO
 				if (esNuevo(relatedMovie)) {

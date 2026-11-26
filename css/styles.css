@@ -4127,6 +4127,32 @@ button {
     height: 100%;
 }
 
+/* RESPLANDOR DE LA PELÍCULA ACTUAL EN RELACIONES */
+
+/* SAGA - VIOLETA */
+.related-poster-visual.related-poster-active.saga {
+    box-shadow:
+        0 0 6px #e83aff,
+        0 0 14px #d000ff,
+        0 0 25px rgba(190, 0, 255, 0.8);
+}
+
+/* UNIVERSO - NARANJA */
+.related-poster-visual.related-poster-active.universo {
+    box-shadow:
+        0 0 6px #ffb000,
+        0 0 14px #ff9500,
+        0 0 25px rgba(255, 120, 0, 0.8);
+}
+
+/* ADAPTACIONES - ROSADO */
+.related-poster-visual.related-poster-active.adaptaciones {
+    box-shadow:
+        0 0 6px #ff2990,
+        0 0 14px #ff0077,
+        0 0 25px rgba(255, 0, 120, 0.8);
+}
+
 
 
 
