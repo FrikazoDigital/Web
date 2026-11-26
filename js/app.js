@@ -16,7 +16,7 @@
     const PAGE_SIZE = CONFIG.PAGE_SIZE || 24;
 	
 	// CONFIGURACIÓN DE PELÍCULAS RELACIONADAS
-	const INCLUIR_PELICULA_ACTUAL_EN_RELACIONES = true;
+	const INCLUIR_PELICULA_ACTUAL_EN_RELACIONES = false;
 
     let allMovies = [];
     let filteredMovies = [];
