@@ -1204,7 +1204,17 @@
 				);
 
 			}
+			
+			// ORDENAR POR AÑO: DE MENOR A MAYOR
+			relatedMovies.sort((a, b) => {
 
+				const yearA = Number(a["Año"]) || Infinity;
+				const yearB = Number(b["Año"]) || Infinity;
+
+				return yearA - yearB;
+
+			});
+			
 			relatedMovies.forEach(relatedMovie => {
 
 				const posterUrl = getMoviePoster(relatedMovie);
@@ -4536,8 +4546,8 @@
 			"Tamaño (MB)",
 			"Formato",
 			"Capitulos",
-			"Fecha Ingreso",
-			"Observaciones"
+			/*"Fecha Ingreso",
+			"Observaciones"*/
 		];
 
 		/*const fieldIcons = {
